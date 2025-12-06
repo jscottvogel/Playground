@@ -5,40 +5,75 @@ import './ProjectGallery.css';
 
 const client = generateClient<Schema>();
 
+const seedData = [
+    {
+        title: 'Solutions (This Project)',
+        description: 'A personal portfolio and solutions lab built with React, AWS Amplify Gen 2, and AI.',
+        imageUrl: 'https://via.placeholder.com/400x200', // Placeholder
+        demoUrl: window.location.origin,
+        gitUrl: 'https://github.com/jscottvogel/Playground.git'
+    },
+    {
+        title: 'Amplify Gen 2 Chatbot',
+        description: 'Intelligent conversational agent integrating with backend systems.',
+        imageUrl: 'https://via.placeholder.com/400x200',
+        demoUrl: '#',
+        gitUrl: '#'
+    },
+    {
+        title: 'React 3D Portfolio',
+        description: 'Next-gen personal website with interactive 3D elements using Three.js.',
+        imageUrl: 'https://via.placeholder.com/400x200',
+        demoUrl: '#',
+        gitUrl: '#'
+    }
+];
+
 export function ProjectGallery() {
     const [projects, setProjects] = useState<Schema['Project']['type'][]>([]);
+    const [seeding, setSeeding] = useState(false);
+
+    const fetchProjects = async () => {
+        try {
+            const { data: items } = await client.models.Project.list();
+            setProjects(items);
+        } catch (e) {
+            console.error("Failed to fetch projects (Backend might not be deployed):", e);
+        }
+    };
 
     useEffect(() => {
-        // In a real scenario, this fetches from DynamoDB
-        const fetchProjects = async () => {
-            try {
-                const { data: items } = await client.models.Project.list();
-                setProjects(items);
-            } catch (e) {
-                console.error("Failed to fetch projects (Backend might not be deployed):", e);
-            }
-        };
         fetchProjects();
     }, []);
+
+    const handleSeed = async () => {
+        setSeeding(true);
+        for (const p of seedData) {
+            await client.models.Project.create(p);
+        }
+        setSeeding(false);
+        fetchProjects();
+    };
 
     return (
         <div className="animate-fade-in">
             <div className="gallery-header">
                 <h2>Project Showcase</h2>
-                {/* Admin Add button could go here */}
+                <button
+                    className="btn"
+                    onClick={handleSeed}
+                    disabled={seeding || projects.length > 0}
+                    style={{ fontSize: '0.8rem', opacity: projects.length > 0 ? 0.5 : 1 }}
+                >
+                    {seeding ? 'Seeding...' : 'Seed Database'}
+                </button>
             </div>
 
             {projects.length === 0 ? (
                 <div className="card gallery-empty">
                     <p className="gallery-text-dim">
-                        No projects loaded from DB. (If offline, ensure Backend is deployed or check console).
+                        No projects loaded from DB. Click "Seed Database" to add initial data.
                     </p>
-                    {/* Fallback mock for demo purposes if list is empty */}
-                    <div className="gallery-mock-grid">
-                        <MockProjectCard title="Amplify Gen 2 App" desc="A powerful fullstack app built with AWS Amplify Gen 2." />
-                        <MockProjectCard title="React AI Chatbot" desc="An intelligent agentic interface for personal portfolios." />
-                        <MockProjectCard title="Portfolio 2025" desc="Next-gen personal website with 3D elements." />
-                    </div>
                 </div>
             ) : (
                 <div className="gallery-grid">
@@ -47,7 +82,10 @@ export function ProjectGallery() {
                             {proj.imageUrl && <img src={proj.imageUrl} alt={proj.title || ''} className="project-img" />}
                             <h3>{proj.title}</h3>
                             <p className="gallery-text-dim">{proj.description}</p>
-                            {proj.demoUrl && <a href={proj.demoUrl} className="btn btn-primary project-btn-demo">View Demo</a>}
+                            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+                                {proj.demoUrl && <a href={proj.demoUrl} className="btn btn-primary project-btn-demo" target='_blank' rel='noreferrer'>Live Demo</a>}
+                                {proj.gitUrl && <a href={proj.gitUrl} className="btn" style={{ textDecoration: 'none' }} target='_blank' rel='noreferrer'>GitHub</a>}
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -56,12 +94,3 @@ export function ProjectGallery() {
     );
 }
 
-function MockProjectCard({ title, desc }: { title: string, desc: string }) {
-    return (
-        <div className="card mock-card">
-            <div className="mock-img-placeholder"></div>
-            <h3 className="mock-title">{title}</h3>
-            <p className="mock-desc">{desc}</p>
-        </div>
-    );
-}

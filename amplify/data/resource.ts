@@ -12,6 +12,7 @@ const schema = a.schema({
             description: a.string(),
             imageUrl: a.string(),
             demoUrl: a.string(),
+            gitUrl: a.string(),
         })
         .authorization((allow) => [
             // Public can read projects
