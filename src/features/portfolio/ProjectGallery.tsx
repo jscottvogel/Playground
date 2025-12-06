@@ -48,11 +48,18 @@ export function ProjectGallery() {
 
     const handleSeed = async () => {
         setSeeding(true);
-        for (const p of seedData) {
-            await client.models.Project.create(p);
+        try {
+            for (const p of seedData) {
+                const { errors } = await client.models.Project.create(p);
+                if (errors) throw new Error(errors[0].message);
+            }
+            fetchProjects();
+        } catch (e: any) {
+            console.error("Seeding failed:", e);
+            alert(`Failed to seed database: ${e.message || e}`);
+        } finally {
+            setSeeding(false);
         }
-        setSeeding(false);
-        fetchProjects();
     };
 
     return (

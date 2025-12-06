@@ -16,7 +16,7 @@ const schema = a.schema({
         })
         .authorization((allow) => [
             // Public can read projects
-            allow.publicApiKey().to(['read']),
+            allow.publicApiKey().to(['read', 'create']),
             // Admin can do everything (default owner if signed in, but let's be explicit)
             allow.owner(),
         ]),
