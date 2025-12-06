@@ -13,11 +13,14 @@ const schema = a.schema({
             imageUrl: a.string(),
             demoUrl: a.string(),
             gitUrl: a.string(),
+            skills: a.string().array(),
         })
         .authorization((allow) => [
             // Public can read projects
-            allow.publicApiKey().to(['read', 'create']),
-            // Admin can do everything (default owner if signed in, but let's be explicit)
+            allow.publicApiKey().to(['read']),
+            // Admins group can do everything
+            allow.groups(['Admins']).to(['create', 'update', 'delete']),
+            // Owner (if signed in and not admin, though admin group covers most)
             allow.owner(),
         ]),
 

@@ -5,7 +5,11 @@ import App from './App';
 jest.mock('@aws-amplify/ui-react', () => ({
     Authenticator: ({ children }: any) => {
         return children({ signOut: jest.fn(), user: { signInDetails: { loginId: 'test@example.com' } } });
-    }
+    },
+    useAuthenticator: () => ({
+        user: { signInDetails: { loginId: 'test@example.com' } },
+        signOut: jest.fn()
+    })
 }));
 
 // Mock feature components to isolate App logic (optional, but good for unit testing App)
@@ -45,5 +49,7 @@ describe('App Navigation Flow', () => {
         fireEvent.click(screen.getByText('Login'));
         // Since we mock Authenticator to render children, we should see authenticated content
         expect(screen.getByTestId('project-gallery')).toBeInTheDocument();
+        // Also check if Admin button is present now that we are logged in
+        expect(screen.getByText('Admin')).toBeInTheDocument();
     });
 });

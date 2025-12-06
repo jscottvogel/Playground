@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">91.3% </span>
+                <span class="strong">85.18% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>21/23</span>
+                <span class='fraction'>23/27</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">83.33% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>4/4</span>
+                <span class='fraction'>5/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/5</span>
+                <span class='fraction'>4/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">95.23% </span>
+                <span class="strong">88% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>20/21</span>
+                <span class='fraction'>22/25</span>
             </div>
         
             
@@ -126,7 +126,25 @@
 <a name='L61'></a><a href='#L61'>61</a>
 <a name='L62'></a><a href='#L62'>62</a>
 <a name='L63'></a><a href='#L63'>63</a>
-<a name='L64'></a><a href='#L64'>64</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -167,6 +185,22 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -195,12 +229,13 @@ import '@aws-amplify/ui-react/styles.css';
 import { GuestGateway } from './features/guest/GuestGateway';
 import { MeetMeBot } from './features/chatbot/MeetMeBot';
 import { ProjectGallery } from './features/portfolio/ProjectGallery';
+import { AdminDashboard } from './features/admin/AdminDashboard';
 import { Nav } from './components/Nav';
 import './App.css';
 &nbsp;
 function App() {
-  // States: 'gateway', 'guest_chat', 'auth'
-  const [viewState, setViewState] = useState&lt;'gateway' | 'guest_chat' | 'auth'&gt;('gateway');
+  // States: 'gateway', 'guest_chat', 'auth', 'admin'
+  const [viewState, setViewState] = useState&lt;'gateway' | 'guest_chat' | 'auth' | 'admin'&gt;('gateway');
   const [guestEmail, setGuestEmail] = useState('');
 &nbsp;
   const handleGuestAccess = (email: string) =&gt; {
@@ -221,9 +256,25 @@ function App() {
             /&gt;
 &nbsp;
             &lt;div className="auth-layout"&gt;
-              &lt;MeetMeBot /&gt; {/* Authenticated users also see the bot */}
-              &lt;ProjectGallery /&gt;
+              {/* Authenticated user landing */}
+              &lt;div style={{ padding: '2rem' }}&gt;
+                &lt;h2 style={{ marginBottom: '2rem' }}&gt;Welcome, {user?.signInDetails?.loginId}&lt;/h2&gt;
+                &lt;ProjectGallery /&gt;
+              &lt;/div&gt;
             &lt;/div&gt;
+          &lt;/main&gt;
+        )}
+      &lt;/Authenticator&gt;
+    );
+  }
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (viewState === 'admin') {
+<span class="cstat-no" title="statement not covered" >    return (</span>
+      &lt;Authenticator&gt;
+        {<span class="fstat-no" title="function not covered" >({</span> signOut, user }) =&gt; (
+<span class="cstat-no" title="statement not covered" >          &lt;main className="main-container"&gt;</span>
+            &lt;Nav viewState="admin" setViewState={setViewState} user={user} signOut={signOut} /&gt;
+            &lt;AdminDashboard /&gt;
           &lt;/main&gt;
         )}
       &lt;/Authenticator&gt;
@@ -259,7 +310,7 @@ export default App;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-06T19:29:19.371Z
+                at 2025-12-06T20:57:06.152Z
             </div>
         <script src="../prettify.js"></script>
         <script>

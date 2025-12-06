@@ -1,0 +1,81 @@
+.admin-dashboard {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.admin-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.admin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: var(--color-text-dim);
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--color-text);
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-hint {
+    font-size: 0.8rem;
+    color: var(--color-text-dim);
+    margin-top: 0.2rem;
+}
+
+.btn-submit {
+    margin-top: 1rem;
+    padding: 1rem;
+    font-size: 1.1rem;
+}
+
+.admin-message {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.admin-message.success {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    border: 1px solid #059669;
+}
+
+.admin-message.error {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border: 1px solid #b91c1c;
+}

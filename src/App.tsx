@@ -4,12 +4,13 @@ import '@aws-amplify/ui-react/styles.css';
 import { GuestGateway } from './features/guest/GuestGateway';
 import { MeetMeBot } from './features/chatbot/MeetMeBot';
 import { ProjectGallery } from './features/portfolio/ProjectGallery';
+import { AdminDashboard } from './features/admin/AdminDashboard';
 import { Nav } from './components/Nav';
 import './App.css';
 
 function App() {
-  // States: 'gateway', 'guest_chat', 'auth'
-  const [viewState, setViewState] = useState<'gateway' | 'guest_chat' | 'auth'>('gateway');
+  // States: 'gateway', 'guest_chat', 'auth', 'admin'
+  const [viewState, setViewState] = useState<'gateway' | 'guest_chat' | 'auth' | 'admin'>('gateway');
   const [guestEmail, setGuestEmail] = useState('');
 
   const handleGuestAccess = (email: string) => {
@@ -30,9 +31,25 @@ function App() {
             />
 
             <div className="auth-layout">
-              <MeetMeBot /> {/* Authenticated users also see the bot */}
-              <ProjectGallery />
+              {/* Authenticated user landing */}
+              <div style={{ padding: '2rem' }}>
+                <h2 style={{ marginBottom: '2rem' }}>Welcome, {user?.signInDetails?.loginId}</h2>
+                <ProjectGallery />
+              </div>
             </div>
+          </main>
+        )}
+      </Authenticator>
+    );
+  }
+
+  if (viewState === 'admin') {
+    return (
+      <Authenticator>
+        {({ signOut, user }) => (
+          <main className="main-container">
+            <Nav viewState="admin" setViewState={setViewState} user={user} signOut={signOut} />
+            <AdminDashboard />
           </main>
         )}
       </Authenticator>
