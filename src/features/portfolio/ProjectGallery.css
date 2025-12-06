@@ -1,0 +1,61 @@
+.gallery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.gallery-empty {
+    text-align: center;
+    padding: 3rem;
+}
+
+.gallery-text-dim {
+    color: var(--color-text-dim);
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.gallery-mock-grid {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.project-img {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.project-btn-demo {
+    display: inline-block;
+    margin-top: 1rem;
+    text-decoration: none;
+}
+
+.mock-card {
+    text-align: left;
+}
+
+.mock-img-placeholder {
+    width: 100%;
+    height: 140px;
+    background: linear-gradient(135deg, #1e293b, #334155);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.mock-title {
+    margin: 0 0 0.5rem 0;
+}
+
+.mock-desc {
+    color: var(--color-text-dim);
+    font-size: 0.9em;
+}

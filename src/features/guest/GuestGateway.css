@@ -1,0 +1,46 @@
+.gateway-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80vh;
+}
+
+.gateway-title {
+    margin-bottom: 2rem;
+}
+
+.gateway-card {
+    max-width: 400px;
+    width: 100%;
+}
+
+.gateway-subtitle {
+    margin-top: 0;
+}
+
+.gateway-text {
+    color: var(--color-text-dim);
+    margin-bottom: 1.5rem;
+}
+
+.gateway-error {
+    color: #ef4444;
+    font-size: 0.9em;
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+}
+
+.gateway-btn-submit {
+    width: 100%;
+}
+
+.gateway-divider {
+    margin: 1.5rem 0;
+    height: 1px;
+    background: var(--color-border);
+}
+
+.gateway-btn-auth {
+    width: 100%;
+}

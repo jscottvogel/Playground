@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import './MeetMeBot.css';
 
 interface Message {
     id: string;
@@ -50,35 +51,26 @@ export function MeetMeBot({ guestEmail }: { guestEmail?: string }) {
     };
 
     return (
-        <div className="card animate-fade-in" style={{ height: '600px', display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}>
-            <div style={{ padding: '1rem', background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)' }}>
-                <h3 style={{ margin: 0 }}>Meet Me Chatbot 🤖</h3>
+        <div className="card animate-fade-in bot-container">
+            <div className="bot-header">
+                <h3 className="bot-title">Meet Me Chatbot 🤖</h3>
             </div>
 
-            <div style={{ flex: 1, padding: '1rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div className="bot-messages">
                 {messages.map((msg) => (
-                    <div key={msg.id} style={{
-                        alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start',
-                        maxWidth: '80%',
-                        padding: '0.8rem 1.2rem',
-                        borderRadius: '12px',
-                        backgroundColor: msg.sender === 'user' ? 'var(--color-primary)' : 'rgba(255,255,255,0.1)',
-                        color: 'white',
-                        borderBottomRightRadius: msg.sender === 'user' ? '2px' : '12px',
-                        borderBottomLeftRadius: msg.sender === 'bot' ? '2px' : '12px'
-                    }}>
+                    <div key={msg.id} className={`bot-message-bubble ${msg.sender === 'user' ? 'bot-msg-user' : 'bot-msg-bot'}`}>
                         {msg.text}
                     </div>
                 ))}
                 <div ref={messagesEndRef} />
             </div>
 
-            <form onSubmit={handleSend} style={{ padding: '1rem', borderTop: '1px solid var(--color-border)', display: 'flex', gap: '0.5rem' }}>
+            <form onSubmit={handleSend} className="bot-input-form">
                 <input
                     value={input}
                     onChange={e => setInput(e.target.value)}
                     placeholder="Type a message..."
-                    style={{ marginBottom: 0 }}
+                    className="bot-input"
                 />
                 <button type="submit" className="btn btn-primary">Send</button>
             </form>
