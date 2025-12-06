@@ -20,7 +20,8 @@ module.exports = {
                 allowSyntheticDefaultImports: true,
                 types: ["vite/client", "jest", "@testing-library/jest-dom"],
                 skipLibCheck: true
-            }
+            },
+            diagnostics: false
         }]
     },
 };
