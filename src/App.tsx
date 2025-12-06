@@ -31,8 +31,8 @@ function App() {
             />
 
             <div className="auth-layout">
-              {/* Authenticated user landing */}
-              <div style={{ padding: '2rem' }}>
+              <MeetMeBot />
+              <div style={{ padding: '2rem', flex: 1 }}>
                 <h2 style={{ marginBottom: '2rem' }}>Welcome, {user?.signInDetails?.loginId}</h2>
                 <ProjectGallery />
               </div>
@@ -49,7 +49,12 @@ function App() {
         {({ signOut, user }) => (
           <main className="main-container">
             <Nav viewState="admin" setViewState={setViewState} user={user} signOut={signOut} />
-            <AdminDashboard />
+            <div style={{ display: 'flex', gap: '2rem' }}>
+              <MeetMeBot />
+              <div style={{ flex: 1 }}>
+                <AdminDashboard />
+              </div>
+            </div>
           </main>
         )}
       </Authenticator>

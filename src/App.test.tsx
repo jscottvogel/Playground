@@ -30,6 +30,14 @@ jest.mock('./features/guest/GuestGateway', () => ({
     )
 }));
 
+jest.mock('./features/admin/AdminDashboard', () => ({
+    AdminDashboard: () => <div>Admin Dashboard</div>
+}));
+
+jest.mock('./features/chatbot/MeetMeBot', () => ({
+    MeetMeBot: () => <div>Meet Me Chatbot 🤖</div>
+}));
+
 describe('App Navigation Flow', () => {
     test('renders GuestGateway by default', () => {
         render(<App />);
@@ -51,5 +59,13 @@ describe('App Navigation Flow', () => {
         expect(screen.getByTestId('project-gallery')).toBeInTheDocument();
         // Also check if Admin button is present now that we are logged in
         expect(screen.getByText('Admin')).toBeInTheDocument();
+    });
+
+    test('shows chatbot in admin view', () => {
+        render(<App />);
+        fireEvent.click(screen.getByText('Login')); // Go to auth
+        fireEvent.click(screen.getByText('Admin')); // Go to admin
+        expect(screen.getByText('Meet Me Chatbot 🤖')).toBeInTheDocument();
+        expect(screen.getByText('Admin Dashboard')).toBeInTheDocument();
     });
 });
