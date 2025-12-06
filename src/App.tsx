@@ -39,7 +39,7 @@ function App() {
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               paddingBottom: '1rem', marginBottom: '2rem', borderBottom: '1px solid var(--color-border)'
             }}>
-              <div style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>JSV Playground</div>
+              <div style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>Vogel Solutions Lab</div>
               <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.9em', opacity: 0.7 }}>{user?.signInDetails?.loginId}</span>
                 <button className="btn" onClick={signOut}>Sign Out</button>
