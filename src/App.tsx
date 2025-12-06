@@ -20,7 +20,7 @@ function App() {
       display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       paddingBottom: '1rem', marginBottom: '2rem', borderBottom: '1px solid var(--color-border)'
     }}>
-      <div style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>JSV Playground</div>
+      <div style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>Vogel Solutions Lab</div>
       <div style={{ display: 'flex', gap: '1rem' }}>
         <button className="btn" onClick={() => setViewState('gateway')} style={{ fontSize: '0.9em', padding: '0.4em 0.8em' }}>Home</button>
         {viewState === 'auth' ? null : (

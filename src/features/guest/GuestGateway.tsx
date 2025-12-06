@@ -50,7 +50,7 @@ export function GuestGateway({ onAccessGranted, onLoginRequest }: GuestGatewayPr
         <div className="gateway-container animate-fade-in" style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '80vh'
         }}>
-            <h1 style={{ marginBottom: '2rem' }}>Welcome to Vogel Solutions Lab.</h1>
+            <h1 style={{ marginBottom: '2rem' }}>Vogel Solutions Lab</h1>
 
             <div className="card" style={{ maxWidth: '400px', width: '100%' }}>
                 <h2 style={{ marginTop: 0 }}>Who are you?</h2>
