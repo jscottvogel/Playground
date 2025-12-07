@@ -23,9 +23,9 @@ function App() {
   /**
    * viewState controls the main content being rendered.
    * - 'gateway': Default landing page
-   * - 'guest_chat': Guest user experience
-   * - 'auth': Signed-in user experience (Gallery)
-   * - 'admin': Administrative dashboard
+   * - 'guest_chat': Guest user experience (Bot is Embedded/Centered)
+   * - 'auth': Signed-in user experience (Gallery + Bot Widget)
+   * - 'admin': Administrative dashboard (Dashboard + Bot Widget)
    */
   const [viewState, setViewState] = useState<'gateway' | 'guest_chat' | 'auth' | 'admin'>('gateway');
   const [guestEmail, setGuestEmail] = useState('');

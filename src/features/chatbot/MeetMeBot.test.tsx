@@ -1,9 +1,10 @@
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MeetMeBot } from './MeetMeBot';
 
 // Mock scrollIntoView
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
+// Mock Logger
 jest.mock('../../services/Logger', () => ({
     ChatLogger: {
         debug: jest.fn(),
@@ -12,34 +13,67 @@ jest.mock('../../services/Logger', () => ({
     }
 }));
 
+// Mock AWS Amplify Data Client
+const mockAskAgent = jest.fn();
+jest.mock('aws-amplify/data', () => ({
+    generateClient: () => ({
+        queries: {
+            askBedrockAgent: mockAskAgent
+        }
+    })
+}));
+
 describe('MeetMeBot', () => {
     beforeEach(() => {
-        jest.useFakeTimers();
+        jest.clearAllMocks();
     });
 
-    afterEach(() => {
-        jest.useRealTimers();
+    // --- Embedded Mode Tests ---
+    test('renders embedded mode (always open)', () => {
+        render(<MeetMeBot mode="embedded" />);
+        // Should show title immediately
+        expect(screen.getByText('MeetMe Chatbot 🤖')).toBeInTheDocument();
+        // Should NOT show FAB
+        expect(screen.queryByText(/Chat with Scott-bot/)).not.toBeInTheDocument();
     });
 
-    test('renders initial greeting', () => {
-        render(<MeetMeBot />);
-        expect(screen.getByText(/Hi there/)).toBeInTheDocument();
-    });
+    test('embedded mode sends message to agent', async () => {
+        mockAskAgent.mockResolvedValue({ data: 'I am the Agent.' });
+        render(<MeetMeBot mode="embedded" />);
 
-    test('responds to user input', () => {
-        render(<MeetMeBot />);
         const input = screen.getByPlaceholderText('Ask about projects...');
         const button = screen.getByText('Send');
 
-        fireEvent.change(input, { target: { value: 'Hello' } });
+        fireEvent.change(input, { target: { value: 'Hello Agent' } });
         fireEvent.click(button);
 
-        expect(screen.getByText('Hello')).toBeInTheDocument(); // User message
+        expect(screen.getByText('Hello Agent')).toBeInTheDocument();
 
-        act(() => {
-            jest.advanceTimersByTime(1000);
+        await waitFor(() => {
+            expect(mockAskAgent).toHaveBeenCalledWith({ message: 'Hello Agent' });
+            expect(screen.getByText('I am the Agent.')).toBeInTheDocument();
         });
+    });
 
-        expect(screen.getByText(/Hello! How can I help you today?/)).toBeInTheDocument(); // Bot response
+    // --- Widget Mode Tests ---
+    test('renders widget mode (FAB first)', () => {
+        render(<MeetMeBot mode="widget" />);
+        // Should show FAB
+        expect(screen.getByText('💬 Chat with Scott-bot')).toBeInTheDocument();
+        // Should NOT show chat window yet
+        expect(screen.queryByText('MeetMe Chatbot 🤖')).not.toBeInTheDocument();
+    });
+
+    test('opens and closes widget', () => {
+        render(<MeetMeBot mode="widget" />);
+
+        // Open
+        fireEvent.click(screen.getByText('💬 Chat with Scott-bot'));
+        expect(screen.getByText('MeetMe Chatbot 🤖')).toBeInTheDocument();
+
+        // Close
+        fireEvent.click(screen.getByText('×'));
+        expect(screen.getByText('💬 Chat with Scott-bot')).toBeInTheDocument();
+        expect(screen.queryByText('MeetMe Chatbot 🤖')).not.toBeInTheDocument();
     });
 });

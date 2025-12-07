@@ -9,14 +9,14 @@ const client = generateClient<Schema>();
 /**
  * MeetMeBot Component
  * 
- * An interactive chatbot that allows users (Guests, Auth Users, Admins) to ask questions 
- * about the portfolio owner.
+ * An intelligent conversational agent backed by AWS Bedrock (Claude 3 Sonnet).
  * 
  * Features:
- * - Persistent chat history during the session
- * - Auto-scrolling to new messages
- * - Context-aware greeting (uses guest email if provided)
- * - Basic keyword matching for responses
+ * - **Modes**: 
+ *   - 'embedded': Centered, always-open view (Default for Guests).
+ *   - 'widget': Floating FAB that expands into a chat window (Default for Users).
+ * - **Agentic Capabilities**: Calls the backend `askBedrockAgent` query to answer questions.
+ * - **History**: Persists chat session locally (state).
  */
 
 interface Message {

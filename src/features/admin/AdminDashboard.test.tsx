@@ -2,24 +2,36 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { AdminDashboard } from './AdminDashboard';
 
 // 1. Define mock functions (vars)
-const mockList = jest.fn();
-const mockCreate = jest.fn();
-const mockUpdate = jest.fn();
-const mockDelete = jest.fn();
+// 1. Mock 'aws-amplify/data' with a singleton to ensure reference equality
+jest.mock('aws-amplify/data', () => {
+    const mockList = jest.fn();
+    const mockCreate = jest.fn();
+    const mockUpdate = jest.fn();
+    const mockDelete = jest.fn();
 
-// 2. Mock 'aws-amplify/data' using closure forwarding to access the vars above
-jest.mock('aws-amplify/data', () => ({
-    generateClient: () => ({
+    const client = {
         models: {
             Project: {
-                list: (...args: any[]) => mockList(...args),
-                create: (...args: any[]) => mockCreate(...args),
-                update: (...args: any[]) => mockUpdate(...args),
-                delete: (...args: any[]) => mockDelete(...args)
+                list: mockList,
+                create: mockCreate,
+                update: mockUpdate,
+                delete: mockDelete
             }
         }
-    })
-}));
+    };
+
+    return {
+        generateClient: () => client
+    };
+});
+
+// 2. Access the mocks for assertion via the imported module
+import { generateClient } from 'aws-amplify/data';
+const client = generateClient() as any;
+const mockList = client.models.Project.list as jest.Mock;
+const mockCreate = client.models.Project.create as jest.Mock;
+const mockUpdate = client.models.Project.update as jest.Mock;
+const mockDelete = client.models.Project.delete as jest.Mock;
 
 // 3. Mock Logger
 jest.mock('../../services/Logger', () => ({
@@ -40,6 +52,18 @@ jest.mock('@aws-amplify/ui-react', () => ({
 
 
 
+/**
+ * AdminDashboard Tests
+ * 
+ * Verifies the CRUD functionality of the Admin Dashboard.
+ * 
+ * Scope:
+ * - List, Create, Update, Delete (Soft Delete) Projects.
+ * - Form interactions.
+ * - Notification toasts.
+ * 
+ * Note: Chatbot is tested separately in `MeetMeBot.test.tsx` as it is no longer part of this component.
+ */
 describe('AdminDashboard', () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -51,13 +75,16 @@ describe('AdminDashboard', () => {
     test('renders form and loads projects', async () => {
         mockList.mockResolvedValue({ data: [{ id: '1', title: 'Existing Project', isActive: true }] });
         render(<AdminDashboard />);
+
         expect(screen.getByText('Add New Project')).toBeInTheDocument();
+        // Wait for list to load
         expect(await screen.findByText('Existing Project')).toBeInTheDocument();
     });
 
     test('creates a project', async () => {
         mockList.mockResolvedValue({ data: [] });
-        mockCreate.mockResolvedValue({ data: { id: 'new' } });
+        mockCreate.mockResolvedValue({ data: { id: 'new' }, errors: null });
+
         render(<AdminDashboard />);
 
         fireEvent.change(screen.getByLabelText(/Project Title/i), { target: { value: 'New App' } });
@@ -81,14 +108,15 @@ describe('AdminDashboard', () => {
         mockList.mockResolvedValue({
             data: [{ id: '1', title: 'Old Title', isActive: true, skills: ['A'] }]
         });
-        mockUpdate.mockResolvedValue({ data: { id: '1' } });
+        mockUpdate.mockResolvedValue({ data: { id: '1' }, errors: null });
 
         render(<AdminDashboard />);
         const editBtn = await screen.findByText('Edit');
         fireEvent.click(editBtn);
 
-        expect(screen.getByText('Edit Project')).toBeInTheDocument();
-        expect(screen.getByLabelText(/Project Title/i)).toHaveValue('Old Title');
+        await waitFor(() => {
+            expect(screen.getByLabelText(/Project Title/i)).toHaveValue('Old Title');
+        });
 
         fireEvent.change(screen.getByLabelText(/Project Title/i), { target: { value: 'New Title' } });
         fireEvent.click(screen.getByText('Update Project'));
@@ -103,7 +131,7 @@ describe('AdminDashboard', () => {
         mockList.mockResolvedValue({
             data: [{ id: '1', title: 'To Deactivate', isActive: true }]
         });
-        mockUpdate.mockResolvedValue({ data: { id: '1', isActive: false } });
+        mockUpdate.mockResolvedValue({ data: { id: '1', isActive: false }, errors: null });
 
         render(<AdminDashboard />);
         const deactivateBtn = await screen.findByText('Deactivate');
