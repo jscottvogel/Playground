@@ -2,6 +2,7 @@ import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../amplify/data/resource';
 import { useEffect, useState } from 'react';
 import './ProjectGallery.css';
+import { GalleryLogger } from '../../services/Logger';
 
 /**
  * Interface for the Amplify Data Client
@@ -22,11 +23,13 @@ export function ProjectGallery() {
      * Note: This view allows read access to all authenticated users.
      */
     const fetchProjects = async () => {
+        GalleryLogger.debug('Fetching list of projects...');
         try {
             const { data: items } = await client.models.Project.list();
+            GalleryLogger.info(`Fetched ${items.length} projects.`);
             setProjects(items);
         } catch (e) {
-            console.error("Failed to fetch projects (Backend might not be deployed):", e);
+            GalleryLogger.error("Failed to fetch projects (Backend might not be deployed):", e);
         }
     };
 

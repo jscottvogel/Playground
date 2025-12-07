@@ -3,14 +3,24 @@ import { GuestGateway } from './GuestGateway';
 
 // Mock Amplify Data client
 const mockCreate = jest.fn();
+
 jest.mock('aws-amplify/data', () => ({
     generateClient: () => ({
         models: {
             GuestVisit: {
-                create: mockCreate
+                create: (...args: any[]) => mockCreate(...args)
             }
         }
     })
+}));
+
+jest.mock('../../services/Logger', () => ({
+    GuestLogger: {
+        debug: jest.fn(),
+        info: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn()
+    }
 }));
 
 describe('GuestGateway', () => {
@@ -20,18 +30,21 @@ describe('GuestGateway', () => {
 
     test('renders correctly', () => {
         render(<GuestGateway onAccessGranted={jest.fn()} onLoginRequest={jest.fn()} />);
-        expect(screen.getByText('Who are you?')).toBeInTheDocument();
+        expect(screen.getByText('Welcome to Vogel Solutions')).toBeInTheDocument();
     });
 
-    test('shows error on invalid email', () => {
+    test('shows error on invalid email', async () => {
         render(<GuestGateway onAccessGranted={jest.fn()} onLoginRequest={jest.fn()} />);
+        // Use placeholder because label is sr-only
         const input = screen.getByPlaceholderText('enter@email.com');
         const button = screen.getByText('Continue as Guest');
 
         fireEvent.change(input, { target: { value: 'invalid-email' } });
         fireEvent.click(button);
 
-        expect(screen.getByText('Please enter a valid email address.')).toBeInTheDocument();
+        await waitFor(() => {
+            expect(screen.getByText('Please enter a valid email address.')).toBeInTheDocument();
+        });
     });
 
     test('calls access granted and saves visit on valid email', async () => {

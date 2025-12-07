@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import './MeetMeBot.css';
+import { ChatLogger } from '../../services/Logger';
 
 /**
  * MeetMeBot Component
@@ -46,31 +47,26 @@ export function MeetMeBot({ guestEmail }: { guestEmail?: string }) {
 
     /**
      * Handles user message submission.
-     * Adds the user message immediately, then simulates a bot response delay.
      */
     const handleSendMessage = (e: React.FormEvent) => {
         e.preventDefault();
         if (!inputValue.trim()) return;
 
-        const userMsg: Message = {
-            id: Date.now().toString(),
-            text: inputValue,
-            sender: 'user'
-        };
+        const userText = inputValue;
+        const userMsg: Message = { id: Date.now().toString(), text: userText, sender: 'user' };
 
         setMessages(prev => [...prev, userMsg]);
         setInputValue('');
         setIsTyping(true);
 
-        // Simulate network delay / thinking time
+        ChatLogger.info(`User sent message: ${userText}`);
+
         setTimeout(() => {
-            const botResponse = getBotResponse(userMsg.text);
-            setMessages(prev => [...prev, {
-                id: (Date.now() + 1).toString(),
-                text: botResponse,
-                sender: 'bot'
-            }]);
+            const responseText = getBotResponse(userText);
+            const botMsg: Message = { id: (Date.now() + 1).toString(), text: responseText, sender: 'bot' };
+            setMessages(prev => [...prev, botMsg]);
             setIsTyping(false);
+            ChatLogger.info('Bot responded');
         }, 1000);
     };
 

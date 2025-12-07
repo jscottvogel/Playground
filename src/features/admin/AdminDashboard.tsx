@@ -3,11 +3,13 @@ import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../amplify/data/resource';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import './AdminDashboard.css';
+import { AdminLogger } from '../../services/Logger';
 
 /**
  * Interface definition for the Amplify Data Client
+ * Using 'userPool' auth mode to ensure we use the authenticated user's credentials for mutations.
  */
-const client = generateClient<Schema>();
+const client = generateClient<Schema>({ authMode: 'userPool' });
 
 /**
  * AdminDashboard Component
@@ -47,11 +49,13 @@ export function AdminDashboard() {
      * READ: Fetches the list of all projects from the database.
      */
     const fetchProjects = async () => {
+        AdminLogger.debug('Fetching projects...');
         try {
             const { data: items } = await client.models.Project.list();
+            AdminLogger.info(`Successfully fetched ${items.length} projects.`);
             setProjects(items);
         } catch (e) {
-            console.error("Failed to fetch projects:", e);
+            AdminLogger.error("Failed to fetch projects:", e);
         }
     };
 
@@ -61,6 +65,7 @@ export function AdminDashboard() {
      * @param proj - The project to edit
      */
     const handleEdit = (proj: Schema['Project']['type']) => {
+        AdminLogger.debug(`Edit requested for project ID: ${proj.id}`);
         setId(proj.id);
         setTitle(proj.title || '');
         setDescription(proj.description || '');
@@ -95,13 +100,16 @@ export function AdminDashboard() {
     const handleDelete = async (idToDelete: string) => {
         if (!window.confirm("Are you sure you want to delete this project?")) return;
 
+        AdminLogger.info(`Deleting project ID: ${idToDelete}`);
         try {
             await client.models.Project.delete({ id: idToDelete });
+            AdminLogger.info('Project deleted successfully.');
             setStatus({ type: 'success', message: 'Project deleted.' });
             fetchProjects(); // Refresh list
             // If the deleted project was currently being edited, reset the form.
             if (id === idToDelete) handleCancelEdit();
         } catch (e: any) {
+            AdminLogger.error('Delete failed:', e);
             setStatus({ type: 'error', message: `Delete failed: ${e.message}` });
         }
     };
@@ -114,6 +122,7 @@ export function AdminDashboard() {
         e.preventDefault();
         setLoading(true);
         setStatus(null);
+        AdminLogger.debug(`Submitting form. Mode: ${id ? 'Edit' : 'Create'}`);
 
         try {
             // Transform comma-separated string into Array<string> for backend
@@ -130,23 +139,27 @@ export function AdminDashboard() {
 
             if (id) {
                 // UPDATE Existing Project
+                AdminLogger.info(`Updating project ${id} with data:`, projectData);
                 const { errors } = await client.models.Project.update({
                     id,
                     ...projectData
                 });
                 if (errors) throw new Error(errors[0].message);
+                AdminLogger.info('Update successful.');
                 setStatus({ type: 'success', message: 'Project updated successfully!' });
             } else {
                 // CREATE New Project
+                AdminLogger.info('Creating new project with data:', projectData);
                 const { errors } = await client.models.Project.create(projectData);
                 if (errors) throw new Error(errors[0].message);
+                AdminLogger.info('Creation successful.');
                 setStatus({ type: 'success', message: 'Project created successfully!' });
             }
 
             handleCancelEdit(); // Reset form
             fetchProjects(); // Refresh list to show changes
         } catch (err: any) {
-            console.error('Error saving project:', err);
+            AdminLogger.error('Error saving project:', err);
             setStatus({ type: 'error', message: `Failed to save project: ${err.message || err}` });
         } finally {
             setLoading(false);

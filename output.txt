@@ -1,0 +1,193 @@
+
+> solutions@0.0.0 test
+> jest src/features/guest/GuestGateway.test.tsx --watchAll=false
+
+FAIL src/features/guest/GuestGateway.test.tsx
+  GuestGateway
+    × renders correctly (45 ms)
+    × shows error on invalid email (13 ms)
+    √ calls access granted and saves visit on valid email (13 ms)
+
+  ● GuestGateway › renders correctly
+
+    TestingLibraryElementError: Unable to find an element with the text: Who are you?. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+    Ignored nodes: comments, script, style
+    [36m<body>[39m
+      [36m<div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"gateway-container"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"gateway-card animate-scale-in"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"gateway-header"[39m
+            [36m>[39m
+              [36m<h1[39m
+                [33mclass[39m=[32m"gateway-title"[39m
+              [36m>[39m
+                [0mWelcome to Vogel Solutions[0m
+              [36m</h1>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"gateway-subtitle"[39m
+              [36m>[39m
+                [0mPlease identify yourself to continue[0m
+              [36m</p>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"gateway-actions"[39m
+            [36m>[39m
+              [36m<form[39m
+                [33mclass[39m=[32m"guest-form"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"form-group"[39m
+                [36m>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"sr-only"[39m
+                    [33mfor[39m=[32m"guest-email"[39m
+                  [36m>[39m
+                    [0mEmail Address[0m
+                  [36m</label>[39m
+                  [36m<input[39m
+                    [33mclass[39m=[32m"gateway-input"[39m
+                    [33mid[39m=[32m"guest-email"[39m
+                    [33mplaceholder[39m=[32m"enter@email.com"[39m
+                    [33mtype[39m=[32m"email"[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m/>[39m
+                [36m</div>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"btn btn-primary btn-block"[39m
+                  [33mtype[39m=[32m"submit"[39m
+                [36m>[39m
+                  [0mContinue as Guest[0m
+                [36m</button>[39m
+              [36m</form>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"gateway-divider"[39m
+              [36m>[39m
+                [36m<span>[39m
+                  [0mOR[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"btn btn-outline btn-block"[39m
+              [36m>[39m
+                [0mLogin with Password[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</body>[39m
+
+    [0m [90m 30 |[39m     test([32m'renders correctly'[39m[33m,[39m () [33m=>[39m {
+     [90m 31 |[39m         render([33m<[39m[33mGuestGateway[39m onAccessGranted[33m=[39m{jest[33m.[39mfn()} onLoginRequest[33m=[39m{jest[33m.[39mfn()} [33m/[39m[33m>[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 32 |[39m         expect(screen[33m.[39mgetByText([32m'Who are you?'[39m))[33m.[39mtoBeInTheDocument()[33m;[39m
+     [90m    |[39m                       [31m[1m^[22m[39m
+     [90m 33 |[39m     })[33m;[39m
+     [90m 34 |[39m
+     [90m 35 |[39m     test([32m'shows error on invalid email'[39m[33m,[39m () [33m=>[39m {[0m
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.<anonymous> (src/features/guest/GuestGateway.test.tsx:32:23)
+
+  ● GuestGateway › shows error on invalid email
+
+    TestingLibraryElementError: Unable to find an element with the text: Please enter a valid email address.. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+    Ignored nodes: comments, script, style
+    [36m<body>[39m
+      [36m<div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"gateway-container"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"gateway-card animate-scale-in"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"gateway-header"[39m
+            [36m>[39m
+              [36m<h1[39m
+                [33mclass[39m=[32m"gateway-title"[39m
+              [36m>[39m
+                [0mWelcome to Vogel Solutions[0m
+              [36m</h1>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"gateway-subtitle"[39m
+              [36m>[39m
+                [0mPlease identify yourself to continue[0m
+              [36m</p>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"gateway-actions"[39m
+            [36m>[39m
+              [36m<form[39m
+                [33mclass[39m=[32m"guest-form"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"form-group"[39m
+                [36m>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"sr-only"[39m
+                    [33mfor[39m=[32m"guest-email"[39m
+                  [36m>[39m
+                    [0mEmail Address[0m
+                  [36m</label>[39m
+                  [36m<input[39m
+                    [33mclass[39m=[32m"gateway-input"[39m
+                    [33mid[39m=[32m"guest-email"[39m
+                    [33mplaceholder[39m=[32m"enter@email.com"[39m
+                    [33mtype[39m=[32m"email"[39m
+                    [33mvalue[39m=[32m"invalid-email"[39m
+                  [36m/>[39m
+                [36m</div>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"btn btn-primary btn-block"[39m
+                  [33mtype[39m=[32m"submit"[39m
+                [36m>[39m
+                  [0mContinue as Guest[0m
+                [36m</button>[39m
+              [36m</form>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"gateway-divider"[39m
+              [36m>[39m
+                [36m<span>[39m
+                  [0mOR[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"btn btn-outline btn-block"[39m
+              [36m>[39m
+                [0mLogin with Password[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</body>[39m
+
+    [0m [90m 41 |[39m         fireEvent[33m.[39mclick(button)[33m;[39m
+     [90m 42 |[39m
+    [31m[1m>[22m[39m[90m 43 |[39m         expect(screen[33m.[39mgetByText([32m'Please enter a valid email address.'[39m))[33m.[39mtoBeInTheDocument()[33m;[39m
+     [90m    |[39m                       [31m[1m^[22m[39m
+     [90m 44 |[39m     })[33m;[39m
+     [90m 45 |[39m
+     [90m 46 |[39m     test([32m'calls access granted and saves visit on valid email'[39m[33m,[39m [36masync[39m () [33m=>[39m {[0m
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.<anonymous> (src/features/guest/GuestGateway.test.tsx:43:23)
+
+Test Suites: 1 failed, 1 total
+Tests:       2 failed, 1 passed, 3 total
+Snapshots:   0 total
+Time:        1.5 s
+Ran all test suites matching src/features/guest/GuestGateway.test.tsx.

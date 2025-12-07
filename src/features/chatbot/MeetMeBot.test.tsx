@@ -4,6 +4,14 @@ import { MeetMeBot } from './MeetMeBot';
 // Mock scrollIntoView
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
+jest.mock('../../services/Logger', () => ({
+    ChatLogger: {
+        debug: jest.fn(),
+        info: jest.fn(),
+        error: jest.fn()
+    }
+}));
+
 describe('MeetMeBot', () => {
     beforeEach(() => {
         jest.useFakeTimers();
@@ -20,7 +28,7 @@ describe('MeetMeBot', () => {
 
     test('responds to user input', () => {
         render(<MeetMeBot />);
-        const input = screen.getByPlaceholderText('Type a message...');
+        const input = screen.getByPlaceholderText('Ask about projects...');
         const button = screen.getByText('Send');
 
         fireEvent.change(input, { target: { value: 'Hello' } });
@@ -32,6 +40,6 @@ describe('MeetMeBot', () => {
             jest.advanceTimersByTime(1000);
         });
 
-        expect(screen.getByText(/Ready to explore/)).toBeInTheDocument(); // Bot response
+        expect(screen.getByText(/Hello! How can I help you today?/)).toBeInTheDocument(); // Bot response
     });
 });

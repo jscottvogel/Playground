@@ -9,11 +9,19 @@ jest.mock('aws-amplify/data', () => ({
     generateClient: () => ({
         models: {
             Project: {
-                list: mockList,
-                create: mockCreate
+                list: (...args: any[]) => mockList(...args),
+                create: (...args: any[]) => mockCreate(...args)
             }
         }
     })
+}));
+
+jest.mock('../../services/Logger', () => ({
+    GalleryLogger: {
+        debug: jest.fn(),
+        info: jest.fn(),
+        error: jest.fn()
+    }
 }));
 
 describe('ProjectGallery', () => {

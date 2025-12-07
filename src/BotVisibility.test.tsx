@@ -33,6 +33,20 @@ jest.mock('./features/portfolio/ProjectGallery', () => ({
     ProjectGallery: () => <div>Project Gallery</div>
 }));
 
+jest.mock('./services/Logger', () => ({
+    AuthLogger: {
+        info: jest.fn(),
+        debug: jest.fn(),
+        error: jest.fn()
+    }
+}));
+
+jest.mock('aws-amplify/utils', () => ({
+    Hub: {
+        listen: jest.fn(() => () => { })
+    }
+}));
+
 describe('Chatbot Visibility', () => {
     test('Scenario 1: Visible to Guests after email', () => {
         render(<App />);
@@ -56,7 +70,7 @@ describe('Chatbot Visibility', () => {
         // Login
         fireEvent.click(screen.getByText('Login'));
         // Click Admin Nav
-        fireEvent.click(screen.getByText('Admin'));
+        fireEvent.click(screen.getByText('Admin Portal'));
         // Should be visible (alongside Admin Dashboard)
         expect(screen.getByTestId('meet-me-bot')).toBeInTheDocument();
         expect(screen.getByText('Admin Dashboard')).toBeInTheDocument();

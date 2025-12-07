@@ -38,6 +38,20 @@ jest.mock('./features/chatbot/MeetMeBot', () => ({
     MeetMeBot: () => <div>Meet Me Chatbot 🤖</div>
 }));
 
+jest.mock('./services/Logger', () => ({
+    AuthLogger: {
+        info: jest.fn(),
+        debug: jest.fn(),
+        error: jest.fn()
+    }
+}));
+
+jest.mock('aws-amplify/utils', () => ({
+    Hub: {
+        listen: jest.fn(() => () => { })
+    }
+}));
+
 describe('App Navigation Flow', () => {
     test('renders GuestGateway by default', () => {
         render(<App />);

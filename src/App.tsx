@@ -8,6 +8,7 @@ import { ProjectGallery } from './features/portfolio/ProjectGallery';
 import { AdminDashboard } from './features/admin/AdminDashboard';
 import { Nav } from './components/Nav';
 import './App.css';
+import { AuthLogger } from './services/Logger';
 
 /**
  * Main Application Component
@@ -35,18 +36,30 @@ function App() {
    * we force the application back to the 'gateway' state for security.
    */
   useEffect(() => {
+    AuthLogger.info('Auth Hub listener initialized');
     const unsubscribe = Hub.listen('auth', ({ payload }) => {
+      AuthLogger.debug(`Auth Hub Event: ${payload.event}`, payload);
       if (payload.event === 'signedOut') {
+        AuthLogger.info('Detected external sign-out, resetting view to gateway');
         setViewState('gateway');
       }
     });
     return unsubscribe;
   }, []);
 
+  // Log view state changes
+  useEffect(() => {
+    AuthLogger.debug(`Current ViewState: ${viewState}`);
+    if (viewState === 'guest_chat') {
+      AuthLogger.debug(`Guest Email: ${guestEmail}`);
+    }
+  }, [viewState, guestEmail]);
+
   /**
    * Called when a guest provides a valid email at the gateway.
    */
   const handleGuestAccess = (email: string) => {
+    AuthLogger.info(`Handling guest access for: ${email}`);
     setGuestEmail(email);
     setViewState('guest_chat');
   };
@@ -56,7 +69,11 @@ function App() {
    * @param amplifySignOut - The signOut function provided by Amplify's Authenticator or useAuthenticator
    */
   const handleSignOut = async (amplifySignOut: (() => void) | undefined) => {
-    if (amplifySignOut) await amplifySignOut();
+    AuthLogger.info('User initiated Sign Out');
+    if (amplifySignOut) {
+      await amplifySignOut();
+      AuthLogger.info('Amplify SignOut completed');
+    }
     setViewState('gateway');
   };
 
@@ -66,25 +83,29 @@ function App() {
   if (viewState === 'auth') {
     return (
       <Authenticator>
-        {({ signOut, user }) => (
-          <main className="main-container">
-            <Nav
-              viewState="auth"
-              setViewState={setViewState}
-              user={user}
-              signOut={() => handleSignOut(signOut)}
-            />
+        {({ signOut, user }) => {
+          // Log user presence mainly on mount or change, but inside render it's noisy. 
+          // We'll trust the Hub event logs for auth flow mostly.
+          return (
+            <main className="main-container">
+              <Nav
+                viewState="auth"
+                setViewState={setViewState}
+                user={user}
+                signOut={() => handleSignOut(signOut)}
+              />
 
-            <div className="auth-layout">
-              {/* Chatbot accessible to all signed-in users */}
-              <MeetMeBot />
-              <div style={{ padding: '2rem', flex: 1 }}>
-                <h2 style={{ marginBottom: '2rem' }}>Welcome, {user?.signInDetails?.loginId}</h2>
-                <ProjectGallery />
+              <div className="auth-layout">
+                {/* Chatbot accessible to all signed-in users */}
+                <MeetMeBot />
+                <div style={{ padding: '2rem', flex: 1 }}>
+                  <h2 style={{ marginBottom: '2rem' }}>Welcome, {user?.signInDetails?.loginId}</h2>
+                  <ProjectGallery />
+                </div>
               </div>
-            </div>
-          </main>
-        )}
+            </main>
+          )
+        }}
       </Authenticator>
     );
   }
