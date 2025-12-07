@@ -25,7 +25,7 @@ interface Message {
     sender: 'user' | 'bot';
 }
 
-export function MeetMeBot({ guestEmail, initialOpen = false }: { guestEmail?: string; initialOpen?: boolean }) {
+export function MeetMeBot({ guestEmail, mode = 'widget' }: { guestEmail?: string; mode?: 'widget' | 'embedded' }) {
     // --- State ---
     const [messages, setMessages] = useState<Message[]>([
         {
@@ -88,7 +88,7 @@ export function MeetMeBot({ guestEmail, initialOpen = false }: { guestEmail?: st
 
 
 
-    const [isOpen, setIsOpen] = useState(initialOpen);
+    const [isOpen, setIsOpen] = useState(mode === 'embedded');
 
     // --- Interaction ---
     const toggleChat = () => setIsOpen(!isOpen);
@@ -96,16 +96,18 @@ export function MeetMeBot({ guestEmail, initialOpen = false }: { guestEmail?: st
     if (!isOpen) {
         return (
             <button className="bot-fab animate-bounce-in" onClick={toggleChat} aria-label="Open Chat">
-                💬 Ask AI
+                💬 Chat with Scott-bot
             </button>
         );
     }
 
     return (
-        <div className="card bot-container bot-widget animate-fade-in">
+        <div className={`card bot-container ${mode === 'widget' ? 'bot-widget' : ''} animate-fade-in`}>
             <div className="bot-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h3 className="bot-title">MeetMe Chatbot 🤖</h3>
-                <button onClick={toggleChat} style={{ background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', fontSize: '1.2rem' }}>×</button>
+                {mode === 'widget' && (
+                    <button onClick={toggleChat} style={{ background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', fontSize: '1.2rem' }}>×</button>
+                )}
             </div>
 
             <div className="bot-messages">
