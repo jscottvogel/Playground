@@ -16,30 +16,70 @@ interface NavProps {
  * Nav Component
  * 
  * Top navigation bar that adapts based on the auth status.
- * - Authenticated: Shows User Email, Admin Link, Gallery Link, Sign Out.
- * - Guest/Public: Shows Home (Gateway) and Sign In buttons.
+ * Replaced buttons with a modern link/tab interface.
  */
 export const Nav = ({ viewState, setViewState, user, signOut }: NavProps) => {
     return (
         <nav className="nav-container">
-            <div className="nav-title">Vogel Solutions Lab</div>
-            <div className="nav-actions">
-                {/* Condition: Is the user authenticated (Auth or Admin view)? */}
-                {viewState === 'auth' || viewState === 'admin' ? (
+            {/* Branding */}
+            <div className="nav-brand">
+                <div className="nav-title">Vogel Solutions Lab</div>
+            </div>
+
+            {/* Main Navigation Links (Tabs) */}
+            <div className="nav-links">
+                {/* Public / Guest Links */}
+                {(viewState === 'gateway' || viewState === 'guest_chat') && (
                     <>
-                        <span className="nav-user-email">{user?.signInDetails?.loginId}</span>
-                        <button className="btn" onClick={() => setViewState('admin')}>Admin</button>
-                        <button className="btn" onClick={() => setViewState('auth')}>Gallery</button>
-                        <button className="btn" onClick={signOut}>Sign Out</button>
+                        <a
+                            href="#"
+                            className={`nav-link ${viewState === 'gateway' ? 'active' : ''}`}
+                            onClick={(e) => { e.preventDefault(); setViewState('gateway'); }}
+                        >
+                            Home
+                        </a>
+                        <a
+                            href="#"
+                            className="nav-link highlight"
+                            onClick={(e) => { e.preventDefault(); setViewState('auth'); }}
+                        >
+                            Sign In
+                        </a>
                     </>
-                ) : (
-                    /* Guest / Public View */
+                )}
+
+                {/* Authenticated Links */}
+                {(viewState === 'auth' || viewState === 'admin') && (
                     <>
-                        <button className="btn nav-btn-home" onClick={() => setViewState('gateway')}>Home</button>
-                        <button className="btn btn-primary nav-btn-auth" onClick={() => setViewState('auth')}>Sign In</button>
+                        <a
+                            href="#"
+                            className={`nav-link ${viewState === 'auth' ? 'active' : ''}`}
+                            onClick={(e) => { e.preventDefault(); setViewState('auth'); }}
+                        >
+                            Gallery
+                        </a>
+                        <a
+                            href="#"
+                            className={`nav-link ${viewState === 'admin' ? 'active' : ''}`}
+                            onClick={(e) => { e.preventDefault(); setViewState('admin'); }}
+                        >
+                            Admin Portal
+                        </a>
                     </>
                 )}
             </div>
+
+            {/* One-off User Menu / Profile Section */}
+            {(viewState === 'auth' || viewState === 'admin') && (
+                <div className="nav-profile">
+                    <span className="nav-user-email">
+                        {user?.signInDetails?.loginId}
+                    </span>
+                    <button className="nav-btn-signout" onClick={signOut}>
+                        Sign Out
+                    </button>
+                </div>
+            )}
         </nav>
     );
 };

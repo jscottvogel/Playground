@@ -58,13 +58,13 @@ describe('App Navigation Flow', () => {
         // Since we mock Authenticator to render children, we should see authenticated content
         expect(screen.getByTestId('project-gallery')).toBeInTheDocument();
         // Also check if Admin button is present now that we are logged in
-        expect(screen.getByText('Admin')).toBeInTheDocument();
+        expect(screen.getByText('Admin Portal')).toBeInTheDocument();
     });
 
     test('shows chatbot in admin view', () => {
         render(<App />);
         fireEvent.click(screen.getByText('Login')); // Go to auth
-        fireEvent.click(screen.getByText('Admin')); // Go to admin
+        fireEvent.click(screen.getByText('Admin Portal')); // Go to admin
         expect(screen.getByText('Meet Me Chatbot 🤖')).toBeInTheDocument();
         expect(screen.getByText('Admin Dashboard')).toBeInTheDocument();
     });
