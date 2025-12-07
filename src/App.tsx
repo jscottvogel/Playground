@@ -95,11 +95,15 @@ function App() {
                 signOut={() => handleSignOut(signOut)}
               />
 
-              <div className="auth-layout">
-                {/* Chatbot accessible to all signed-in users */}
-                <MeetMeBot />
-                <div style={{ padding: '2rem', flex: 1 }}>
-                  <h2 style={{ marginBottom: '2rem' }}>Welcome, {user?.signInDetails?.loginId}</h2>
+              <div className="split-layout">
+                {/* Left: Chatbot Assistant */}
+                <div style={{ position: 'sticky', top: '2rem' }}>
+                  <MeetMeBot />
+                </div>
+
+                {/* Right: Main Content */}
+                <div>
+                  <h2 style={{ marginTop: 0, marginBottom: '2rem' }}>Welcome, {user?.signInDetails?.loginId}</h2>
                   <ProjectGallery />
                 </div>
               </div>
@@ -122,7 +126,13 @@ function App() {
               user={user}
               signOut={() => handleSignOut(signOut)}
             />
-            <div className="auth-layout">
+            <div className="split-layout">
+              {/* Left: Chatbot Assistant */}
+              <div style={{ position: 'sticky', top: '2rem' }}>
+                <MeetMeBot />
+              </div>
+
+              {/* Right: Admin Features */}
               <div style={{ flex: 1 }}>
                 <AdminDashboard />
               </div>

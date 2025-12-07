@@ -4,7 +4,7 @@ import type { Schema } from '../../../amplify/data/resource';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import './AdminDashboard.css';
 import { AdminLogger } from '../../services/Logger';
-import { MeetMeBot } from '../chatbot/MeetMeBot';
+
 
 /**
  * Interface definition for the Amplify Data Client
@@ -197,8 +197,8 @@ export function AdminDashboard() {
                 </div>
             )}
 
-            {/* 3-Column Grid Layout: Projects | Form | Chatbot */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 350px', gap: '2rem', alignItems: 'start' }}>
+            {/* 2-Column Grid Layout: Projects | Form */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', alignItems: 'start' }}>
                 {/* LEFT COLUMN: List of Existing Projects */}
                 <div>
                     <h3>Existing Projects</h3>
@@ -323,14 +323,6 @@ export function AdminDashboard() {
                             )}
                         </div>
                     </form>
-                </div>
-
-                {/* RIGHT COLUMN: Chatbot */}
-                <div>
-                    <h3 style={{ visibility: 'hidden' }}>Chatbot</h3> {/* Spacer for alignment */}
-                    <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-                        <MeetMeBot />
-                    </div>
                 </div>
             </div>
         </div>

@@ -9,11 +9,12 @@
   width: 100%;
 }
 
-.auth-layout {
+.split-layout {
   display: grid;
-  grid-template-columns: minmax(300px, 1fr) 2fr;
+  grid-template-columns: 350px 1fr;
   gap: 2rem;
   align-items: start;
+  text-align: left;
 }
 
 .guest-chat-container {
@@ -33,7 +34,7 @@
 }
 
 @media (max-width: 768px) {
-  .auth-layout {
+  .split-layout {
     grid-template-columns: 1fr;
   }
 }
