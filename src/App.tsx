@@ -99,7 +99,7 @@ function App() {
                 <h2 style={{ marginTop: 0, marginBottom: '2rem' }}>Welcome, {user?.signInDetails?.loginId}</h2>
                 <ProjectGallery />
               </div>
-              <MeetMeBot />
+              <MeetMeBot mode="widget" />
             </main>
           )
         }}
@@ -124,7 +124,7 @@ function App() {
               <AdminDashboard />
             </div>
             {/* Floating Widget */}
-            <MeetMeBot />
+            <MeetMeBot mode="widget" />
           </main>
         )}
       </Authenticator>
@@ -140,7 +140,7 @@ function App() {
           setViewState={setViewState}
         />
         <div className="guest-chat-container">
-          <MeetMeBot guestEmail={guestEmail} initialOpen={true} />
+          <MeetMeBot guestEmail={guestEmail} mode="embedded" />
 
           <div className="guest-chat-footer">
             <p>Want to see the projects? <a href="#" onClick={(e) => { e.preventDefault(); setViewState('auth'); }} className="link-primary">Sign In</a></p>
