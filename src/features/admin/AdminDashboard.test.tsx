@@ -1,4 +1,5 @@
-import React from 'react';
+// React import removed as it is unused in this scope
+
 
 // Common deps
 let render: any, screen: any, fireEvent: any, waitFor: any;
