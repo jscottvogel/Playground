@@ -1,76 +1,128 @@
 import { useState, useRef, useEffect } from 'react';
 import './MeetMeBot.css';
 
+/**
+ * MeetMeBot Component
+ * 
+ * An interactive chatbot that allows users (Guests, Auth Users, Admins) to ask questions 
+ * about the portfolio owner.
+ * 
+ * Features:
+ * - Persistent chat history during the session
+ * - Auto-scrolling to new messages
+ * - Context-aware greeting (uses guest email if provided)
+ * - Basic keyword matching for responses
+ */
+
 interface Message {
     id: string;
-    sender: 'user' | 'bot';
     text: string;
+    sender: 'user' | 'bot';
 }
 
 export function MeetMeBot({ guestEmail }: { guestEmail?: string }) {
+    // --- State ---
     const [messages, setMessages] = useState<Message[]>([
-        { id: '1', sender: 'bot', text: `Hi there! I'm the digital assistant for J. Scott Vogel.${guestEmail ? ` I see you're visiting as ${guestEmail}.` : ''} Ask me anything about his projects or experience!` }
+        {
+            id: '1',
+            sender: 'bot',
+            text: `Hi there! I'm the digital assistant for J. Scott Vogel.${guestEmail ? ` I see you're visiting as ${guestEmail}.` : ''} Ask me anything about his projects or experience!`
+        }
     ]);
-    const [input, setInput] = useState('');
+    const [inputValue, setInputValue] = useState('');
+    const [isTyping, setIsTyping] = useState(false);
+
+    // Ref for auto-scrolling the chat window
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
-    useEffect(scrollToBottom, [messages]);
+    // Scroll whenever messages change
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages, isTyping]);
 
-    const handleSend = (e: React.FormEvent) => {
+    /**
+     * Handles user message submission.
+     * Adds the user message immediately, then simulates a bot response delay.
+     */
+    const handleSendMessage = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!input.trim()) return;
+        if (!inputValue.trim()) return;
 
-        const userMsg: Message = { id: Date.now().toString(), sender: 'user', text: input };
+        const userMsg: Message = {
+            id: Date.now().toString(),
+            text: inputValue,
+            sender: 'user'
+        };
+
         setMessages(prev => [...prev, userMsg]);
-        setInput('');
+        setInputValue('');
+        setIsTyping(true);
 
-        // Simple bot logic
+        // Simulate network delay / thinking time
         setTimeout(() => {
-            let responseText = "I'm still learning about that. Try asking about 'projects', 'skills', or 'contact'.";
-            const lowerInput = userMsg.text.toLowerCase();
+            const botResponse = getBotResponse(userMsg.text);
+            setMessages(prev => [...prev, {
+                id: (Date.now() + 1).toString(),
+                text: botResponse,
+                sender: 'bot'
+            }]);
+            setIsTyping(false);
+        }, 1000);
+    };
 
-            if (lowerInput.includes('hello') || lowerInput.includes('hi')) {
-                responseText = "Hello! Ready to explore?";
-            } else if (lowerInput.includes('project')) {
-                responseText = "You can view the full project portfolio by signing in! I can tell you about his work in React, AWS, and AI.";
-            } else if (lowerInput.includes('skill') || lowerInput.includes('stack')) {
-                responseText = "He is proficient in React, TypeScript, AWS Amplify, Node.js, and Python.";
-            } else if (lowerInput.includes('contact')) {
-                responseText = "You can reach out via LinkedIn or email.";
-            } else if (lowerInput.includes('meet me')) {
-                responseText = "That's me! I'm the Meet Me Chatbot.";
-            }
+    /**
+     * Simple keyword-based response logic.
+     * In a real app, this would call an AI backend or more complex NLP service.
+     */
+    const getBotResponse = (input: string): string => {
+        const lowerInput = input.toLowerCase();
 
-            const botMsg: Message = { id: (Date.now() + 1).toString(), sender: 'bot', text: responseText };
-            setMessages(prev => [...prev, botMsg]);
-        }, 800);
+        if (lowerInput.includes('project') || lowerInput.includes('work')) {
+            return "Scott has worked on a variety of projects involving React, AWS, and AI integration. You can see the full detailed list in the Project Gallery!";
+        }
+        if (lowerInput.includes('contact') || lowerInput.includes('email') || lowerInput.includes('reach')) {
+            return "You can reach Scott at j.scott.vogel@gmail.com.";
+        }
+        if (lowerInput.includes('skill') || lowerInput.includes('tech')) {
+            return "He is proficient in TypeScript, React, Node.js, Python, and cloud architecture on AWS.";
+        }
+        if (lowerInput.includes('hello') || lowerInput.includes('hi')) {
+            return "Hello! How can I help you today?";
+        }
+
+        return "That's a great question! I'm still learning about Scott's specific details on that topic, but feel free to browse the gallery for more info.";
     };
 
     return (
-        <div className="card animate-fade-in bot-container">
+        <div className="card bot-container">
             <div className="bot-header">
-                <h3 className="bot-title">Meet Me Chatbot 🤖</h3>
+                <h3 className="bot-title">MeetMe Chatbot 🤖</h3>
             </div>
 
             <div className="bot-messages">
-                {messages.map((msg) => (
-                    <div key={msg.id} className={`bot-message-bubble ${msg.sender === 'user' ? 'bot-msg-user' : 'bot-msg-bot'}`}>
+                {messages.map(msg => (
+                    <div
+                        key={msg.id}
+                        className={`bot-message-bubble ${msg.sender === 'user' ? 'bot-msg-user' : 'bot-msg-bot'}`}
+                    >
                         {msg.text}
                     </div>
                 ))}
+                {isTyping && <div className="bot-message-bubble bot-msg-bot">Typing...</div>}
                 <div ref={messagesEndRef} />
             </div>
 
-            <form onSubmit={handleSend} className="bot-input-form">
+            <form className="bot-input-form" onSubmit={handleSendMessage}>
                 <input
-                    value={input}
-                    onChange={e => setInput(e.target.value)}
-                    placeholder="Type a message..."
+                    type="text"
                     className="bot-input"
+                    placeholder="Ask about projects..."
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
                 />
                 <button type="submit" className="btn btn-primary">Send</button>
             </form>

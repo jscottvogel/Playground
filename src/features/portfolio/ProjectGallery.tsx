@@ -3,13 +3,24 @@ import type { Schema } from '../../../amplify/data/resource';
 import { useEffect, useState } from 'react';
 import './ProjectGallery.css';
 
+/**
+ * Interface for the Amplify Data Client
+ */
 const client = generateClient<Schema>();
 
-
-
+/**
+ * ProjectGallery Component
+ * 
+ * Displays the portfolio projects to authenticated users.
+ * Fetches data from the backend and renders it in a responsive grid.
+ */
 export function ProjectGallery() {
     const [projects, setProjects] = useState<Schema['Project']['type'][]>([]);
 
+    /**
+     * Fetches all projects from the database.
+     * Note: This view allows read access to all authenticated users.
+     */
     const fetchProjects = async () => {
         try {
             const { data: items } = await client.models.Project.list();
@@ -19,6 +30,7 @@ export function ProjectGallery() {
         }
     };
 
+    // Load projects on mount
     useEffect(() => {
         fetchProjects();
     }, []);
@@ -29,6 +41,7 @@ export function ProjectGallery() {
                 <h2>Project Showcase</h2>
             </div>
 
+            {/* Empty State */}
             {projects.length === 0 ? (
                 <div className="card gallery-empty">
                     <p className="gallery-text-dim">
@@ -36,6 +49,7 @@ export function ProjectGallery() {
                     </p>
                 </div>
             ) : (
+                /* Project Grid */
                 <div className="gallery-grid">
                     {projects.map(proj => (
                         <div key={proj.id} className="card">
@@ -43,6 +57,7 @@ export function ProjectGallery() {
                             <h3>{proj.title}</h3>
                             <p className="gallery-text-dim">{proj.description}</p>
 
+                            {/* Skills Tags */}
                             {proj.skills && proj.skills.length > 0 && (
                                 <div className="skills-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}>
                                     {proj.skills.filter(s => s).map((opt, i) => (
@@ -59,6 +74,7 @@ export function ProjectGallery() {
                                 </div>
                             )}
 
+                            {/* Action Links */}
                             <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
                                 {proj.demoUrl && <a href={proj.demoUrl} className="btn btn-primary project-btn-demo" target='_blank' rel='noreferrer'>Live Demo</a>}
                                 {proj.gitUrl && <a href={proj.gitUrl} className="btn" style={{ textDecoration: 'none' }} target='_blank' rel='noreferrer'>GitHub</a>}
@@ -70,4 +86,3 @@ export function ProjectGallery() {
         </div>
     );
 }
-

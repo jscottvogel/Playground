@@ -4,13 +4,28 @@ import type { Schema } from '../../../amplify/data/resource';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import './AdminDashboard.css';
 
+/**
+ * Interface definition for the Amplify Data Client
+ */
 const client = generateClient<Schema>();
 
+/**
+ * AdminDashboard Component
+ * 
+ * Provides a protected interface for Administrators to manage the portfolio content.
+ * Features:
+ * - List all existing projects
+ * - Create new projects
+ * - Edit existing projects
+ * - Delete projects
+ */
 export function AdminDashboard() {
+    // Access the current authenticated user to ensure permissions
     const { user } = useAuthenticator((context) => [context.user]);
 
-    // Form State
-    const [id, setId] = useState<string | null>(null); // If set, we are editing
+    // --- Form State Management ---
+    // 'id' determines if we are in 'Create' (null) or 'Edit' (string) mode
+    const [id, setId] = useState<string | null>(null);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [imageUrl, setImageUrl] = useState('');
@@ -18,15 +33,19 @@ export function AdminDashboard() {
     const [gitUrl, setGitUrl] = useState('');
     const [skills, setSkills] = useState('');
 
-    // UI State
+    // --- UI State Management ---
     const [projects, setProjects] = useState<Schema['Project']['type'][]>([]);
     const [status, setStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
     const [loading, setLoading] = useState(false);
 
+    // Initial data fetch on component mount
     useEffect(() => {
         fetchProjects();
     }, []);
 
+    /**
+     * READ: Fetches the list of all projects from the database.
+     */
     const fetchProjects = async () => {
         try {
             const { data: items } = await client.models.Project.list();
@@ -36,6 +55,11 @@ export function AdminDashboard() {
         }
     };
 
+    /**
+     * Prepares the form for editing a specific project.
+     * Populates all state variables with the project's current data.
+     * @param proj - The project to edit
+     */
     const handleEdit = (proj: Schema['Project']['type']) => {
         setId(proj.id);
         setTitle(proj.title || '');
@@ -44,10 +68,14 @@ export function AdminDashboard() {
         setDemoUrl(proj.demoUrl || '');
         setGitUrl(proj.gitUrl || '');
         setSkills(proj.skills ? proj.skills.join(', ') : '');
-        setStatus(null);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setStatus(null); // Clear previous messages
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to form
     };
 
+    /**
+     * Resets the form to its default "Add New" state.
+     * Clears all input fields and the 'id' state.
+     */
     const handleCancelEdit = () => {
         setId(null);
         setTitle('');
@@ -59,26 +87,38 @@ export function AdminDashboard() {
         setStatus(null);
     };
 
+    /**
+     * DELETE: Removes a project from the database.
+     * Includes a confirmation step to prevent accidental deletions.
+     * @param idToDelete - The unique identifier of the project to remove
+     */
     const handleDelete = async (idToDelete: string) => {
         if (!window.confirm("Are you sure you want to delete this project?")) return;
 
         try {
             await client.models.Project.delete({ id: idToDelete });
             setStatus({ type: 'success', message: 'Project deleted.' });
-            fetchProjects();
+            fetchProjects(); // Refresh list
+            // If the deleted project was currently being edited, reset the form.
             if (id === idToDelete) handleCancelEdit();
         } catch (e: any) {
             setStatus({ type: 'error', message: `Delete failed: ${e.message}` });
         }
     };
 
+    /**
+     * CREATE & UPDATE: Handles form submission.
+     * Determines whether to create a new project or update an existing one based on 'id'.
+     */
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setStatus(null);
 
         try {
+            // Transform comma-separated string into Array<string> for backend
             const skillsArray = skills.split(',').map(s => s.trim()).filter(s => s.length > 0);
+
             const projectData = {
                 title,
                 description,
@@ -89,7 +129,7 @@ export function AdminDashboard() {
             };
 
             if (id) {
-                // Update
+                // UPDATE Existing Project
                 const { errors } = await client.models.Project.update({
                     id,
                     ...projectData
@@ -97,15 +137,14 @@ export function AdminDashboard() {
                 if (errors) throw new Error(errors[0].message);
                 setStatus({ type: 'success', message: 'Project updated successfully!' });
             } else {
-                // Create
+                // CREATE New Project
                 const { errors } = await client.models.Project.create(projectData);
                 if (errors) throw new Error(errors[0].message);
                 setStatus({ type: 'success', message: 'Project created successfully!' });
             }
 
-            // Reset form if create, but maybe keep for edit flow? Let's reset.
-            handleCancelEdit();
-            fetchProjects();
+            handleCancelEdit(); // Reset form
+            fetchProjects(); // Refresh list to show changes
         } catch (err: any) {
             console.error('Error saving project:', err);
             setStatus({ type: 'error', message: `Failed to save project: ${err.message || err}` });
@@ -114,6 +153,7 @@ export function AdminDashboard() {
         }
     };
 
+    // Should not happen if wrapped in Authenticator, but good safety check
     if (!user) {
         return <div className="admin-dashboard"><p>Please sign in to access the Admin Dashboard.</p></div>;
     }
@@ -125,6 +165,7 @@ export function AdminDashboard() {
                 <p>Manage portfolio projects.</p>
             </div>
 
+            {/* Status Message Area */}
             {status && (
                 <div className={`admin-message ${status.type}`}>
                     {status.message}
@@ -132,7 +173,7 @@ export function AdminDashboard() {
             )}
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-                {/* List Section - Now on Left */}
+                {/* LEFT COLUMN: List of Existing Projects */}
                 <div>
                     <h3>Existing Projects</h3>
                     <div className="admin-project-list" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -156,7 +197,7 @@ export function AdminDashboard() {
                     </div>
                 </div>
 
-                {/* Form Section - Now on Right */}
+                {/* RIGHT COLUMN: Create / Edit Form */}
                 <div>
                     <h3>{id ? 'Edit Project' : 'Add New Project'}</h3>
                     <form className="card admin-form" onSubmit={handleSubmit}>
@@ -181,7 +222,7 @@ export function AdminDashboard() {
                             />
                         </div>
 
-                        {/* URLs */}
+                        {/* URL Fields Loop */}
                         {['imageUrl', 'demoUrl', 'gitUrl'].map(field => (
                             <div className="form-group" key={field}>
                                 <label htmlFor={field}>{field === 'gitUrl' ? 'GitHub URL' : field.replace('Url', ' URL')}</label>
