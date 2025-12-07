@@ -3,11 +3,17 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 80vh;
+    min-height: 80vh;
+    /* Allow dynamic growth */
+    gap: 3rem;
+    /* Enforce spacing */
+    padding: 2rem;
 }
 
 .gateway-title {
-    margin-bottom: 2rem;
+    margin-bottom: 0;
+    /* Let flex gap handle spacing */
+    text-align: center;
 }
 
 .gateway-card {
