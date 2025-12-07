@@ -95,18 +95,11 @@ function App() {
                 signOut={() => handleSignOut(signOut)}
               />
 
-              <div className="split-layout">
-                {/* Left: Chatbot Assistant */}
-                <div style={{ position: 'sticky', top: '2rem' }}>
-                  <MeetMeBot />
-                </div>
-
-                {/* Right: Main Content */}
-                <div>
-                  <h2 style={{ marginTop: 0, marginBottom: '2rem' }}>Welcome, {user?.signInDetails?.loginId}</h2>
-                  <ProjectGallery />
-                </div>
+              <div className="auth-layout">
+                <h2 style={{ marginTop: 0, marginBottom: '2rem' }}>Welcome, {user?.signInDetails?.loginId}</h2>
+                <ProjectGallery />
               </div>
+              <MeetMeBot />
             </main>
           )
         }}
@@ -126,17 +119,12 @@ function App() {
               user={user}
               signOut={() => handleSignOut(signOut)}
             />
-            <div className="split-layout">
-              {/* Left: Chatbot Assistant */}
-              <div style={{ position: 'sticky', top: '2rem' }}>
-                <MeetMeBot />
-              </div>
-
-              {/* Right: Admin Features */}
-              <div style={{ flex: 1 }}>
-                <AdminDashboard />
-              </div>
+            <div className="auth-layout">
+              {/* Admin Features take full width now */}
+              <AdminDashboard />
             </div>
+            {/* Floating Widget */}
+            <MeetMeBot />
           </main>
         )}
       </Authenticator>
@@ -152,7 +140,7 @@ function App() {
           setViewState={setViewState}
         />
         <div className="guest-chat-container">
-          <MeetMeBot guestEmail={guestEmail} />
+          <MeetMeBot guestEmail={guestEmail} initialOpen={true} />
 
           <div className="guest-chat-footer">
             <p>Want to see the projects? <a href="#" onClick={(e) => { e.preventDefault(); setViewState('auth'); }} className="link-primary">Sign In</a></p>

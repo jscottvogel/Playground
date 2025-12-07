@@ -25,7 +25,7 @@ interface Message {
     sender: 'user' | 'bot';
 }
 
-export function MeetMeBot({ guestEmail }: { guestEmail?: string }) {
+export function MeetMeBot({ guestEmail, initialOpen = false }: { guestEmail?: string; initialOpen?: boolean }) {
     // --- State ---
     const [messages, setMessages] = useState<Message[]>([
         {
@@ -88,10 +88,24 @@ export function MeetMeBot({ guestEmail }: { guestEmail?: string }) {
 
 
 
+    const [isOpen, setIsOpen] = useState(initialOpen);
+
+    // --- Interaction ---
+    const toggleChat = () => setIsOpen(!isOpen);
+
+    if (!isOpen) {
+        return (
+            <button className="bot-fab animate-bounce-in" onClick={toggleChat} aria-label="Open Chat">
+                💬 Ask AI
+            </button>
+        );
+    }
+
     return (
-        <div className="card bot-container">
-            <div className="bot-header">
+        <div className="card bot-container bot-widget animate-fade-in">
+            <div className="bot-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h3 className="bot-title">MeetMe Chatbot 🤖</h3>
+                <button onClick={toggleChat} style={{ background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', fontSize: '1.2rem' }}>×</button>
             </div>
 
             <div className="bot-messages">

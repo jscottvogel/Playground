@@ -9,12 +9,11 @@
   width: 100%;
 }
 
-.split-layout {
-  display: grid;
-  grid-template-columns: 350px 1fr;
+.auth-layout {
+  display: flex;
+  flex-direction: column;
   gap: 2rem;
-  align-items: start;
-  text-align: left;
+  width: 100%;
 }
 
 .guest-chat-container {
