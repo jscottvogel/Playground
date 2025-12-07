@@ -38,6 +38,10 @@ jest.mock('@aws-amplify/ui-react', () => ({
     Authenticator: ({ children }: any) => <div>{children({ signOut: jest.fn(), user: { signInDetails: { loginId: 'test' } } })}</div>
 }));
 
+jest.mock('../chatbot/MeetMeBot', () => ({
+    MeetMeBot: () => <div data-testid="meet-me-bot">Mock Bot</div>
+}));
+
 describe('AdminDashboard', () => {
     beforeEach(() => {
         jest.clearAllMocks();

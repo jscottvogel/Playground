@@ -123,7 +123,6 @@ function App() {
               signOut={() => handleSignOut(signOut)}
             />
             <div className="auth-layout">
-              <MeetMeBot />
               <div style={{ flex: 1 }}>
                 <AdminDashboard />
               </div>
