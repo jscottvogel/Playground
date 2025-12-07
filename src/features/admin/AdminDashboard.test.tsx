@@ -31,7 +31,7 @@ const client = generateClient() as any;
 const mockList = client.models.Project.list as jest.Mock;
 const mockCreate = client.models.Project.create as jest.Mock;
 const mockUpdate = client.models.Project.update as jest.Mock;
-const mockDelete = client.models.Project.delete as jest.Mock;
+//const mockDelete = client.models.Project.delete as jest.Mock;
 
 // 3. Mock Logger
 jest.mock('../../services/Logger', () => ({
