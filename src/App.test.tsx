@@ -68,4 +68,16 @@ describe('App Navigation Flow', () => {
         expect(screen.getByText('Meet Me Chatbot 🤖')).toBeInTheDocument();
         expect(screen.getByText('Admin Dashboard')).toBeInTheDocument();
     });
+
+    test('sign out redirects to gateway', async () => {
+        render(<App />);
+        fireEvent.click(screen.getByText('Login')); // Login
+        expect(screen.getByText('Sign Out')).toBeInTheDocument();
+
+        fireEvent.click(screen.getByText('Sign Out'));
+
+        // Should land back on Gateway
+        expect(await screen.findByTestId('guest-gateway')).toBeInTheDocument();
+        expect(screen.queryByText('Project Gallery')).not.toBeInTheDocument();
+    });
 });

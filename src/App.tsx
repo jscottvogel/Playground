@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Authenticator } from '@aws-amplify/ui-react';
+import { Hub } from 'aws-amplify/utils';
 import '@aws-amplify/ui-react/styles.css';
 import { GuestGateway } from './features/guest/GuestGateway';
 import { MeetMeBot } from './features/chatbot/MeetMeBot';
@@ -13,9 +14,25 @@ function App() {
   const [viewState, setViewState] = useState<'gateway' | 'guest_chat' | 'auth' | 'admin'>('gateway');
   const [guestEmail, setGuestEmail] = useState('');
 
+  // Listen for external auth events (e.g. token expire)
+  useEffect(() => {
+    const unsubscribe = Hub.listen('auth', ({ payload }) => {
+      if (payload.event === 'signedOut') {
+        setViewState('gateway');
+      }
+    });
+    return unsubscribe;
+  }, []);
+
   const handleGuestAccess = (email: string) => {
     setGuestEmail(email);
     setViewState('guest_chat');
+  };
+
+  // Robust Sign Out
+  const handleSignOut = async (amplifySignOut: (() => void) | undefined) => {
+    if (amplifySignOut) await amplifySignOut();
+    setViewState('gateway');
   };
 
   if (viewState === 'auth') {
@@ -27,7 +44,7 @@ function App() {
               viewState="auth"
               setViewState={setViewState}
               user={user}
-              signOut={signOut}
+              signOut={() => handleSignOut(signOut)}
             />
 
             <div className="auth-layout">
@@ -48,7 +65,12 @@ function App() {
       <Authenticator>
         {({ signOut, user }) => (
           <main className="main-container">
-            <Nav viewState="admin" setViewState={setViewState} user={user} signOut={signOut} />
+            <Nav
+              viewState="admin"
+              setViewState={setViewState}
+              user={user}
+              signOut={() => handleSignOut(signOut)}
+            />
             <div className="auth-layout">
               <MeetMeBot />
               <div style={{ flex: 1 }}>
