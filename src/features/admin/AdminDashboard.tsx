@@ -132,7 +132,31 @@ export function AdminDashboard() {
             )}
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-                {/* Form Section */}
+                {/* List Section - Now on Left */}
+                <div>
+                    <h3>Existing Projects</h3>
+                    <div className="admin-project-list" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        {projects.map(proj => (
+                            <div key={proj.id} className="card" style={{ padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div>
+                                    <h4 style={{ margin: 0 }}>{proj.title}</h4>
+                                    <small style={{ color: 'var(--color-text-dim)' }}>{proj.id.substring(0, 8)}...</small>
+                                </div>
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    <button onClick={() => handleEdit(proj)} className="btn" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem' }}>
+                                        Edit
+                                    </button>
+                                    <button onClick={() => handleDelete(proj.id)} className="btn" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem', background: 'rgba(239, 68, 68, 0.2)', color: '#f87171', border: '1px solid #b91c1c' }}>
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                        {projects.length === 0 && <p style={{ color: 'var(--color-text-dim)' }}>No projects found.</p>}
+                    </div>
+                </div>
+
+                {/* Form Section - Now on Right */}
                 <div>
                     <h3>{id ? 'Edit Project' : 'Add New Project'}</h3>
                     <form className="card admin-form" onSubmit={handleSubmit}>
@@ -196,30 +220,6 @@ export function AdminDashboard() {
                             )}
                         </div>
                     </form>
-                </div>
-
-                {/* List Section */}
-                <div>
-                    <h3>Existing Projects</h3>
-                    <div className="admin-project-list" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        {projects.map(proj => (
-                            <div key={proj.id} className="card" style={{ padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <div>
-                                    <h4 style={{ margin: 0 }}>{proj.title}</h4>
-                                    <small style={{ color: 'var(--color-text-dim)' }}>{proj.id.substring(0, 8)}...</small>
-                                </div>
-                                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                    <button onClick={() => handleEdit(proj)} className="btn" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem' }}>
-                                        Edit
-                                    </button>
-                                    <button onClick={() => handleDelete(proj.id)} className="btn" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem', background: 'rgba(239, 68, 68, 0.2)', color: '#f87171', border: '1px solid #b91c1c' }}>
-                                        Delete
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                        {projects.length === 0 && <p style={{ color: 'var(--color-text-dim)' }}>No projects found.</p>}
-                    </div>
                 </div>
             </div>
         </div>
