@@ -34,9 +34,16 @@
 }
 
 .project-btn-demo {
-    display: inline-block;
-    margin-top: 1rem;
+    /* Container handles spacing now */
     text-decoration: none;
+}
+
+/* Ensure all buttons in gallery are consistent */
+.card .btn {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .mock-card {
