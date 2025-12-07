@@ -1,5 +1,7 @@
 .bot-container {
     height: 600px;
+    width: 100%;
+    min-width: 300px;
     display: flex;
     flex-direction: column;
     padding: 0;

@@ -49,7 +49,7 @@ function App() {
         {({ signOut, user }) => (
           <main className="main-container">
             <Nav viewState="admin" setViewState={setViewState} user={user} signOut={signOut} />
-            <div style={{ display: 'flex', gap: '2rem' }}>
+            <div className="auth-layout">
               <MeetMeBot />
               <div style={{ flex: 1 }}>
                 <AdminDashboard />
