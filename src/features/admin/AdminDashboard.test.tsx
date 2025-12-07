@@ -1,63 +1,53 @@
-// React import removed as it is unused in this scope
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { AdminDashboard } from './AdminDashboard';
 
+// 1. Define mock functions (vars)
+const mockList = jest.fn();
+const mockCreate = jest.fn();
+const mockUpdate = jest.fn();
+const mockDelete = jest.fn();
 
-// Common deps
-let render: any, screen: any, fireEvent: any, waitFor: any;
-let AdminDashboard: any;
-let mockList: any, mockCreate: any, mockUpdate: any, mockDelete: any;
+// 2. Mock 'aws-amplify/data' using closure forwarding to access the vars above
+jest.mock('aws-amplify/data', () => ({
+    generateClient: () => ({
+        models: {
+            Project: {
+                list: (...args: any[]) => mockList(...args),
+                create: (...args: any[]) => mockCreate(...args),
+                update: (...args: any[]) => mockUpdate(...args),
+                delete: (...args: any[]) => mockDelete(...args)
+            }
+        }
+    })
+}));
+
+// 3. Mock Logger
+jest.mock('../../services/Logger', () => ({
+    AdminLogger: {
+        debug: jest.fn(),
+        info: jest.fn(),
+        error: jest.fn()
+    }
+}));
+
+// 4. Mock Authenticator
+jest.mock('@aws-amplify/ui-react', () => ({
+    useAuthenticator: () => ({
+        user: { signInDetails: { loginId: 'admin@test.com' } }
+    }),
+    Authenticator: ({ children }: any) => <div>{children({ signOut: jest.fn(), user: { signInDetails: { loginId: 'test' } } })}</div>
+}));
 
 describe('AdminDashboard', () => {
-    beforeEach(async () => {
-        jest.resetModules();
-        mockList = jest.fn();
-        mockCreate = jest.fn();
-        mockUpdate = jest.fn();
-        mockDelete = jest.fn();
-
-        jest.doMock('aws-amplify/data', () => ({
-            generateClient: () => ({
-                models: {
-                    Project: {
-                        list: mockList,
-                        create: mockCreate,
-                        update: mockUpdate,
-                        delete: mockDelete
-                    }
-                }
-            })
-        }));
-
-        jest.doMock('@aws-amplify/ui-react', () => ({
-            useAuthenticator: () => ({
-                user: { signInDetails: { loginId: 'admin@test.com' } }
-            }),
-            Authenticator: ({ children }: any) => <div>{children({ signOut: jest.fn(), user: { signInDetails: { loginId: 'test' } } })}</div>
-        }));
-
-        jest.doMock('../../services/Logger', () => ({
-            AdminLogger: {
-                debug: jest.fn(),
-                info: jest.fn(),
-                error: jest.fn()
-            }
-        }));
-
-        const rtl = await import('@testing-library/react');
-        render = rtl.render;
-        screen = rtl.screen;
-        fireEvent = rtl.fireEvent;
-        waitFor = rtl.waitFor;
-
-        const mod = await import('./AdminDashboard');
-        AdminDashboard = mod.AdminDashboard;
-
+    beforeEach(() => {
+        jest.clearAllMocks();
         // Mock window methods
         window.scrollTo = jest.fn();
         window.confirm = jest.fn(() => true);
     });
 
     test('renders form and loads projects', async () => {
-        mockList.mockResolvedValue({ data: [{ id: '1', title: 'Existing Project' }] });
+        mockList.mockResolvedValue({ data: [{ id: '1', title: 'Existing Project', isActive: true }] });
         render(<AdminDashboard />);
         expect(screen.getByText('Add New Project')).toBeInTheDocument();
         expect(await screen.findByText('Existing Project')).toBeInTheDocument();
@@ -77,14 +67,17 @@ describe('AdminDashboard', () => {
         fireEvent.click(screen.getByText('Create Project'));
 
         await waitFor(() => {
-            expect(mockCreate).toHaveBeenCalled();
+            expect(mockCreate).toHaveBeenCalledWith(expect.objectContaining({
+                title: 'New App',
+                isActive: true
+            }));
             expect(screen.getByText('Project created successfully!')).toBeInTheDocument();
         });
     });
 
     test('edits a project', async () => {
         mockList.mockResolvedValue({
-            data: [{ id: '1', title: 'Old Title', skills: ['A'] }]
+            data: [{ id: '1', title: 'Old Title', isActive: true, skills: ['A'] }]
         });
         mockUpdate.mockResolvedValue({ data: { id: '1' } });
 
@@ -104,19 +97,22 @@ describe('AdminDashboard', () => {
         });
     });
 
-    test('deletes a project', async () => {
+    test('toggles project status (deactivate)', async () => {
         mockList.mockResolvedValue({
-            data: [{ id: '1', title: 'To Delete' }]
+            data: [{ id: '1', title: 'To Deactivate', isActive: true }]
         });
-        mockDelete.mockResolvedValue({ data: { id: '1' } });
+        mockUpdate.mockResolvedValue({ data: { id: '1', isActive: false } });
 
         render(<AdminDashboard />);
-        const deleteBtn = await screen.findByText('Delete');
-        fireEvent.click(deleteBtn);
+        const deactivateBtn = await screen.findByText('Deactivate');
+        fireEvent.click(deactivateBtn);
 
         await waitFor(() => {
-            expect(mockDelete).toHaveBeenCalledWith({ id: '1' });
-            expect(screen.getByText('Project deleted.')).toBeInTheDocument();
+            expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({
+                id: '1',
+                isActive: false
+            }));
+            expect(screen.getByText('Project deactivated.')).toBeInTheDocument();
         });
     });
 });

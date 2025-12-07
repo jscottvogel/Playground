@@ -1,8 +1,14 @@
+/* Existing styles... */
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
 .gallery-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     margin-bottom: 2rem;
+    text-align: center;
 }
 
 .gallery-empty {
@@ -12,57 +18,29 @@
 
 .gallery-text-dim {
     color: var(--color-text-dim);
-}
-
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
-}
-
-.gallery-mock-grid {
-    margin-top: 2rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2rem;
+    line-height: 1.5;
 }
 
 .project-img {
     width: 100%;
+    height: 180px;
+    object-fit: cover;
     border-radius: 8px;
     margin-bottom: 1rem;
+    background: #222;
+}
+
+.project-title-link {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.2s;
+}
+
+.project-title-link:hover h3 {
+    color: var(--color-primary);
+    text-decoration: underline;
 }
 
 .project-btn-demo {
-    /* Container handles spacing now */
-    text-decoration: none;
-}
-
-/* Ensure all buttons in gallery are consistent */
-.card .btn {
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mock-card {
-    text-align: left;
-}
-
-.mock-img-placeholder {
-    width: 100%;
-    height: 140px;
-    background: linear-gradient(135deg, #1e293b, #334155);
-    border-radius: 8px;
-    margin-bottom: 1rem;
-}
-
-.mock-title {
-    margin: 0 0 0.5rem 0;
-}
-
-.mock-desc {
-    color: var(--color-text-dim);
-    font-size: 0.9em;
+    /* Specific styles if needed, otherwise inherits btn-primary */
 }

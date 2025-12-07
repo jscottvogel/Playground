@@ -14,6 +14,7 @@ const schema = a.schema({
             demoUrl: a.string(),
             gitUrl: a.string(),
             skills: a.string().array(),
+            isActive: a.boolean().default(true),
         })
         .authorization((allow) => [
             // Public can read projects

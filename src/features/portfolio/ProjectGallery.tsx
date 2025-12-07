@@ -25,9 +25,13 @@ export function ProjectGallery() {
     const fetchProjects = async () => {
         GalleryLogger.debug('Fetching list of projects...');
         try {
+            // Fetch all projects, then filter for active ones.
+            // (Ideally done via filter in list() if supported, but client-side filter is safe for small datasets)
             const { data: items } = await client.models.Project.list();
-            GalleryLogger.info(`Fetched ${items.length} projects.`);
-            setProjects(items);
+            const activeItems = items.filter(p => p.isActive !== false); // Default is true, handle null/undefined as true or explicit false
+
+            GalleryLogger.info(`Fetched ${items.length} projects (${activeItems.length} active).`);
+            setProjects(activeItems);
         } catch (e) {
             GalleryLogger.error("Failed to fetch projects (Backend might not be deployed):", e);
         }
@@ -57,8 +61,16 @@ export function ProjectGallery() {
                     {projects.map(proj => (
                         <div key={proj.id} className="card">
                             {proj.imageUrl && <img src={proj.imageUrl} alt={proj.title || ''} className="project-img" />}
-                            <h3>{proj.title}</h3>
-                            <p className="gallery-text-dim">{proj.description}</p>
+                            {proj.demoUrl ? (
+                                <a href={proj.demoUrl} target="_blank" rel="noreferrer" className="project-title-link">
+                                    <h3>{proj.title}</h3>
+                                </a>
+                            ) : (
+                                <h3>{proj.title}</h3>
+                            )}
+                            <p className="gallery-text-dim" style={{ margin: '0.5rem 0', minHeight: '3rem' }}>
+                                {proj.description}
+                            </p>
 
                             {/* Skills Tags */}
                             {proj.skills && proj.skills.length > 0 && (

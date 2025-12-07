@@ -52,8 +52,13 @@ export function AdminDashboard() {
         AdminLogger.debug('Fetching projects...');
         try {
             const { data: items } = await client.models.Project.list();
+            // Sort by active status first (active first), then title
+            const sorted = items.sort((a, b) => {
+                if (a.isActive === b.isActive) return (a.title || '').localeCompare(b.title || '');
+                return (b.isActive === true ? 1 : 0) - (a.isActive === true ? 1 : 0);
+            });
             AdminLogger.info(`Successfully fetched ${items.length} projects.`);
-            setProjects(items);
+            setProjects(sorted);
         } catch (e) {
             AdminLogger.error("Failed to fetch projects:", e);
         }
@@ -78,6 +83,31 @@ export function AdminDashboard() {
     };
 
     /**
+     * SOFT DELETE / FLIP STATUS
+     * Toggles the project's active status instead of permanently deleting it.
+     */
+    const handleToggleStatus = async (proj: Schema['Project']['type']) => {
+        const newStatus = !proj.isActive;
+        const action = newStatus ? 'Reactivate' : 'Deactivate';
+
+        if (!window.confirm(`Are you sure you want to ${action.toLowerCase()} this project?`)) return;
+
+        AdminLogger.info(`${action} requested for project ID: ${proj.id}`);
+        try {
+            await client.models.Project.update({
+                id: proj.id,
+                isActive: newStatus
+            });
+            AdminLogger.info(`Project ${action}d successfully.`);
+            setStatus({ type: 'success', message: `Project ${action}d.` });
+            fetchProjects();
+        } catch (e: any) {
+            AdminLogger.error(`${action} failed:`, e);
+            setStatus({ type: 'error', message: `${action} failed: ${e.message}` });
+        }
+    };
+
+    /**
      * Resets the form to its default "Add New" state.
      * Clears all input fields and the 'id' state.
      */
@@ -92,27 +122,7 @@ export function AdminDashboard() {
         setStatus(null);
     };
 
-    /**
-     * DELETE: Removes a project from the database.
-     * Includes a confirmation step to prevent accidental deletions.
-     * @param idToDelete - The unique identifier of the project to remove
-     */
-    const handleDelete = async (idToDelete: string) => {
-        if (!window.confirm("Are you sure you want to delete this project?")) return;
 
-        AdminLogger.info(`Deleting project ID: ${idToDelete}`);
-        try {
-            await client.models.Project.delete({ id: idToDelete });
-            AdminLogger.info('Project deleted successfully.');
-            setStatus({ type: 'success', message: 'Project deleted.' });
-            fetchProjects(); // Refresh list
-            // If the deleted project was currently being edited, reset the form.
-            if (id === idToDelete) handleCancelEdit();
-        } catch (e: any) {
-            AdminLogger.error('Delete failed:', e);
-            setStatus({ type: 'error', message: `Delete failed: ${e.message}` });
-        }
-    };
 
     /**
      * CREATE & UPDATE: Handles form submission.
@@ -134,7 +144,8 @@ export function AdminDashboard() {
                 imageUrl,
                 demoUrl,
                 gitUrl,
-                skills: skillsArray
+                skills: skillsArray,
+                isActive: true // Default to active
             };
 
             if (id) {
@@ -191,19 +202,55 @@ export function AdminDashboard() {
                     <h3>Existing Projects</h3>
                     <div className="admin-project-list" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         {projects.map(proj => (
-                            <div key={proj.id} className="card" style={{ padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <div>
-                                    <h4 style={{ margin: 0 }}>{proj.title}</h4>
-                                    <small style={{ color: 'var(--color-text-dim)' }}>{proj.id.substring(0, 8)}...</small>
+                            <div
+                                key={proj.id}
+                                className="card"
+                                style={{
+                                    padding: '1rem',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '0.5rem',
+                                    opacity: proj.isActive === false ? 0.6 : 1,
+                                    border: proj.isActive === false ? '1px dashed #444' : undefined
+                                }}
+                            >
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                    <div>
+                                        <h4 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                            {proj.demoUrl ? (
+                                                <a href={proj.demoUrl} target="_blank" rel="noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>
+                                                    {proj.title} <span style={{ fontSize: '0.8em' }}>↗</span>
+                                                </a>
+                                            ) : (
+                                                proj.title
+                                            )}
+                                            {proj.isActive === false && <span style={{ fontSize: '0.7em', background: '#333', padding: '2px 6px', borderRadius: '4px' }}>INACTIVE</span>}
+                                        </h4>
+                                        <small style={{ color: 'var(--color-text-dim)' }}>ID: {proj.id.substring(0, 8)}...</small>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                        <button onClick={() => handleEdit(proj)} className="btn" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem' }}>
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() => handleToggleStatus(proj)}
+                                            className="btn"
+                                            style={{
+                                                fontSize: '0.8rem',
+                                                padding: '0.3rem 0.6rem',
+                                                // Change color based on action
+                                                background: proj.isActive === false ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+                                                color: proj.isActive === false ? '#4ade80' : '#f87171',
+                                                border: proj.isActive === false ? '1px solid #15803d' : '1px solid #b91c1c'
+                                            }}
+                                        >
+                                            {proj.isActive === false ? 'Activate' : 'Deactivate'}
+                                        </button>
+                                    </div>
                                 </div>
-                                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                    <button onClick={() => handleEdit(proj)} className="btn" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem' }}>
-                                        Edit
-                                    </button>
-                                    <button onClick={() => handleDelete(proj.id)} className="btn" style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem', background: 'rgba(239, 68, 68, 0.2)', color: '#f87171', border: '1px solid #b91c1c' }}>
-                                        Delete
-                                    </button>
-                                </div>
+                                <p style={{ fontSize: '0.9rem', color: 'var(--color-text-dim)', margin: 0 }}>
+                                    {proj.description}
+                                </p>
                             </div>
                         ))}
                         {projects.length === 0 && <p style={{ color: 'var(--color-text-dim)' }}>No projects found.</p>}
