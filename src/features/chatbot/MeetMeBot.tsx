@@ -1,6 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import './MeetMeBot.css';
 import { ChatLogger } from '../../services/Logger';
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '../../../amplify/data/resource';
+
+const client = generateClient<Schema>();
 
 /**
  * MeetMeBot Component
@@ -27,7 +31,7 @@ export function MeetMeBot({ guestEmail }: { guestEmail?: string }) {
         {
             id: '1',
             sender: 'bot',
-            text: `Hi there! I'm the digital assistant for J. Scott Vogel.${guestEmail ? ` I see you're visiting as ${guestEmail}.` : ''} Ask me anything about his projects or experience!`
+            text: `Hi there! I'm the digital assistant for Scott Vogel.${guestEmail ? ` I see you're visiting as ${guestEmail}.` : ''} Ask me anything about his projects or experience!`
         }
     ]);
     const [inputValue, setInputValue] = useState('');
@@ -48,9 +52,12 @@ export function MeetMeBot({ guestEmail }: { guestEmail?: string }) {
     /**
      * Handles user message submission.
      */
-    const handleSendMessage = (e: React.FormEvent) => {
+    /**
+     * Handles user message submission.
+     */
+    const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!inputValue.trim()) return;
+        if (!inputValue.trim() || isTyping) return;
 
         const userText = inputValue;
         const userMsg: Message = { id: Date.now().toString(), text: userText, sender: 'user' };
@@ -61,37 +68,25 @@ export function MeetMeBot({ guestEmail }: { guestEmail?: string }) {
 
         ChatLogger.info(`User sent message: ${userText}`);
 
-        setTimeout(() => {
-            const responseText = getBotResponse(userText);
+        try {
+            // Call the Bedrock Agent
+            // Using 'any' cast temporarily until schema is regenerated types
+            const response = await (client.queries as any).askBedrockAgent({ message: userText });
+            const responseText = response.data || "I couldn't get a response from the agent.";
+
             const botMsg: Message = { id: (Date.now() + 1).toString(), text: responseText, sender: 'bot' };
             setMessages(prev => [...prev, botMsg]);
-            setIsTyping(false);
             ChatLogger.info('Bot responded');
-        }, 1000);
+        } catch (error) {
+            console.error("Chat Error:", error);
+            const errorMsg: Message = { id: (Date.now() + 1).toString(), text: "Sorry, I'm having trouble connecting to my brain right now.", sender: 'bot' };
+            setMessages(prev => [...prev, errorMsg]);
+        } finally {
+            setIsTyping(false);
+        }
     };
 
-    /**
-     * Simple keyword-based response logic.
-     * In a real app, this would call an AI backend or more complex NLP service.
-     */
-    const getBotResponse = (input: string): string => {
-        const lowerInput = input.toLowerCase();
 
-        if (lowerInput.includes('project') || lowerInput.includes('work')) {
-            return "Scott has worked on a variety of projects involving React, AWS, and AI integration. You can see the full detailed list in the Project Gallery!";
-        }
-        if (lowerInput.includes('contact') || lowerInput.includes('email') || lowerInput.includes('reach')) {
-            return "You can reach Scott at j.scott.vogel@gmail.com.";
-        }
-        if (lowerInput.includes('skill') || lowerInput.includes('tech')) {
-            return "He is proficient in TypeScript, React, Node.js, Python, and cloud architecture on AWS.";
-        }
-        if (lowerInput.includes('hello') || lowerInput.includes('hi')) {
-            return "Hello! How can I help you today?";
-        }
-
-        return "That's a great question! I'm still learning about Scott's specific details on that topic, but feel free to browse the gallery for more info.";
-    };
 
     return (
         <div className="card bot-container">

@@ -36,6 +36,18 @@ const schema = a.schema({
             // Admin can read these
             allow.owner(),
         ]),
+
+    askBedrockAgent: a
+        .query()
+        .arguments({
+            message: a.string().required()
+        })
+        .returns(a.string())
+        .authorization(allow => [
+            allow.authenticated(),
+            allow.publicApiKey() // Allow guests to chat too
+        ])
+        .handler(a.handler.function('chat-handler')),
 });
 
 export type Schema = ClientSchema<typeof schema>;
