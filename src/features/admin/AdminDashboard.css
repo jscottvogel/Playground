@@ -5,6 +5,13 @@
     animation: fadeIn 0.5s ease-out;
 }
 
+@media (max-width: 600px) {
+    .admin-dashboard {
+        padding: 1rem;
+        margin: 1rem auto;
+    }
+}
+
 .admin-header {
     margin-bottom: 2rem;
     text-align: center;

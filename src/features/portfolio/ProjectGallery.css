@@ -2,7 +2,7 @@
 
 .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
 }
 
@@ -39,8 +39,4 @@
 .project-title-link:hover h3 {
     color: var(--color-primary);
     text-decoration: underline;
-}
-
-.project-btn-demo {
-    /* Specific styles if needed, otherwise inherits btn-primary */
 }
