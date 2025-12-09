@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import './MeetMeBot.css';
+import './ScottBot.css';
 import { ChatLogger } from '../../services/Logger';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../amplify/data/resource';
@@ -7,7 +7,7 @@ import type { Schema } from '../../../amplify/data/resource';
 const client = generateClient<Schema>();
 
 /**
- * MeetMeBot Component
+ * ScottBot Component
  * 
  * An intelligent conversational agent backed by AWS Bedrock (Claude 3 Sonnet).
  * 
@@ -25,7 +25,7 @@ interface Message {
     sender: 'user' | 'bot';
 }
 
-export function MeetMeBot({ guestEmail, mode = 'widget' }: { guestEmail?: string; mode?: 'widget' | 'embedded' }) {
+export function ScottBot({ guestEmail, mode = 'widget' }: { guestEmail?: string; mode?: 'widget' | 'embedded' }) {
     // --- State ---
     const [messages, setMessages] = useState<Message[]>([
         {
@@ -110,7 +110,7 @@ export function MeetMeBot({ guestEmail, mode = 'widget' }: { guestEmail?: string
     return (
         <div className={`card bot-container ${mode === 'widget' ? 'bot-widget' : ''} animate-fade-in`}>
             <div className="bot-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h3 className="bot-title">MeetMe Chatbot 🤖</h3>
+                <h3 className="bot-title">Scott-bot 🤖</h3>
                 {mode === 'widget' && (
                     <button onClick={toggleChat} style={{ background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', fontSize: '1.2rem' }}>×</button>
                 )}

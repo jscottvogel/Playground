@@ -62,7 +62,7 @@ jest.mock('@aws-amplify/ui-react', () => ({
  * - Form interactions.
  * - Notification toasts.
  * 
- * Note: Chatbot is tested separately in `MeetMeBot.test.tsx` as it is no longer part of this component.
+ * Note: Chatbot is tested separately in `ScottBot.test.tsx` as it is no longer part of this component.
  */
 describe('AdminDashboard', () => {
     beforeEach(() => {

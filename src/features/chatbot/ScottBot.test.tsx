@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { MeetMeBot } from './MeetMeBot';
+import { ScottBot } from './ScottBot';
 
 // Mock scrollIntoView
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
@@ -14,32 +14,39 @@ jest.mock('../../services/Logger', () => ({
 }));
 
 // Mock AWS Amplify Data Client
-const mockAskAgent = jest.fn();
-jest.mock('aws-amplify/data', () => ({
-    generateClient: () => ({
-        queries: {
-            askBedrockAgent: mockAskAgent
-        }
-    })
-}));
+// Mock AWS Amplify Data Client
+jest.mock('aws-amplify/data', () => {
+    const mockAsk = jest.fn();
+    return {
+        generateClient: () => ({
+            queries: {
+                askBedrockAgent: mockAsk
+            }
+        })
+    };
+});
 
-describe('MeetMeBot', () => {
+import { generateClient } from 'aws-amplify/data';
+const client = generateClient() as any;
+const mockAskAgent = client.queries.askBedrockAgent as jest.Mock;
+
+describe('ScottBot', () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
     // --- Embedded Mode Tests ---
     test('renders embedded mode (always open)', () => {
-        render(<MeetMeBot mode="embedded" />);
+        render(<ScottBot mode="embedded" />);
         // Should show title immediately
-        expect(screen.getByText('MeetMe Chatbot 🤖')).toBeInTheDocument();
+        expect(screen.getByText('Scott-bot 🤖')).toBeInTheDocument();
         // Should NOT show FAB
         expect(screen.queryByText(/Chat with Scott-bot/)).not.toBeInTheDocument();
     });
 
     test('embedded mode sends message to agent', async () => {
         mockAskAgent.mockResolvedValue({ data: 'I am the Agent.' });
-        render(<MeetMeBot mode="embedded" />);
+        render(<ScottBot mode="embedded" />);
 
         const input = screen.getByPlaceholderText('Ask about projects...');
         const button = screen.getByText('Send');
@@ -57,23 +64,23 @@ describe('MeetMeBot', () => {
 
     // --- Widget Mode Tests ---
     test('renders widget mode (FAB first)', () => {
-        render(<MeetMeBot mode="widget" />);
+        render(<ScottBot mode="widget" />);
         // Should show FAB
         expect(screen.getByText('💬 Chat with Scott-bot')).toBeInTheDocument();
         // Should NOT show chat window yet
-        expect(screen.queryByText('MeetMe Chatbot 🤖')).not.toBeInTheDocument();
+        expect(screen.queryByText('Scott-bot 🤖')).not.toBeInTheDocument();
     });
 
     test('opens and closes widget', () => {
-        render(<MeetMeBot mode="widget" />);
+        render(<ScottBot mode="widget" />);
 
         // Open
         fireEvent.click(screen.getByText('💬 Chat with Scott-bot'));
-        expect(screen.getByText('MeetMe Chatbot 🤖')).toBeInTheDocument();
+        expect(screen.getByText('Scott-bot 🤖')).toBeInTheDocument();
 
         // Close
         fireEvent.click(screen.getByText('×'));
         expect(screen.getByText('💬 Chat with Scott-bot')).toBeInTheDocument();
-        expect(screen.queryByText('MeetMe Chatbot 🤖')).not.toBeInTheDocument();
+        expect(screen.queryByText('Scott-bot 🤖')).not.toBeInTheDocument();
     });
 });

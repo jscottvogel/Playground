@@ -34,8 +34,8 @@ jest.mock('./features/admin/AdminDashboard', () => ({
     AdminDashboard: () => <div>Admin Dashboard</div>
 }));
 
-jest.mock('./features/chatbot/MeetMeBot', () => ({
-    MeetMeBot: () => <div>Meet Me Chatbot 🤖</div>
+jest.mock('./features/chatbot/ScottBot', () => ({
+    ScottBot: () => <div>Scott-bot 🤖</div>
 }));
 
 jest.mock('./services/Logger', () => ({
@@ -61,7 +61,7 @@ describe('App Navigation Flow', () => {
     test('navigates to guest chat when access granted', () => {
         render(<App />);
         fireEvent.click(screen.getByText('Enter as Guest'));
-        expect(screen.getByText('Meet Me Chatbot 🤖')).toBeInTheDocument();
+        expect(screen.getByText('Scott-bot 🤖')).toBeInTheDocument();
         // Check if Nav is present
         expect(screen.getByText('Vogel Solutions Lab')).toBeInTheDocument();
     });
@@ -79,7 +79,7 @@ describe('App Navigation Flow', () => {
         render(<App />);
         fireEvent.click(screen.getByText('Login')); // Go to auth
         fireEvent.click(screen.getByText('Admin Portal')); // Go to admin
-        expect(screen.getByText('Meet Me Chatbot 🤖')).toBeInTheDocument();
+        expect(screen.getByText('Scott-bot 🤖')).toBeInTheDocument();
         expect(screen.getByText('Admin Dashboard')).toBeInTheDocument();
     });
 

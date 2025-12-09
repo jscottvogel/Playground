@@ -23,12 +23,12 @@ FUN FACTS: I love hiking, I brew my own coffee, and I once met Linus Torvalds.
 // --- TOOL DEFINITIONS ---
 const tools = [
     {
-        name: "search_resume",
-        description: "Search for specific information within the candidate's resume (files). Use this to answer questions about work history, education, or skills.",
+        name: "search_knowledge",
+        description: "Search for specific information within the candidate's knowledge base (files, FAQs, resume, descriptions). Use this to answer questions about work history, education, skills, or general facts.",
         input_schema: {
             type: "object",
             properties: {
-                query: { type: "string", description: "The specific topic to search for in the resume." }
+                query: { type: "string", description: "The specific topic to search for." }
             },
             required: ["query"]
         }
@@ -120,7 +120,7 @@ async function callBedrock(messages: any[]) {
 async function executeTool(name: string, input: any) {
     console.log(`[Tool] Executing ${name} with input:`, input);
 
-    if (name === 'search_resume') {
+    if (name === 'search_knowledge') {
         // Simulating "RAG" by returning relevant chunks or full text if small
         // Real implementation: Fetch from S3, use localized search, or Knowledge Base
         return RESUME_TEXT; // Return full text for Claude to analyze

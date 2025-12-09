@@ -21,7 +21,7 @@ export const GuestLogger = new ConsoleLogger('GuestGateway');
 /**
  * Logger for Chatbot interactions
  */
-export const ChatLogger = new ConsoleLogger('MeetMeBot');
+export const ChatLogger = new ConsoleLogger('ScottBot');
 
 /**
  * Logger for Project Gallery data fetching

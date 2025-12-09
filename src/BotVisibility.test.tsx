@@ -12,8 +12,8 @@ jest.mock('@aws-amplify/ui-react', () => ({
     })
 }));
 
-jest.mock('./features/chatbot/MeetMeBot', () => ({
-    MeetMeBot: () => <div data-testid="meet-me-bot">Meet Me Chatbot 🤖</div>
+jest.mock('./features/chatbot/ScottBot', () => ({
+    ScottBot: () => <div data-testid="meet-me-bot">Scott-bot 🤖</div>
 }));
 
 jest.mock('./features/guest/GuestGateway', () => ({
