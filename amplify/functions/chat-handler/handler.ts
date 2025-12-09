@@ -76,10 +76,9 @@ export const handler: any = async (event: any) => {
             const toolResults = await Promise.all(toolRequests.map(async (tool: any) => {
                 const result = await executeTool(tool.name, tool.input);
                 return {
-                    tool_result: {
-                        tool_use_id: tool.id,
-                        content: [{ type: "text", text: JSON.stringify(result) }]
-                    }
+                    type: 'tool_result',
+                    tool_use_id: tool.id,
+                    content: [{ type: "text", text: JSON.stringify(result) }]
                 };
             }));
 
