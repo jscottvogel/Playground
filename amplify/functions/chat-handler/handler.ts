@@ -61,7 +61,7 @@ export const handler: any = async (event: any) => {
 
     // 1. Construct Conversation History (Simplified: stateless for now, just current message)
     // In a real app, pass 'history' from frontend or store in DDB.
-    const messages: any[] = [{ role: "user", content: [{ text: message }] }];
+    const messages: any[] = [{ role: "user", content: [{ type: 'text', text: message }] }];
 
     try {
         // 2. Call Bedrock with Tools
