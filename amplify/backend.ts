@@ -6,19 +6,19 @@ import { storage } from './storage/resource';
 /**
  * @see https://docs.amplify.aws/gen2/build-a-backend
  */
-import { chatHandler } from './functions/chat-handler/resource';
+import { scottBotHandler } from './functions/chat-handler/resource';
 
 const backend = defineBackend({
     auth,
     data,
-    chatHandler,
+    scottBotHandler,
     storage,
 });
 
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 // Grant Bedrock Access to the Chat Function
-backend.chatHandler.resources.lambda.addToRolePolicy(
+backend.scottBotHandler.resources.lambda.addToRolePolicy(
     new PolicyStatement({
         effect: 'Allow' as any,
         actions: ['bedrock:InvokeModel'],
@@ -27,4 +27,4 @@ backend.chatHandler.resources.lambda.addToRolePolicy(
 );
 
 // Grant Chat Handler access to read from storage (resumes, etc.)
-backend.storage.resources.bucket.grantRead(backend.chatHandler.resources.lambda);
+backend.storage.resources.bucket.grantRead(backend.scottBotHandler.resources.lambda);

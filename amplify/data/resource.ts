@@ -47,7 +47,7 @@ const schema = a.schema({
             allow.authenticated(),
             allow.publicApiKey() // Allow guests to chat too
         ])
-        .handler(a.handler.function('chatHandler')),
+        .handler(a.handler.function('scottBotHandler')),
 });
 
 export type Schema = ClientSchema<typeof schema>;
