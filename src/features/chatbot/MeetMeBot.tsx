@@ -72,6 +72,12 @@ export function MeetMeBot({ guestEmail, mode = 'widget' }: { guestEmail?: string
             // Call the Bedrock Agent
             // Using 'any' cast temporarily until schema is regenerated types
             const response = await (client.queries as any).askBedrockAgent({ message: userText });
+
+            if (response.errors && response.errors.length > 0) {
+                console.error("Backend errors:", response.errors);
+                throw new Error(response.errors[0].message);
+            }
+
             const responseText = response.data || "I couldn't get a response from the agent.";
 
             const botMsg: Message = { id: (Date.now() + 1).toString(), text: responseText, sender: 'bot' };

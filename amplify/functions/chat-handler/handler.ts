@@ -23,43 +23,31 @@ FUN FACTS: I love hiking, I brew my own coffee, and I once met Linus Torvalds.
 // --- TOOL DEFINITIONS ---
 const tools = [
     {
-        toolSpec: {
-            name: "search_resume",
-            description: "Search for specific information within the candidate's resume (files). Use this to answer questions about work history, education, or skills.",
-            inputSchema: {
-                json: {
-                    type: "object",
-                    properties: {
-                        query: { type: "string", description: "The specific topic to search for in the resume." }
-                    },
-                    required: ["query"]
-                }
-            }
+        name: "search_resume",
+        description: "Search for specific information within the candidate's resume (files). Use this to answer questions about work history, education, or skills.",
+        input_schema: {
+            type: "object",
+            properties: {
+                query: { type: "string", description: "The specific topic to search for in the resume." }
+            },
+            required: ["query"]
         }
     },
     {
-        toolSpec: {
-            name: "aboutme_query",
-            description: "Get general facts, personal and professional goals, and the objective statement of the candidate.",
-            inputSchema: {
-                json: {
-                    type: "object",
-                    properties: {},
-                }
-            }
+        name: "aboutme_query",
+        description: "Get general facts, personal and professional goals, and the objective statement of the candidate.",
+        input_schema: {
+            type: "object",
+            properties: {},
         }
     },
     {
-        toolSpec: {
-            name: "list_projects",
-            description: "List portfolio projects from the database. Can filter by skills or status.",
-            inputSchema: {
-                json: {
-                    type: "object",
-                    properties: {
-                        skill: { type: "string", description: "Filter projects by a specific skill (e.g. 'React')." }
-                    }
-                }
+        name: "list_projects",
+        description: "List portfolio projects from the database. Can filter by skills or status.",
+        input_schema: {
+            type: "object",
+            properties: {
+                skill: { type: "string", description: "Filter projects by a specific skill (e.g. 'React')." }
             }
         }
     }
@@ -78,30 +66,31 @@ export const handler: any = async (event: any) => {
         const response = await callBedrock(messages);
 
         // 3. Check for Tool Use
-        if (response.stopReason === "tool_use") {
-            const toolRequests = response.output.message.content.filter((c: any) => c.toolUse);
+        // 3. Check for Tool Use
+        if (response.stop_reason === "tool_use") {
+            const toolRequests = response.content.filter((c: any) => c.type === "tool_use");
 
             // Execute Tools
-            const toolResults = await Promise.all(toolRequests.map(async (req: any) => {
-                const result = await executeTool(req.toolUse.name, req.toolUse.input);
+            const toolResults = await Promise.all(toolRequests.map(async (tool: any) => {
+                const result = await executeTool(tool.name, tool.input);
                 return {
-                    toolResult: {
-                        toolUseId: req.toolUse.toolUseId,
-                        content: [{ json: { result } }]
+                    tool_result: {
+                        tool_use_id: tool.id,
+                        content: [{ type: "text", text: JSON.stringify(result) }]
                     }
                 };
             }));
 
             // Append Assistant's Tool Request and Tool Results to history
-            messages.push({ role: "assistant", content: response.output.message.content });
-            messages.push({ role: "user", content: toolResults.map(r => r.toolResult) });
+            messages.push({ role: "assistant", content: response.content });
+            messages.push({ role: "user", content: toolResults });
 
             // 4. Call Bedrock Again with Tool Outputs
             const finalResponse = await callBedrock(messages);
-            return finalResponse.output.message.content[0].text;
+            return finalResponse.content[0].text;
         }
 
-        return response.output.message.content[0].text;
+        return response.content[0].text;
 
     } catch (error) {
         console.error("Agent Error:", error);
