@@ -1,4 +1,5 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
+import { scottBotHandler } from '../functions/chat-handler/resource';
 
 /*
  * Define your data schema
@@ -47,7 +48,7 @@ const schema = a.schema({
             allow.authenticated(),
             allow.publicApiKey() // Allow guests to chat too
         ])
-        .handler(a.handler.function('scottBotHandler')),
+        .handler(a.handler.function(scottBotHandler)),
 });
 
 export type Schema = ClientSchema<typeof schema>;
