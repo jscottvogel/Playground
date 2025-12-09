@@ -85,7 +85,7 @@ export function ScottBot({ guestEmail, mode = 'widget' }: { guestEmail?: string;
             ChatLogger.info('Bot responded');
         } catch (error) {
             console.error("Chat Error:", error);
-            const errorMsg: Message = { id: (Date.now() + 1).toString(), text: "Sorry, I'm having trouble connecting to my brain right now.", sender: 'bot' };
+            const errorMsg: Message = { id: (Date.now() + 1).toString(), text: `Sorry, I'm having trouble connecting to my brain right now. Details: ${(error as Error).message}`, sender: 'bot' };
             setMessages(prev => [...prev, errorMsg]);
         } finally {
             setIsTyping(false);
