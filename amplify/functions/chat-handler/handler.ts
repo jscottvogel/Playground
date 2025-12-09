@@ -145,7 +145,7 @@ async function executeTool(name: string, input: any) {
 
         } catch (error) {
             console.error("Error querying Knowledge Base:", error);
-            return "Error retrieving information from Knowledge Base.";
+            return `Error retrieving information from Knowledge Base: ${(error as Error).message}`;
         }
     }
 
