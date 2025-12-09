@@ -96,7 +96,7 @@ export const handler: any = async (event: any) => {
 
     } catch (error) {
         console.error("Agent Error:", error);
-        return "Sorry, I encountered an error while thinking. Please check my logs.";
+        return `Error: ${(error as Error).message}`;
     }
 };
 
