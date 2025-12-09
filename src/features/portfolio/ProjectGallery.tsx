@@ -91,7 +91,11 @@ export function ProjectGallery() {
 
                             {/* Action Links */}
                             <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
-                                {proj.demoUrl && <a href={proj.demoUrl} className="btn btn-primary project-btn-demo" target='_blank' rel='noreferrer'>Live Demo</a>}
+                                {proj.demoUrl ? (
+                                    <a href={proj.demoUrl} className="btn btn-primary project-btn-demo" target='_blank' rel='noreferrer'>Live Demo</a>
+                                ) : (
+                                    <button className="btn btn-primary project-btn-demo" disabled>Live Demo</button>
+                                )}
                                 {proj.gitUrl && <a href={proj.gitUrl} className="btn" target='_blank' rel='noreferrer'>GitHub</a>}
                             </div>
                         </div>
