@@ -1,8 +1,10 @@
 import { BedrockRuntimeClient, InvokeModelCommand } from "@aws-sdk/client-bedrock-runtime";
+import { BedrockAgentRuntimeClient, RetrieveCommand } from "@aws-sdk/client-bedrock-agent-runtime";
 import type { Schema } from "../../data/resource";
 
 // Initialize Bedrock Client
 const bedrock = new BedrockRuntimeClient({ region: process.env.AWS_REGION });
+const bedrockAgent = new BedrockAgentRuntimeClient({ region: process.env.AWS_REGION });
 
 // --- MOCK DATA FOR TOOLS (In production, fetch from S3 / DynamoDB) ---
 const RESUME_TEXT = `
@@ -121,9 +123,30 @@ async function executeTool(name: string, input: any) {
     console.log(`[Tool] Executing ${name} with input:`, input);
 
     if (name === 'search_knowledge') {
-        // Simulating "RAG" by returning relevant chunks or full text if small
-        // Real implementation: Fetch from S3, use localized search, or Knowledge Base
-        return RESUME_TEXT; // Return full text for Claude to analyze
+        try {
+            const kbId = process.env.KNOWLEDGE_BASE_ID;
+            if (!kbId) {
+                console.warn("KNOWLEDGE_BASE_ID not set, falling back to mock data.");
+                return RESUME_TEXT;
+            }
+
+            const command = new RetrieveCommand({
+                knowledgeBaseId: kbId,
+                retrievalQuery: { text: input.query },
+                retrievalConfiguration: {
+                    vectorSearchConfiguration: { numberOfResults: 3 }
+                }
+            });
+
+            const response = await bedrockAgent.send(command);
+            const validResults = response.retrievalResults?.filter(r => r.content?.text).map(r => r.content!.text).join('\n\n') || "No relevant info found in KB.";
+
+            return validResults;
+
+        } catch (error) {
+            console.error("Error querying Knowledge Base:", error);
+            return "Error retrieving information from Knowledge Base.";
+        }
     }
 
     if (name === 'aboutme_query') {

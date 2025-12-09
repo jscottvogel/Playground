@@ -21,8 +21,11 @@ import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 backend.scottBotHandler.resources.lambda.addToRolePolicy(
     new PolicyStatement({
         effect: 'Allow' as any,
-        actions: ['bedrock:InvokeModel'],
-        resources: [`arn:aws:bedrock:*::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0`]
+        actions: ['bedrock:InvokeModel', 'bedrock:Retrieve'],
+        resources: [
+            `arn:aws:bedrock:*::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0`,
+            `arn:aws:bedrock:us-east-1:*:knowledge-base/*`
+        ]
     })
 );
 
