@@ -4,7 +4,6 @@ import { Hub } from 'aws-amplify/utils';
 import '@aws-amplify/ui-react/styles.css';
 import { GuestGateway } from './features/guest/GuestGateway';
 import { GuestChat } from './features/guest/GuestChat';
-import { ScottBot } from './features/chatbot/ScottBot';
 import { AuthChat } from './features/chatbot/AuthChat';
 import { ProjectGallery } from './features/portfolio/ProjectGallery';
 import { AdminDashboard } from './features/admin/AdminDashboard';
