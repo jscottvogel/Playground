@@ -1,0 +1,97 @@
+.auth-chat-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 3rem auto 0;
+    padding: 2rem;
+    height: 600px;
+    /* Fixed height for embedded section in the page flow */
+    box-sizing: border-box;
+}
+
+/* Left Panel */
+.auth-chat-instructions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--color-surface), rgba(255, 255, 255, 0.05));
+    border-radius: 20px;
+    border: 1px solid var(--color-border);
+}
+
+.auth-chat-instructions h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(90deg, #fff, var(--color-text-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.auth-instruction-lead {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin-bottom: 2rem;
+}
+
+.auth-suggestions-list h3 {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-text-dim);
+}
+
+.auth-suggestion-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    color: inherit;
+    font-family: inherit;
+    font-size: 0.95rem;
+}
+
+.auth-suggestion-card:hover {
+    border-color: var(--color-primary);
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(4px);
+}
+
+/* Right Panel */
+.auth-chat-bot-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.auth-chat-bot-panel .bot-container {
+    height: 100%;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .auth-chat-layout {
+        grid-template-columns: 1fr;
+        height: auto;
+        padding: 1rem;
+    }
+
+    .auth-chat-instructions {
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .auth-chat-bot-panel {
+        height: 600px;
+    }
+}

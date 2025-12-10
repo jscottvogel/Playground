@@ -5,6 +5,7 @@ import '@aws-amplify/ui-react/styles.css';
 import { GuestGateway } from './features/guest/GuestGateway';
 import { GuestChat } from './features/guest/GuestChat';
 import { ScottBot } from './features/chatbot/ScottBot';
+import { AuthChat } from './features/chatbot/AuthChat';
 import { ProjectGallery } from './features/portfolio/ProjectGallery';
 import { AdminDashboard } from './features/admin/AdminDashboard';
 import { Nav } from './components/Nav';
@@ -99,8 +100,8 @@ function App() {
               <div className="auth-layout">
                 <h2 style={{ marginTop: 0, marginBottom: '2rem' }}>Welcome, {user?.signInDetails?.loginId}</h2>
                 <ProjectGallery />
+                <AuthChat userEmail={user?.signInDetails?.loginId} />
               </div>
-              <ScottBot mode="widget" />
             </main>
           )
         }}
@@ -124,19 +125,12 @@ function App() {
               {/* Admin Features take full width now */}
               <AdminDashboard />
             </div>
-            {/* Floating Widget */}
-            <ScottBot mode="widget" />
+            {/* Floating Widget removed for Admin */}
           </main>
         )}
       </Authenticator>
     );
   }
-
-  import { GuestChat } from './features/guest/GuestChat';
-
-  // ... imports ...
-
-  // ... inside App component ...
 
   // 3. Guest User View (Chat only)
   if (viewState === 'guest_chat') {
