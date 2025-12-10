@@ -26,6 +26,7 @@ export function GuestGateway({ onAccessGranted, onLoginRequest }: GuestGatewayPr
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showGuestModal, setShowGuestModal] = useState(false);
 
     /**
      * Handles the "Continue as Guest" flow.
@@ -77,40 +78,66 @@ export function GuestGateway({ onAccessGranted, onLoginRequest }: GuestGatewayPr
                 </div>
 
                 <div className="gateway-actions">
-                    {/* Guest Access Form */}
-                    <form onSubmit={handleGuestAccess} className="guest-form">
-                        <div className="form-group">
-                            <label htmlFor="guest-email" className="sr-only">Email Address</label>
-                            <input
-                                id="guest-email"
-                                type="email"
-                                className="gateway-input"
-                                placeholder="enter@email.com"
-                                value={email}
-                                onChange={(e) => {
-                                    setEmail(e.target.value);
-                                    setError('');
-                                }}
-                                disabled={loading}
-                            />
-                        </div>
-                        {error && <p className="gateway-error">{error}</p>}
-
-                        <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
-                            {loading ? 'Verifying...' : 'Continue as Guest'}
-                        </button>
-                    </form>
+                    <button
+                        onClick={() => setShowGuestModal(true)}
+                        className="btn btn-primary btn-block"
+                    >
+                        Continue as Guest
+                    </button>
 
                     <div className="gateway-divider">
                         <span>OR</span>
                     </div>
 
-                    {/* Login Button */}
                     <button onClick={onLoginRequest} className="btn btn-outline btn-block">
-                        Login with Password
+                        Sign In / Sign Up
                     </button>
                 </div>
             </div>
+
+            {/* Guest Modal */}
+            {showGuestModal && (
+                <div className="guest-modal-overlay">
+                    <div className="guest-modal-content animate-scale-in">
+                        <div className="modal-header">
+                            <h3>Guest Access</h3>
+                            <button
+                                className="modal-close-btn"
+                                onClick={() => setShowGuestModal(false)}
+                                aria-label="Close modal"
+                            >
+                                &times;
+                            </button>
+                        </div>
+
+                        <p className="modal-text">Enter your email to chat with the bot.</p>
+
+                        <form onSubmit={handleGuestAccess} className="guest-form">
+                            <div className="form-group">
+                                <label htmlFor="guest-email" className="sr-only">Email Address</label>
+                                <input
+                                    id="guest-email"
+                                    type="email"
+                                    className="gateway-input"
+                                    placeholder="enter@email.com"
+                                    value={email}
+                                    onChange={(e) => {
+                                        setEmail(e.target.value);
+                                        setError('');
+                                    }}
+                                    disabled={loading}
+                                    autoFocus
+                                />
+                            </div>
+                            {error && <p className="gateway-error">{error}</p>}
+
+                            <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
+                                {loading ? 'Verifying...' : 'Start Chatting'}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
