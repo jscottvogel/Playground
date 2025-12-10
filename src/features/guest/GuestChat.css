@@ -45,25 +45,6 @@
 }
 
 .suggestion-card {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    border: 1px solid transparent;
-    transition: all 0.2s;
-    cursor: default;
-    /* Change to pointer if clickable later */
-}
-
-.suggestion-card:hover {
-    border-color: var(--color-primary);
-    background: rgba(255, 255, 255, 0.08);
-}
-
-/* Right Panel */
-.chat-bot-panel {
-    display: flex;
-    flex-direction: column;
     height: 100%;
     /* Ensure the bot container fills this panel */
 }

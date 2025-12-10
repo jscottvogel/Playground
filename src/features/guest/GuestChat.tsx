@@ -1,4 +1,5 @@
-import { ScottBot } from '../chatbot/ScottBot';
+import { useRef } from 'react';
+import { ScottBot, type ScottBotHandle } from '../chatbot/ScottBot';
 import './GuestChat.css';
 
 interface GuestChatProps {
@@ -7,6 +8,20 @@ interface GuestChatProps {
 }
 
 export function GuestChat({ guestEmail, onSignInRequest }: GuestChatProps) {
+    const botRef = useRef<ScottBotHandle>(null);
+
+    const handleSuggestionClick = (text: string) => {
+        if (botRef.current) {
+            botRef.current.setInput(text);
+        }
+    };
+
+    const suggestions = [
+        "What technologies did you use for the Portfolio project?",
+        "Tell me about your experience with AWS.",
+        "How do I use this application?"
+    ];
+
     return (
         <div className="guest-chat-layout animate-fade-in">
             {/* Left Panel: Instructions & Suggestions */}
@@ -20,15 +35,15 @@ export function GuestChat({ guestEmail, onSignInRequest }: GuestChatProps) {
 
                     <div className="suggestions-list">
                         <h3>Try asking:</h3>
-                        <div className="suggestion-card">
-                            "What technologies did you use for the Portfolio project?"
-                        </div>
-                        <div className="suggestion-card">
-                            "Tell me about your experience with AWS."
-                        </div>
-                        <div className="suggestion-card">
-                            "How do I use this application?"
-                        </div>
+                        {suggestions.map((text, index) => (
+                            <button
+                                key={index}
+                                className="suggestion-card"
+                                onClick={() => handleSuggestionClick(text)}
+                            >
+                                "{text}"
+                            </button>
+                        ))}
                     </div>
 
                     <div className="guest-footer-note">
@@ -47,7 +62,11 @@ export function GuestChat({ guestEmail, onSignInRequest }: GuestChatProps) {
 
             {/* Right Panel: The Bot */}
             <div className="chat-bot-panel">
-                <ScottBot guestEmail={guestEmail} mode="embedded" />
+                <ScottBot
+                    ref={botRef}
+                    guestEmail={guestEmail}
+                    mode="embedded"
+                />
             </div>
         </div>
     );

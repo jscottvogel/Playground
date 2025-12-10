@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import './ScottBot.css';
 import { ChatLogger } from '../../services/Logger';
 import { generateClient } from 'aws-amplify/data';
@@ -7,17 +7,11 @@ import type { Schema } from '../../../amplify/data/resource';
 const client = generateClient<Schema>();
 
 /**
- * ScottBot Component
- * 
- * An intelligent conversational agent backed by AWS Bedrock (Claude 3 Sonnet).
- * 
- * Features:
- * - **Modes**: 
- *   - 'embedded': Centered, always-open view (Default for Guests).
- *   - 'widget': Floating FAB that expands into a chat window (Default for Users).
- * - **Agentic Capabilities**: Calls the backend `askBedrockAgent` query to answer questions.
- * - **History**: Persists chat session locally (state).
+ * Interface for controlling ScottBot externally.
  */
+export interface ScottBotHandle {
+    setInput: (text: string) => void;
+}
 
 interface Message {
     id: string;
@@ -25,7 +19,12 @@ interface Message {
     sender: 'user' | 'bot';
 }
 
-export function ScottBot({ guestEmail, mode = 'widget' }: { guestEmail?: string; mode?: 'widget' | 'embedded' }) {
+interface ScottBotProps {
+    guestEmail?: string;
+    mode?: 'widget' | 'embedded';
+}
+
+export const ScottBot = forwardRef<ScottBotHandle, ScottBotProps>(({ guestEmail, mode = 'widget' }, ref) => {
     // --- State ---
     const [messages, setMessages] = useState<Message[]>([
         {
@@ -40,6 +39,13 @@ export function ScottBot({ guestEmail, mode = 'widget' }: { guestEmail?: string;
     // Ref for auto-scrolling the chat window
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
+    // Expose methods to parent
+    useImperativeHandle(ref, () => ({
+        setInput: (text: string) => {
+            setInputValue(text);
+        }
+    }));
+
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
@@ -49,9 +55,6 @@ export function ScottBot({ guestEmail, mode = 'widget' }: { guestEmail?: string;
         scrollToBottom();
     }, [messages, isTyping]);
 
-    /**
-     * Handles user message submission.
-     */
     /**
      * Handles user message submission.
      */
@@ -91,8 +94,6 @@ export function ScottBot({ guestEmail, mode = 'widget' }: { guestEmail?: string;
             setIsTyping(false);
         }
     };
-
-
 
     const [isOpen, setIsOpen] = useState(mode === 'embedded');
 
@@ -141,4 +142,4 @@ export function ScottBot({ guestEmail, mode = 'widget' }: { guestEmail?: string;
             </form>
         </div>
     );
-}
+});
