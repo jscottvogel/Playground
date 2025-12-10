@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { AuthChat } from './AuthChat';
 
 // Mock ScottBot since we are testing layout
