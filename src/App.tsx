@@ -3,6 +3,7 @@ import { Authenticator } from '@aws-amplify/ui-react';
 import { Hub } from 'aws-amplify/utils';
 import '@aws-amplify/ui-react/styles.css';
 import { GuestGateway } from './features/guest/GuestGateway';
+import { GuestChat } from './features/guest/GuestChat';
 import { ScottBot } from './features/chatbot/ScottBot';
 import { ProjectGallery } from './features/portfolio/ProjectGallery';
 import { AdminDashboard } from './features/admin/AdminDashboard';
@@ -131,6 +132,12 @@ function App() {
     );
   }
 
+  import { GuestChat } from './features/guest/GuestChat';
+
+  // ... imports ...
+
+  // ... inside App component ...
+
   // 3. Guest User View (Chat only)
   if (viewState === 'guest_chat') {
     return (
@@ -139,13 +146,10 @@ function App() {
           viewState="guest_chat"
           setViewState={setViewState}
         />
-        <div className="guest-chat-container">
-          <ScottBot guestEmail={guestEmail} mode="embedded" />
-
-          <div className="guest-chat-footer">
-            <p>Want to see the projects? <a href="#" onClick={(e) => { e.preventDefault(); setViewState('auth'); }} className="link-primary">Sign In</a></p>
-          </div>
-        </div>
+        <GuestChat
+          guestEmail={guestEmail}
+          onSignInRequest={() => setViewState('auth')}
+        />
       </main>
     );
   }
