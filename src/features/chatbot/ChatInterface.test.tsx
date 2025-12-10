@@ -11,7 +11,7 @@ describe('ChatInterface', () => {
     test('renders split screen with instructions and bot', () => {
         render(<ChatInterface userEmail="test@user.com" />);
 
-        expect(screen.getByText('Chat with ScottBot')).toBeInTheDocument();
+        expect(screen.getByRole('heading', { level: 2, name: 'Chat with Scott' })).toBeInTheDocument();
         expect(screen.getByText(/I'm an AI assistant/)).toBeInTheDocument();
         expect(screen.getByTestId('scott-bot')).toBeInTheDocument();
     });

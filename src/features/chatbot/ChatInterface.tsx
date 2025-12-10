@@ -24,51 +24,55 @@ export function ChatInterface({ userEmail, onSignInRequest, className = '' }: Ch
     ];
 
     return (
-        <div className={`chat-interface-layout animate-fade-in ${className}`}>
-            {/* Left Panel: Instructions & Suggestions */}
-            <div className="chat-instructions-panel">
-                <h2>Chat with ScottBot</h2>
-                <p className="instruction-lead">
-                    I'm an AI assistant trained on Scott's professional background.
-                    I can answer questions about his projects, skills, and experience.
-                </p>
+        <section className={`chat-interface-wrapper ${className}`}>
+            <h2 className="chat-main-title">Chat with Scott</h2>
 
-                <div className="suggestions-list">
-                    <h3>Try asking:</h3>
-                    {suggestions.map((text, index) => (
-                        <button
-                            key={index}
-                            className="suggestion-card"
-                            onClick={() => handleSuggestionClick(text)}
-                        >
-                            "{text}"
-                        </button>
-                    ))}
-                </div>
-
-                <div className="footer-note">
-                    <p>
-                        Viewing as <strong>{userEmail || 'Guest'}</strong>
+            <div className="chat-interface-layout animate-fade-in">
+                {/* Left Panel: Instructions & Suggestions */}
+                <div className="chat-instructions-panel">
+                    <p className="instruction-lead">
+                        I'm an AI assistant trained on Scott's professional background.
+                        I can answer questions about his projects, skills, and experience.
                     </p>
-                    {onSignInRequest && (
+
+                    <div className="suggestions-list">
+                        <h3>Try asking:</h3>
+                        {suggestions.map((text, index) => (
+                            <button
+                                key={index}
+                                className="suggestion-card"
+                                onClick={() => handleSuggestionClick(text)}
+                            >
+                                "{text}"
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="footer-note">
                         <p>
-                            Want to see the full gallery? <br />
-                            <a href="#" onClick={(e) => { e.preventDefault(); onSignInRequest(); }} className="link-primary">
-                                Sign In or Sign Up
-                            </a>
+                            Viewing as <strong>{userEmail || 'Guest'}</strong>
                         </p>
-                    )}
+                        {onSignInRequest && (
+                            <p>
+                                Want to see the full gallery? <br />
+                                <a href="#" onClick={(e) => { e.preventDefault(); onSignInRequest(); }} className="link-primary">
+                                    Sign In or Sign Up
+                                </a>
+                            </p>
+                        )}
+                    </div>
+                </div>
+
+                {/* Right Panel: The Bot */}
+                <div className="chat-bot-panel">
+                    <ScottBot
+                        ref={botRef}
+                        guestEmail={userEmail}
+                        mode="embedded"
+                    />
                 </div>
             </div>
-
-            {/* Right Panel: The Bot */}
-            <div className="chat-bot-panel">
-                <ScottBot
-                    ref={botRef}
-                    guestEmail={userEmail}
-                    mode="embedded"
-                />
-            </div>
-        </div>
+        </section>
     );
+
 }
