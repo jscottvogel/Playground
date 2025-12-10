@@ -3,8 +3,7 @@ import { Authenticator } from '@aws-amplify/ui-react';
 import { Hub } from 'aws-amplify/utils';
 import '@aws-amplify/ui-react/styles.css';
 import { GuestGateway } from './features/guest/GuestGateway';
-import { GuestChat } from './features/guest/GuestChat';
-import { AuthChat } from './features/chatbot/AuthChat';
+import { ChatInterface } from './features/chatbot/ChatInterface';
 import { ProjectGallery } from './features/portfolio/ProjectGallery';
 import { AdminDashboard } from './features/admin/AdminDashboard';
 import { Nav } from './components/Nav';
@@ -14,6 +13,21 @@ import { AuthLogger } from './services/Logger';
 /**
  * Main Application Component
  * 
+import { useState, useEffect } from 'react';
+import { Authenticator } from '@aws-amplify/ui-react';
+import { Hub } from 'aws-amplify/utils';
+import '@aws-amplify/ui-react/styles.css';
+import { GuestGateway } from './features/guest/GuestGateway';
+import { ChatInterface } from './features/chatbot/ChatInterface'; // Added this import
+import { ProjectGallery } from './features/portfolio/ProjectGallery';
+import { AdminDashboard } from './features/admin/AdminDashboard';
+import { Nav } from './components/Nav';
+import './App.css';
+import { AuthLogger } from './services/Logger';
+
+/**
+ * Main Application Component
+ *
  * Manages the high-level view state and routing for:
  * - Gateway: Initial "Who are you?" screen (Guests vs Users)
  * - Guest Chat: Limited view for guest users to chat with the bot
@@ -78,15 +92,11 @@ function App() {
     setViewState('gateway');
   };
 
-  // --- Render Views ---
-
   // 1. Authenticated User View (Gallery)
   if (viewState === 'auth') {
     return (
       <Authenticator>
         {({ signOut, user }) => {
-          // Log user presence mainly on mount or change, but inside render it's noisy. 
-          // We'll trust the Hub event logs for auth flow mostly.
           return (
             <main className="main-container">
               <Nav
@@ -98,8 +108,11 @@ function App() {
 
               <div className="auth-layout">
                 <h2 style={{ marginTop: 0, marginBottom: '2rem' }}>Welcome, {user?.signInDetails?.loginId}</h2>
+                <ChatInterface
+                  userEmail={user?.signInDetails?.loginId}
+                  className="embedded-section"
+                />
                 <ProjectGallery />
-                <AuthChat userEmail={user?.signInDetails?.loginId} />
               </div>
             </main>
           )
@@ -121,10 +134,8 @@ function App() {
               signOut={() => handleSignOut(signOut)}
             />
             <div className="auth-layout">
-              {/* Admin Features take full width now */}
               <AdminDashboard />
             </div>
-            {/* Floating Widget removed for Admin */}
           </main>
         )}
       </Authenticator>
@@ -139,15 +150,15 @@ function App() {
           viewState="guest_chat"
           setViewState={setViewState}
         />
-        <GuestChat
-          guestEmail={guestEmail}
+        <ChatInterface
+          userEmail={guestEmail}
           onSignInRequest={() => setViewState('auth')}
         />
       </main>
     );
   }
 
-  // 4. Default Gateway View (Entry Point)
+  // 4. Default Gateway View
   return <GuestGateway onAccessGranted={handleGuestAccess} onLoginRequest={() => setViewState('auth')} />;
 }
 

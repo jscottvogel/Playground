@@ -1,0 +1,74 @@
+import { useRef } from 'react';
+import { ScottBot, type ScottBotHandle } from './ScottBot';
+import './ChatInterface.css';
+
+interface ChatInterfaceProps {
+    userEmail?: string;
+    onSignInRequest?: () => void;
+    className?: string;
+}
+
+export function ChatInterface({ userEmail, onSignInRequest, className = '' }: ChatInterfaceProps) {
+    const botRef = useRef<ScottBotHandle>(null);
+
+    const handleSuggestionClick = (text: string) => {
+        if (botRef.current) {
+            botRef.current.setInput(text);
+        }
+    };
+
+    const suggestions = [
+        "What technologies did you use for the Portfolio project?",
+        "Tell me about your experience with AWS.",
+        "How do I use this application?"
+    ];
+
+    return (
+        <div className={`chat-interface-layout animate-fade-in ${className}`}>
+            {/* Left Panel: Instructions & Suggestions */}
+            <div className="chat-instructions-panel">
+                <h2>Chat with ScottBot</h2>
+                <p className="instruction-lead">
+                    I'm an AI assistant trained on Scott's professional background.
+                    I can answer questions about his projects, skills, and experience.
+                </p>
+
+                <div className="suggestions-list">
+                    <h3>Try asking:</h3>
+                    {suggestions.map((text, index) => (
+                        <button
+                            key={index}
+                            className="suggestion-card"
+                            onClick={() => handleSuggestionClick(text)}
+                        >
+                            "{text}"
+                        </button>
+                    ))}
+                </div>
+
+                <div className="footer-note">
+                    <p>
+                        Viewing as <strong>{userEmail || 'Guest'}</strong>
+                    </p>
+                    {onSignInRequest && (
+                        <p>
+                            Want to see the full gallery? <br />
+                            <a href="#" onClick={(e) => { e.preventDefault(); onSignInRequest(); }} className="link-primary">
+                                Sign In or Sign Up
+                            </a>
+                        </p>
+                    )}
+                </div>
+            </div>
+
+            {/* Right Panel: The Bot */}
+            <div className="chat-bot-panel">
+                <ScottBot
+                    ref={botRef}
+                    guestEmail={userEmail}
+                    mode="embedded"
+                />
+            </div>
+        </div>
+    );
+}
