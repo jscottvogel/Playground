@@ -37,7 +37,7 @@ export const ScottBot = forwardRef<ScottBotHandle, ScottBotProps>(({ guestEmail,
     const [isTyping, setIsTyping] = useState(false);
 
     // Ref for auto-scrolling the chat window
-    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const messagesContainerRef = useRef<HTMLDivElement>(null);
 
     // Expose methods to parent
     useImperativeHandle(ref, () => ({
@@ -47,7 +47,13 @@ export const ScottBot = forwardRef<ScottBotHandle, ScottBotProps>(({ guestEmail,
     }));
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        if (messagesContainerRef.current) {
+            const { scrollHeight, clientHeight } = messagesContainerRef.current;
+            messagesContainerRef.current.scrollTo({
+                top: scrollHeight - clientHeight,
+                behavior: 'smooth'
+            });
+        }
     };
 
     // Scroll whenever messages change
@@ -117,7 +123,7 @@ export const ScottBot = forwardRef<ScottBotHandle, ScottBotProps>(({ guestEmail,
                 )}
             </div>
 
-            <div className="bot-messages">
+            <div className="bot-messages" ref={messagesContainerRef}>
                 {messages.map(msg => (
                     <div
                         key={msg.id}
@@ -127,7 +133,7 @@ export const ScottBot = forwardRef<ScottBotHandle, ScottBotProps>(({ guestEmail,
                     </div>
                 ))}
                 {isTyping && <div className="bot-message-bubble bot-msg-bot">Typing...</div>}
-                <div ref={messagesEndRef} />
+
             </div>
 
             <form className="bot-input-form" onSubmit={handleSendMessage}>
