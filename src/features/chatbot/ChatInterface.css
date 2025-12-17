@@ -75,6 +75,8 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow: hidden;
+    /* Strict boundary */
 }
 
 .chat-bot-panel .bot-container {

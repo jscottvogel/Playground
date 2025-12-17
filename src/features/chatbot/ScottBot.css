@@ -1,11 +1,13 @@
 .bot-container {
-    height: 600px;
+    height: 100%;
+    /* Fill parent's fixed height */
     width: 100%;
     min-width: 300px;
     display: flex;
     flex-direction: column;
     padding: 0;
     overflow: hidden;
+    /* Prevent container expansion */
 }
 
 .bot-header {
@@ -19,7 +21,10 @@
 }
 
 .bot-messages {
-    flex: 1;
+    flex: 1 1 0;
+    /* Allow shrinking below content size */
+    min-height: 0;
+    /* Redundant with flex: 1 1 0 but good safety */
     padding: 1rem;
     overflow-y: auto;
     display: flex;
