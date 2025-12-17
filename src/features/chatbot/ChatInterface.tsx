@@ -18,9 +18,10 @@ export function ChatInterface({ userEmail, onSignInRequest, className = '' }: Ch
     };
 
     const suggestions = [
-        "What technologies did you use for the Portfolio project?",
-        "Tell me about your experience with AWS.",
-        "How do I use this application?"
+        "What is Scott's professional background?",
+        "What are Scott's key technical skills?",
+        "Can you tell me about a challenging project Scott worked on?",
+        "What are Scott's career goals?"
     ];
 
     return (
