@@ -31,3 +31,6 @@ backend.scottBotHandler.resources.lambda.addToRolePolicy(
 
 // Grant Chat Handler access to read from storage (resumes, etc.)
 backend.storage.resources.bucket.grantRead(backend.scottBotHandler.resources.lambda);
+
+// Pass bucket name to env vars so Lambda knows where to look for config
+backend.scottBotHandler.resources.lambda.addEnvironment('STORAGE_BUCKET_NAME', backend.storage.resources.bucket.bucketName);

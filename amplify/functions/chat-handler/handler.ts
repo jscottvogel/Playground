@@ -1,10 +1,12 @@
 import { BedrockRuntimeClient, InvokeModelCommand } from "@aws-sdk/client-bedrock-runtime";
 import { BedrockAgentRuntimeClient, RetrieveCommand } from "@aws-sdk/client-bedrock-agent-runtime";
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import type { Schema } from "../../data/resource";
 
-// Initialize Bedrock Client
+// Initialize Clients
 const bedrock = new BedrockRuntimeClient({ region: process.env.AWS_REGION });
 const bedrockAgent = new BedrockAgentRuntimeClient({ region: process.env.AWS_REGION });
+const s3 = new S3Client({ region: process.env.AWS_REGION });
 
 // --- MOCK DATA FOR TOOLS (In production, fetch from S3 / DynamoDB) ---
 const RESUME_TEXT = `
@@ -55,9 +57,48 @@ const tools = [
     }
 ];
 
+interface BotSettings {
+    preferredName: string;
+    fallbackPhrase: string;
+    restrictions: string;
+    instructions: string;
+}
+
+const DEFAULT_SETTINGS: BotSettings = {
+    preferredName: 'ScottBot',
+    fallbackPhrase: "I'm sorry, I don't have information about that.",
+    restrictions: '',
+    instructions: 'Be professional and helpful.'
+};
+
+async function loadBotConfig(): Promise<BotSettings> {
+    const bucketName = process.env.STORAGE_BUCKET_NAME;
+    if (!bucketName) {
+        console.warn("STORAGE_BUCKET_NAME not set, using defaults.");
+        return DEFAULT_SETTINGS;
+    }
+
+    try {
+        const command = new GetObjectCommand({
+            Bucket: bucketName,
+            Key: 'knowledge-base/bot-settings.json'
+        });
+        const response = await s3.send(command);
+        const str = await response.Body?.transformToString();
+        if (!str) return DEFAULT_SETTINGS;
+        return { ...DEFAULT_SETTINGS, ...JSON.parse(str) };
+    } catch (error) {
+        console.warn("Could not load bot config (using defaults):", error);
+        return DEFAULT_SETTINGS;
+    }
+}
+
 export const handler: any = async (event: any) => {
     const { message } = event.arguments;
     console.log(`[Agent] Received message: ${message}`);
+
+    // Load dynamic config
+    const config = await loadBotConfig();
 
     // 1. Construct Conversation History (Simplified: stateless for now, just current message)
     // In a real app, pass 'history' from frontend or store in DDB.
@@ -65,9 +106,8 @@ export const handler: any = async (event: any) => {
 
     try {
         // 2. Call Bedrock with Tools
-        const response = await callBedrock(messages);
+        const response = await callBedrock(messages, config);
 
-        // 3. Check for Tool Use
         // 3. Check for Tool Use
         if (response.stop_reason === "tool_use") {
             const toolRequests = response.content.filter((c: any) => c.type === "tool_use");
@@ -87,7 +127,7 @@ export const handler: any = async (event: any) => {
             messages.push({ role: "user", content: toolResults });
 
             // 4. Call Bedrock Again with Tool Outputs
-            const finalResponse = await callBedrock(messages);
+            const finalResponse = await callBedrock(messages, config);
             return finalResponse.content[0].text;
         }
 
@@ -99,7 +139,15 @@ export const handler: any = async (event: any) => {
     }
 };
 
-async function callBedrock(messages: any[]) {
+async function callBedrock(messages: any[], config: BotSettings) {
+    const systemPrompt = `
+You are an intelligent portfolio assistant for J. Scott.
+Your name is: ${config.preferredName}.
+Instructions: ${config.instructions}
+Restrictions: ${config.restrictions}
+If you cannot find an answer after checking your tools, or if the question violates restrictions, reply with exactly: "${config.fallbackPhrase}"
+    `.trim();
+
     const command = new InvokeModelCommand({
         modelId: "anthropic.claude-3-sonnet-20240229-v1:0",
         contentType: "application/json",
@@ -107,7 +155,7 @@ async function callBedrock(messages: any[]) {
         body: JSON.stringify({
             anthropic_version: "bedrock-2023-05-31",
             max_tokens: 1000,
-            system: "You are an intelligent portfolio assistant for J. Scott. Use the available tools to answer questions about his resume, goals, and projects exactly. Be professional but friendly.",
+            system: systemPrompt,
             messages: messages,
             tools: tools
         })
@@ -154,9 +202,7 @@ async function executeTool(name: string, input: any) {
 
     if (name === 'list_projects') {
         // In a real lambda, we would use strict DynamoDB Client here.
-        // Since this is an Amplify Function defined in 'backend.ts', we might need to grant access or use fetch.
         // For MVP Demo, we'll return a static list or mocked DB response to prove the agent concept.
-        // To properly access the DDB table from this Lambda, we need env vars passed from stack.
         return [
             { title: "Portfolio Site", skills: ["React", "AWS Amplify", "AI"] },
             { title: "E-Commerce App", skills: ["Vue", "Node", "Stripe"] }

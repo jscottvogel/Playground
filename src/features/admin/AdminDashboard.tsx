@@ -4,6 +4,7 @@ import type { Schema } from '../../../amplify/data/resource';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import './AdminDashboard.css';
 import { AdminLogger } from '../../services/Logger';
+import { BotConfig } from './BotConfig';
 
 
 /**
@@ -323,6 +324,10 @@ export function AdminDashboard() {
                             )}
                         </div>
                     </form>
+                </div>
+                {/* Bot Configuration Section */}
+                <div style={{ marginTop: '2rem' }}>
+                    <BotConfig />
                 </div>
             </div>
         </div>
