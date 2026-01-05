@@ -68,7 +68,7 @@ const DEFAULT_SETTINGS: BotSettings = {
     preferredName: 'ScottBot',
     fallbackPhrase: "I'm sorry, I don't have information about that.",
     restrictions: '',
-    instructions: 'Be professional and helpful.'
+    instructions: 'Be professional, helpful, and concise.'
 };
 
 async function loadBotConfig(): Promise<BotSettings> {
@@ -141,7 +141,7 @@ export const handler: any = async (event: any) => {
 
 async function callBedrock(messages: any[], config: BotSettings) {
     const systemPrompt = `
-You are an intelligent portfolio assistant for J. Scott.
+You are an intelligent portfolio assistant for Scott.
 Your name is: ${config.preferredName}.
 Instructions: ${config.instructions}
 Restrictions: ${config.restrictions}
