@@ -24,6 +24,7 @@ backend.scottBotHandler.resources.lambda.addToRolePolicy(
         actions: ['bedrock:InvokeModel', 'bedrock:Retrieve'],
         resources: [
             `arn:aws:bedrock:*::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0`,
+            `arn:aws:bedrock:*::foundation-model/amazon.titan-embed-text-v1`,
             `arn:aws:bedrock:*:*:knowledge-base/*`
         ]
     })

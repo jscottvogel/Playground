@@ -1,14 +1,14 @@
 import { BedrockRuntimeClient, InvokeModelCommand } from "@aws-sdk/client-bedrock-runtime";
-import { BedrockAgentRuntimeClient, RetrieveCommand } from "@aws-sdk/client-bedrock-agent-runtime";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
-import type { Schema } from "../../data/resource";
 
 // Initialize Clients
 const bedrock = new BedrockRuntimeClient({ region: process.env.AWS_REGION });
-const bedrockAgent = new BedrockAgentRuntimeClient({ region: process.env.AWS_REGION });
 const s3 = new S3Client({ region: process.env.AWS_REGION });
 
-// --- MOCK DATA FOR TOOLS (In production, fetch from S3 / DynamoDB) ---
+// Global Cache for Knowledge Base
+let cachedKnowledgeBase: { text: string; embedding: number[]; source: string }[] | null = null;
+
+// --- MOCK DATA FOR TOOLS (Fallback) ---
 const RESUME_TEXT = `
 EXPERIENCE:
 - Sr. Full Stack Engineer at TechCorp (2020-Present): Led React migration.
@@ -93,6 +93,57 @@ async function loadBotConfig(): Promise<BotSettings> {
     }
 }
 
+// --- VECTOR SEARCH UTILS ---
+
+async function getEmbedding(text: string): Promise<number[]> {
+    const command = new InvokeModelCommand({
+        modelId: "amazon.titan-embed-text-v1",
+        contentType: "application/json",
+        accept: "application/json",
+        body: JSON.stringify({ inputText: text })
+    });
+    const response = await bedrock.send(command);
+    const body = JSON.parse(new TextDecoder().decode(response.body));
+    return body.embedding;
+}
+
+function cosineSimilarity(vecA: number[], vecB: number[]): number {
+    const dotProduct = vecA.reduce((sum, a, i) => sum + a * vecB[i], 0);
+    const magA = Math.sqrt(vecA.reduce((sum, a) => sum + a * a, 0));
+    const magB = Math.sqrt(vecB.reduce((sum, b) => sum + b * b, 0));
+    return dotProduct / (magA * magB);
+}
+
+async function loadKnowledgeBase() {
+    if (cachedKnowledgeBase) return cachedKnowledgeBase;
+
+    const bucketName = process.env.STORAGE_BUCKET_NAME;
+    if (!bucketName) {
+        console.warn("STORAGE_BUCKET_NAME not set, cannot load knowledge base.");
+        return null;
+    }
+
+    try {
+        const command = new GetObjectCommand({
+            Bucket: bucketName,
+            Key: 'knowledge-base/embeddings.json'
+        });
+        const response = await s3.send(command);
+        const str = await response.Body?.transformToString();
+        if (!str) return null;
+        cachedKnowledgeBase = JSON.parse(str);
+        if (cachedKnowledgeBase) {
+            console.log(`[KnowledgeBase] Loaded ${cachedKnowledgeBase.length} chunks.`);
+        }
+        return cachedKnowledgeBase;
+    } catch (error) {
+        console.warn("[KnowledgeBase] Could not load embeddings.json:", error);
+        return null;
+    }
+}
+
+// --- HANDLER ---
+
 export const handler: any = async (event: any) => {
     const { message } = event.arguments;
     console.log(`[Agent] Received message: ${message}`);
@@ -171,28 +222,35 @@ async function executeTool(name: string, input: any) {
 
     if (name === 'search_knowledge') {
         try {
-            const kbId = process.env.KNOWLEDGE_BASE_ID;
-            if (!kbId) {
-                console.warn("KNOWLEDGE_BASE_ID not set, falling back to mock data.");
+            // New S3-based Vector Search Implementation
+            const kb = await loadKnowledgeBase();
+
+            if (!kb || kb.length === 0) {
+                console.warn("Knowledge Base empty or missing, falling back to mock.");
                 return RESUME_TEXT;
             }
 
-            const command = new RetrieveCommand({
-                knowledgeBaseId: kbId,
-                retrievalQuery: { text: input.query },
-                retrievalConfiguration: {
-                    vectorSearchConfiguration: { numberOfResults: 3 }
-                }
-            });
+            console.log("Generating embedding for query...");
+            const queryEmbedding = await getEmbedding(input.query);
 
-            const response = await bedrockAgent.send(command);
-            const validResults = response.retrievalResults?.filter(r => r.content?.text).map(r => r.content!.text).join('\n\n') || "No relevant info found in KB.";
+            console.log("Calculating similarity...");
+            const scoredDocs = kb.map(doc => ({
+                ...doc,
+                score: cosineSimilarity(queryEmbedding, doc.embedding)
+            }));
 
-            return validResults;
+            // Sort by score descending
+            scoredDocs.sort((a, b) => b.score - a.score);
+
+            // Take top 3
+            const topDocs = scoredDocs.slice(0, 3);
+            const resultText = topDocs.map(d => d.text).join('\n\n');
+
+            return resultText || "No relevant info found.";
 
         } catch (error) {
-            console.error("Error querying Knowledge Base:", error);
-            return `Error retrieving information from Knowledge Base: ${(error as Error).message}`;
+            console.error("Error searching Knowledge Base:", error);
+            return `Error searching Knowledge Base: ${(error as Error).message}`;
         }
     }
 
