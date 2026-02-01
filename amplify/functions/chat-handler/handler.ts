@@ -9,20 +9,9 @@ const s3 = new S3Client({ region: process.env.AWS_REGION });
 let cachedKnowledgeBase: { text: string; embedding: number[]; source: string }[] | null = null;
 
 // --- MOCK DATA FOR TOOLS (Fallback) ---
-const RESUME_TEXT = `
-EXPERIENCE:
-- Sr. Full Stack Engineer at TechCorp (2020-Present): Led React migration.
-- Web Developer at StartUp Inc (2018-2020): Built key features using Vue.js.
 
-SKILLS: React, TypeScript, AWS, Node.js, Python.
-EDUCATION: BS Computer Science, University of Code.
-`;
 
-const ABOUT_ME_DATA = `
-OBJECTIVE: To leverage agentic AI and cloud architecture to build scalable, intelligent systems.
-GOALS: Master Bedrock, Contribute to Open Source, Build a fully autonomous coding agent.
-FUN FACTS: I love hiking, I brew my own coffee, and I once met Linus Torvalds.
-`;
+
 
 // --- TOOL DEFINITIONS ---
 const tools = [
@@ -36,24 +25,8 @@ const tools = [
             },
             required: ["query"]
         }
-    },
-    {
-        name: "aboutme_query",
-        description: "Get general facts, personal and professional goals, and the objective statement of the candidate.",
-        input_schema: {
-            type: "object",
-            properties: {},
-        }
-    },
-    {
-        name: "list_projects",
-        description: "List portfolio projects from the database. Can filter by skills or status.",
-        input_schema: {
-            type: "object",
-            properties: {
-                skill: { type: "string", description: "Filter projects by a specific skill (e.g. 'React')." }
-            }
-        }
+
+
     }
 ];
 
@@ -194,7 +167,7 @@ async function callBedrock(messages: any[], config: BotSettings) {
     const systemPrompt = `
 You are a strict and intelligent portfolio assistant for Scott.
 Your name is: ${config.preferredName}.
-Your knowledge is strictly limited to the information provided by your tools (search_knowledge, list_projects, etc.).
+Your knowledge is strictly limited to the information provided by your tools (search_knowledge).
 Instructions: ${config.instructions}
 Restrictions: ${config.restrictions}
 CRITICAL RULES:
@@ -231,8 +204,8 @@ async function executeTool(name: string, input: any) {
             const kb = await loadKnowledgeBase();
 
             if (!kb || kb.length === 0) {
-                console.warn("Knowledge Base empty or missing, falling back to mock.");
-                return RESUME_TEXT;
+                console.warn("Knowledge Base empty or missing.");
+                return "No information found in the knowledge base. Please ensure documents have been uploaded.";
             }
 
             console.log("Generating embedding for query...");
@@ -259,18 +232,8 @@ async function executeTool(name: string, input: any) {
         }
     }
 
-    if (name === 'aboutme_query') {
-        return ABOUT_ME_DATA;
-    }
 
-    if (name === 'list_projects') {
-        // In a real lambda, we would use strict DynamoDB Client here.
-        // For MVP Demo, we'll return a static list or mocked DB response to prove the agent concept.
-        return [
-            { title: "Portfolio Site", skills: ["React", "AWS Amplify", "AI"] },
-            { title: "E-Commerce App", skills: ["Vue", "Node", "Stripe"] }
-        ];
-    }
+
 
     return "Tool not found.";
 }
