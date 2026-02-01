@@ -106,11 +106,11 @@ async function loadKnowledgeBase() {
         if (!str) return null;
         cachedKnowledgeBase = JSON.parse(str);
         if (cachedKnowledgeBase) {
-            console.log(`[KnowledgeBase] Loaded ${cachedKnowledgeBase.length} chunks.`);
+            console.log(`[KnowledgeBase] Successfully loaded ${cachedKnowledgeBase.length} embeddings from S3.`);
         }
         return cachedKnowledgeBase;
     } catch (error) {
-        console.warn("[KnowledgeBase] Could not load embeddings.json:", error);
+        console.error("[KnowledgeBase] FATAL ERROR loading embeddings.json:", error);
         return null;
     }
 }
@@ -204,14 +204,13 @@ async function executeTool(name: string, input: any) {
             const kb = await loadKnowledgeBase();
 
             if (!kb || kb.length === 0) {
-                console.warn("Knowledge Base empty or missing.");
+                console.warn("[Search] Knowledge Base is empty or null.");
                 return "No information found in the knowledge base. Please ensure documents have been uploaded.";
             }
 
-            console.log("Generating embedding for query...");
+            console.log(`[Search] Query: "${input.query}"`);
             const queryEmbedding = await getEmbedding(input.query);
 
-            console.log("Calculating similarity...");
             const scoredDocs = kb.map(doc => ({
                 ...doc,
                 score: cosineSimilarity(queryEmbedding, doc.embedding)
@@ -220,8 +219,12 @@ async function executeTool(name: string, input: any) {
             // Sort by score descending
             scoredDocs.sort((a, b) => b.score - a.score);
 
-            // Take top 3
             const topDocs = scoredDocs.slice(0, 3);
+
+            console.log("[Search] Top Results:");
+            topDocs.forEach((d, i) => {
+                console.log(`  ${i + 1}. [Score: ${d.score.toFixed(4)}] ${d.source}: ${d.text.substring(0, 50)}...`);
+            });
             const resultText = topDocs.map(d => d.text).join('\n\n');
 
             return resultText || "No relevant info found.";

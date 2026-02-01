@@ -21,7 +21,7 @@ export function ChatInterface({ userEmail, onSignInRequest, className = '' }: Ch
         "What is Scott's professional background?",
         "What are Scott's key technical skills?",
         "Can you tell me about a challenging project Scott worked on?",
-        "What are Scott's career goals?"
+        "What are Scott's hobbies outside of work?"
     ];
 
     return (
