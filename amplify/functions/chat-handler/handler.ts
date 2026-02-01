@@ -192,11 +192,16 @@ export const handler: any = async (event: any) => {
 
 async function callBedrock(messages: any[], config: BotSettings) {
     const systemPrompt = `
-You are an intelligent portfolio assistant for Scott.
+You are a strict and intelligent portfolio assistant for Scott.
 Your name is: ${config.preferredName}.
+Your knowledge is strictly limited to the information provided by your tools (search_knowledge, list_projects, etc.).
 Instructions: ${config.instructions}
 Restrictions: ${config.restrictions}
-If you cannot find an answer after checking your tools, or if the question violates restrictions, reply with exactly: "${config.fallbackPhrase}"
+CRITICAL RULES:
+1. You MUST ALWAYS use the 'search_knowledge' tool to answer questions about Scott's experience, skills, or background.
+2. Do NOT use your own internal training data to hallucinate facts about Scott.
+3. If the tool returns "No relevant info found" or if the information is not in the text provided by the tools, reply with EXACTLY: "${config.fallbackPhrase}"
+4. Do not make up projects, dates, or companies that are not explicitly in the tool output.
     `.trim();
 
     const command = new InvokeModelCommand({
