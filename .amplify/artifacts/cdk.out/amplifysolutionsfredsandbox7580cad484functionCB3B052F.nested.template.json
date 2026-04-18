@@ -114,7 +114,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "f533884ea862570c2a7930f0e5fb12cc7f7253c68acec4bf034f94c4c4bb89ba.zip"
+     "S3Key": "c05278771f88853e0bc3140c856eb601f33a4b93170fbb42fc544998039fbeba.zip"
     },
     "Environment": {
      "Variables": {
@@ -161,7 +161,7 @@
    "DeletionPolicy": "Delete",
    "Metadata": {
     "aws:cdk:path": "amplify-solutions-fred-sandbox-7580cad484/function/handler-lambda/Resource",
-    "aws:asset:path": "asset.f533884ea862570c2a7930f0e5fb12cc7f7253c68acec4bf034f94c4c4bb89ba",
+    "aws:asset:path": "asset.c05278771f88853e0bc3140c856eb601f33a4b93170fbb42fc544998039fbeba",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
    }
