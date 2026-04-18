@@ -1,0 +1,24 @@
+type Project @model @auth(rules: [{allow: public, provider: apiKey, operations: [read]},
+  {allow: groups, operations: [create, update, delete], groups: ["Admins"]},
+  {allow: owner, ownerField: "owner"}])
+{
+  title: String
+  description: String
+  imageUrl: String
+  demoUrl: String
+  gitUrl: String
+  skills: [String]
+  isActive: Boolean @default(value: "true")
+}
+
+type GuestVisit @model @auth(rules: [{allow: public, provider: apiKey, operations: [create]},
+  {allow: owner, ownerField: "owner"}])
+{
+  email: String!
+  visitedAt: AWSDateTime
+}
+
+type Query {
+  askBedrockAgent(message: String!): String @function(name: "FnAskBedrockAgent") @auth(rules: [{allow: private},
+  {allow: public, provider: apiKey}])
+}
