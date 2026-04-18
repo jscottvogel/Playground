@@ -118,7 +118,7 @@
     },
     "Environment": {
      "Variables": {
-      "FORCE_REDEPLOY": "true",
+      "FORCE_REDEPLOY": "true2",
       "AMPLIFY_SSM_ENV_CONFIG": "{}",
       "STORAGE_BUCKET_NAME": {
        "Ref": "referencetoamplifysolutionsfredsandbox7580cad484storageNestedStackstorageNestedStackResourceD76BC6FAOutputsamplifysolutionsfredsandbox7580cad484storagedriveBucketDAC051FCRef"

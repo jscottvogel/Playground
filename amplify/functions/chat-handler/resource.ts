@@ -5,6 +5,6 @@ export const scottBotHandler = defineFunction({
     timeoutSeconds: 60, // Give Bedrock time to think
     environment: {
         // Add any necessary env vars here
-        FORCE_REDEPLOY: "true",
+        FORCE_REDEPLOY: "true2",
     },
 });
