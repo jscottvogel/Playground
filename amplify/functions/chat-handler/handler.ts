@@ -119,7 +119,7 @@ async function loadKnowledgeBase() {
 
 export const handler: any = async (event: any) => {
     const { message } = event.arguments;
-    console.log(`[Agent] Received message: ${message}`);
+    console.log(`[Agent] Received message: ${message} (v2)`);
 
     // Load dynamic config
     const config = await loadBotConfig();
