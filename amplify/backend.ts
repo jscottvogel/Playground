@@ -24,7 +24,7 @@ backend.scottBotHandler.resources.lambda.addToRolePolicy(
         actions: ['bedrock:InvokeModel'],
         resources: [
             `arn:aws:bedrock:*::foundation-model/*`,
-            `arn:aws:bedrock:*::inference-profile/*`
+            `arn:aws:bedrock:*:*:inference-profile/*`
         ]
     })
 );
