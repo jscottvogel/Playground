@@ -1,28 +1,17 @@
 import { BedrockRuntimeClient, InvokeModelCommand } from "@aws-sdk/client-bedrock-runtime";
-import { BedrockAgentRuntimeClient, RetrieveCommand } from "@aws-sdk/client-bedrock-agent-runtime";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
-import type { Schema } from "../../data/resource";
 
 // Initialize Clients
 const bedrock = new BedrockRuntimeClient({ region: process.env.AWS_REGION });
-const bedrockAgent = new BedrockAgentRuntimeClient({ region: process.env.AWS_REGION });
 const s3 = new S3Client({ region: process.env.AWS_REGION });
 
-// --- MOCK DATA FOR TOOLS (In production, fetch from S3 / DynamoDB) ---
-const RESUME_TEXT = `
-EXPERIENCE:
-- Sr. Full Stack Engineer at TechCorp (2020-Present): Led React migration.
-- Web Developer at StartUp Inc (2018-2020): Built key features using Vue.js.
+// Global Cache for Knowledge Base
+let cachedKnowledgeBase: { text: string; embedding: number[]; source: string }[] | null = null;
 
-SKILLS: React, TypeScript, AWS, Node.js, Python.
-EDUCATION: BS Computer Science, University of Code.
-`;
+// --- MOCK DATA FOR TOOLS (Fallback) ---
 
-const ABOUT_ME_DATA = `
-OBJECTIVE: To leverage agentic AI and cloud architecture to build scalable, intelligent systems.
-GOALS: Master Bedrock, Contribute to Open Source, Build a fully autonomous coding agent.
-FUN FACTS: I love hiking, I brew my own coffee, and I once met Linus Torvalds.
-`;
+
+
 
 // --- TOOL DEFINITIONS ---
 const tools = [
@@ -36,24 +25,8 @@ const tools = [
             },
             required: ["query"]
         }
-    },
-    {
-        name: "aboutme_query",
-        description: "Get general facts, personal and professional goals, and the objective statement of the candidate.",
-        input_schema: {
-            type: "object",
-            properties: {},
-        }
-    },
-    {
-        name: "list_projects",
-        description: "List portfolio projects from the database. Can filter by skills or status.",
-        input_schema: {
-            type: "object",
-            properties: {
-                skill: { type: "string", description: "Filter projects by a specific skill (e.g. 'React')." }
-            }
-        }
+
+
     }
 ];
 
@@ -68,7 +41,7 @@ const DEFAULT_SETTINGS: BotSettings = {
     preferredName: 'ScottBot',
     fallbackPhrase: "I'm sorry, I don't have information about that.",
     restrictions: '',
-    instructions: 'Be professional and helpful.'
+    instructions: 'Be professional, helpful, and concise.'
 };
 
 async function loadBotConfig(): Promise<BotSettings> {
@@ -93,9 +66,60 @@ async function loadBotConfig(): Promise<BotSettings> {
     }
 }
 
+// --- VECTOR SEARCH UTILS ---
+
+async function getEmbedding(text: string): Promise<number[]> {
+    const command = new InvokeModelCommand({
+        modelId: "amazon.titan-embed-text-v1",
+        contentType: "application/json",
+        accept: "application/json",
+        body: JSON.stringify({ inputText: text })
+    });
+    const response = await bedrock.send(command);
+    const body = JSON.parse(new TextDecoder().decode(response.body));
+    return body.embedding;
+}
+
+function cosineSimilarity(vecA: number[], vecB: number[]): number {
+    const dotProduct = vecA.reduce((sum, a, i) => sum + a * vecB[i], 0);
+    const magA = Math.sqrt(vecA.reduce((sum, a) => sum + a * a, 0));
+    const magB = Math.sqrt(vecB.reduce((sum, b) => sum + b * b, 0));
+    return dotProduct / (magA * magB);
+}
+
+async function loadKnowledgeBase() {
+    if (cachedKnowledgeBase) return cachedKnowledgeBase;
+
+    const bucketName = process.env.STORAGE_BUCKET_NAME;
+    if (!bucketName) {
+        console.warn("STORAGE_BUCKET_NAME not set, cannot load knowledge base.");
+        return null;
+    }
+
+    try {
+        const command = new GetObjectCommand({
+            Bucket: bucketName,
+            Key: 'knowledge-base/embeddings.json'
+        });
+        const response = await s3.send(command);
+        const str = await response.Body?.transformToString();
+        if (!str) return null;
+        cachedKnowledgeBase = JSON.parse(str);
+        if (cachedKnowledgeBase) {
+            console.log(`[KnowledgeBase] Successfully loaded ${cachedKnowledgeBase.length} embeddings from S3.`);
+        }
+        return cachedKnowledgeBase;
+    } catch (error) {
+        console.error("[KnowledgeBase] FATAL ERROR loading embeddings.json:", error);
+        return null;
+    }
+}
+
+// --- HANDLER ---
+
 export const handler: any = async (event: any) => {
     const { message } = event.arguments;
-    console.log(`[Agent] Received message: ${message}`);
+    console.log(`[Agent] Received message: ${message} (v2)`);
 
     // Load dynamic config
     const config = await loadBotConfig();
@@ -141,15 +165,20 @@ export const handler: any = async (event: any) => {
 
 async function callBedrock(messages: any[], config: BotSettings) {
     const systemPrompt = `
-You are an intelligent portfolio assistant for J. Scott.
+You are a strict and intelligent portfolio assistant for Scott.
 Your name is: ${config.preferredName}.
+Your knowledge is strictly limited to the information provided by your tools (search_knowledge).
 Instructions: ${config.instructions}
 Restrictions: ${config.restrictions}
-If you cannot find an answer after checking your tools, or if the question violates restrictions, reply with exactly: "${config.fallbackPhrase}"
+CRITICAL RULES:
+1. You MUST ALWAYS use the 'search_knowledge' tool to answer questions about Scott's experience, skills, or background.
+2. Do NOT use your own internal training data to hallucinate facts about Scott.
+3. If the tool returns "No relevant info found" or if the information is not in the text provided by the tools, reply with EXACTLY: "${config.fallbackPhrase}"
+4. Do not make up projects, dates, or companies that are not explicitly in the tool output.
     `.trim();
 
     const command = new InvokeModelCommand({
-        modelId: "anthropic.claude-3-sonnet-20240229-v1:0",
+        modelId: "us.anthropic.claude-sonnet-4-20250514-v1:0",
         contentType: "application/json",
         accept: "application/json",
         body: JSON.stringify({
@@ -171,43 +200,43 @@ async function executeTool(name: string, input: any) {
 
     if (name === 'search_knowledge') {
         try {
-            const kbId = process.env.KNOWLEDGE_BASE_ID;
-            if (!kbId) {
-                console.warn("KNOWLEDGE_BASE_ID not set, falling back to mock data.");
-                return RESUME_TEXT;
+            // New S3-based Vector Search Implementation
+            const kb = await loadKnowledgeBase();
+
+            if (!kb || kb.length === 0) {
+                console.warn("[Search] Knowledge Base is empty or null.");
+                return "No information found in the knowledge base. Please ensure documents have been uploaded.";
             }
 
-            const command = new RetrieveCommand({
-                knowledgeBaseId: kbId,
-                retrievalQuery: { text: input.query },
-                retrievalConfiguration: {
-                    vectorSearchConfiguration: { numberOfResults: 3 }
-                }
+            console.log(`[Search] Query: "${input.query}"`);
+            const queryEmbedding = await getEmbedding(input.query);
+
+            const scoredDocs = kb.map(doc => ({
+                ...doc,
+                score: cosineSimilarity(queryEmbedding, doc.embedding)
+            }));
+
+            // Sort by score descending
+            scoredDocs.sort((a, b) => b.score - a.score);
+
+            const topDocs = scoredDocs.slice(0, 3);
+
+            console.log("[Search] Top Results:");
+            topDocs.forEach((d, i) => {
+                console.log(`  ${i + 1}. [Score: ${d.score.toFixed(4)}] ${d.source}: ${d.text.substring(0, 50)}...`);
             });
+            const resultText = topDocs.map(d => d.text).join('\n\n');
 
-            const response = await bedrockAgent.send(command);
-            const validResults = response.retrievalResults?.filter(r => r.content?.text).map(r => r.content!.text).join('\n\n') || "No relevant info found in KB.";
-
-            return validResults;
+            return resultText || "No relevant info found.";
 
         } catch (error) {
-            console.error("Error querying Knowledge Base:", error);
-            return `Error retrieving information from Knowledge Base: ${(error as Error).message}`;
+            console.error("Error searching Knowledge Base:", error);
+            return `Error searching Knowledge Base: ${(error as Error).message}`;
         }
     }
 
-    if (name === 'aboutme_query') {
-        return ABOUT_ME_DATA;
-    }
 
-    if (name === 'list_projects') {
-        // In a real lambda, we would use strict DynamoDB Client here.
-        // For MVP Demo, we'll return a static list or mocked DB response to prove the agent concept.
-        return [
-            { title: "Portfolio Site", skills: ["React", "AWS Amplify", "AI"] },
-            { title: "E-Commerce App", skills: ["Vue", "Node", "Stripe"] }
-        ];
-    }
+
 
     return "Tool not found.";
 }

@@ -1,0 +1,338 @@
+type Project @aws_iam @aws_cognito_user_pools @aws_api_key {
+  title: String
+  description: String
+  imageUrl: String
+  demoUrl: String
+  gitUrl: String
+  skills: [String]
+  isActive: Boolean
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  owner: String
+}
+
+type GuestVisit @aws_iam @aws_cognito_user_pools @aws_api_key {
+  email: String!
+  visitedAt: AWSDateTime
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  owner: String
+}
+
+type Query @aws_iam {
+  getProject(id: ID!): Project @aws_api_key @aws_iam @aws_cognito_user_pools
+  listProjects(filter: ModelProjectFilterInput, limit: Int, nextToken: String): ModelProjectConnection @aws_api_key @aws_iam @aws_cognito_user_pools
+  getGuestVisit(id: ID!): GuestVisit @aws_iam @aws_cognito_user_pools
+  listGuestVisits(filter: ModelGuestVisitFilterInput, limit: Int, nextToken: String): ModelGuestVisitConnection @aws_iam @aws_cognito_user_pools
+  askBedrockAgent(message: String!): String @aws_iam @aws_cognito_user_pools @aws_api_key
+}
+
+input AmplifyAIConversationTurnErrorInput {
+  errorType: String!
+  message: String!
+}
+
+input ModelStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelBooleanInput {
+  ne: Boolean
+  eq: Boolean
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelSubscriptionStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  in: [String]
+  notIn: [String]
+}
+
+input ModelSubscriptionIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  in: [Int]
+  notIn: [Int]
+}
+
+input ModelSubscriptionFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  in: [Float]
+  notIn: [Float]
+}
+
+input ModelSubscriptionBooleanInput {
+  ne: Boolean
+  eq: Boolean
+}
+
+input ModelSubscriptionIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  in: [ID]
+  notIn: [ID]
+}
+
+enum ModelAttributeTypes {
+  binary
+  binarySet
+  bool
+  list
+  map
+  number
+  numberSet
+  string
+  stringSet
+  _null
+}
+
+input ModelSizeInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+type ModelProjectConnection @aws_api_key @aws_iam @aws_cognito_user_pools {
+  items: [Project]!
+  nextToken: String
+}
+
+input ModelProjectFilterInput {
+  title: ModelStringInput
+  description: ModelStringInput
+  imageUrl: ModelStringInput
+  demoUrl: ModelStringInput
+  gitUrl: ModelStringInput
+  skills: ModelStringInput
+  isActive: ModelBooleanInput
+  id: ModelIDInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  and: [ModelProjectFilterInput]
+  or: [ModelProjectFilterInput]
+  not: ModelProjectFilterInput
+  owner: ModelStringInput
+}
+
+input ModelProjectConditionInput {
+  title: ModelStringInput
+  description: ModelStringInput
+  imageUrl: ModelStringInput
+  demoUrl: ModelStringInput
+  gitUrl: ModelStringInput
+  skills: ModelStringInput
+  isActive: ModelBooleanInput
+  and: [ModelProjectConditionInput]
+  or: [ModelProjectConditionInput]
+  not: ModelProjectConditionInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  owner: ModelStringInput
+}
+
+input CreateProjectInput {
+  title: String
+  description: String
+  imageUrl: String
+  demoUrl: String
+  gitUrl: String
+  skills: [String]
+  isActive: Boolean
+  id: ID
+}
+
+input UpdateProjectInput {
+  title: String
+  description: String
+  imageUrl: String
+  demoUrl: String
+  gitUrl: String
+  skills: [String]
+  isActive: Boolean
+  id: ID!
+}
+
+input DeleteProjectInput {
+  id: ID!
+}
+
+type Mutation {
+  createProject(input: CreateProjectInput!, condition: ModelProjectConditionInput): Project @aws_iam @aws_cognito_user_pools
+  updateProject(input: UpdateProjectInput!, condition: ModelProjectConditionInput): Project @aws_iam @aws_cognito_user_pools
+  deleteProject(input: DeleteProjectInput!, condition: ModelProjectConditionInput): Project @aws_iam @aws_cognito_user_pools
+  createGuestVisit(input: CreateGuestVisitInput!, condition: ModelGuestVisitConditionInput): GuestVisit @aws_api_key @aws_iam @aws_cognito_user_pools
+  updateGuestVisit(input: UpdateGuestVisitInput!, condition: ModelGuestVisitConditionInput): GuestVisit @aws_iam @aws_cognito_user_pools
+  deleteGuestVisit(input: DeleteGuestVisitInput!, condition: ModelGuestVisitConditionInput): GuestVisit @aws_iam @aws_cognito_user_pools
+}
+
+input ModelSubscriptionProjectFilterInput {
+  title: ModelSubscriptionStringInput
+  description: ModelSubscriptionStringInput
+  imageUrl: ModelSubscriptionStringInput
+  demoUrl: ModelSubscriptionStringInput
+  gitUrl: ModelSubscriptionStringInput
+  skills: ModelSubscriptionStringInput
+  isActive: ModelSubscriptionBooleanInput
+  id: ModelSubscriptionIDInput
+  createdAt: ModelSubscriptionStringInput
+  updatedAt: ModelSubscriptionStringInput
+  and: [ModelSubscriptionProjectFilterInput]
+  or: [ModelSubscriptionProjectFilterInput]
+  owner: ModelStringInput
+}
+
+type Subscription {
+  onCreateProject(filter: ModelSubscriptionProjectFilterInput, owner: String): Project @aws_subscribe(mutations: ["createProject"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onUpdateProject(filter: ModelSubscriptionProjectFilterInput, owner: String): Project @aws_subscribe(mutations: ["updateProject"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onDeleteProject(filter: ModelSubscriptionProjectFilterInput, owner: String): Project @aws_subscribe(mutations: ["deleteProject"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onCreateGuestVisit(filter: ModelSubscriptionGuestVisitFilterInput, owner: String): GuestVisit @aws_subscribe(mutations: ["createGuestVisit"]) @aws_iam @aws_cognito_user_pools
+  onUpdateGuestVisit(filter: ModelSubscriptionGuestVisitFilterInput, owner: String): GuestVisit @aws_subscribe(mutations: ["updateGuestVisit"]) @aws_iam @aws_cognito_user_pools
+  onDeleteGuestVisit(filter: ModelSubscriptionGuestVisitFilterInput, owner: String): GuestVisit @aws_subscribe(mutations: ["deleteGuestVisit"]) @aws_iam @aws_cognito_user_pools
+}
+
+type ModelGuestVisitConnection @aws_iam @aws_cognito_user_pools {
+  items: [GuestVisit]!
+  nextToken: String
+}
+
+input ModelGuestVisitFilterInput {
+  email: ModelStringInput
+  visitedAt: ModelStringInput
+  id: ModelIDInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  and: [ModelGuestVisitFilterInput]
+  or: [ModelGuestVisitFilterInput]
+  not: ModelGuestVisitFilterInput
+  owner: ModelStringInput
+}
+
+input ModelGuestVisitConditionInput {
+  email: ModelStringInput
+  visitedAt: ModelStringInput
+  and: [ModelGuestVisitConditionInput]
+  or: [ModelGuestVisitConditionInput]
+  not: ModelGuestVisitConditionInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  owner: ModelStringInput
+}
+
+input CreateGuestVisitInput {
+  email: String!
+  visitedAt: AWSDateTime
+  id: ID
+}
+
+input UpdateGuestVisitInput {
+  email: String
+  visitedAt: AWSDateTime
+  id: ID!
+}
+
+input DeleteGuestVisitInput {
+  id: ID!
+}
+
+input ModelSubscriptionGuestVisitFilterInput {
+  email: ModelSubscriptionStringInput
+  visitedAt: ModelSubscriptionStringInput
+  id: ModelSubscriptionIDInput
+  createdAt: ModelSubscriptionStringInput
+  updatedAt: ModelSubscriptionStringInput
+  and: [ModelSubscriptionGuestVisitFilterInput]
+  or: [ModelSubscriptionGuestVisitFilterInput]
+  owner: ModelStringInput
+}
