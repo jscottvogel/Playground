@@ -82,6 +82,7 @@ export function GuestGateway({ onAccessGranted, onLoginRequest }: GuestGatewayPr
                         Sign In / Sign Up
                     </button>
                 </div>
+            </div>
         </div>
     );
 }
