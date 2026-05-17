@@ -142,7 +142,7 @@ function App() {
     );
   }
 
-  // 3. Guest User View (Chat only)
+  // 3. Guest User View (Chat and Gallery)
   if (viewState === 'guest_chat') {
     return (
       <main className="main-container">
@@ -150,10 +150,13 @@ function App() {
           viewState="guest_chat"
           setViewState={setViewState}
         />
-        <ChatInterface
-          userEmail={guestEmail}
-          onSignInRequest={() => setViewState('auth')}
-        />
+        <div className="auth-layout">
+          <ChatInterface
+            userEmail={guestEmail}
+            className="embedded-section"
+          />
+          <ProjectGallery />
+        </div>
       </main>
     );
   }

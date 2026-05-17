@@ -22,22 +22,11 @@ describe('ChatInterface', () => {
         expect(screen.getByText(/"What technologies did you use for the Portfolio project\?"/)).toBeInTheDocument();
     });
 
-    test('shows sign in link only when onSignInRequest is provided', async () => {
-        const onSignIn = jest.fn();
-        const user = userEvent.setup();
-
-        // Guest Mode
-        const { rerender } = render(<ChatInterface userEmail="guest@example.com" onSignInRequest={onSignIn} />);
-        const signInLink = screen.getByText('Sign In or Sign Up');
-        expect(signInLink).toBeInTheDocument();
+    test('displays user email or Guest', () => {
+        const { rerender } = render(<ChatInterface userEmail="guest@example.com" />);
         expect(screen.getByText(/Viewing as/)).toHaveTextContent('guest@example.com');
 
-        await user.click(signInLink);
-        expect(onSignIn).toHaveBeenCalled();
-
-        // Auth Mode
-        rerender(<ChatInterface userEmail="auth@example.com" />);
-        expect(screen.queryByText('Sign In or Sign Up')).not.toBeInTheDocument();
-        expect(screen.getByText(/Viewing as/)).toHaveTextContent('auth@example.com');
+        rerender(<ChatInterface />);
+        expect(screen.getByText(/Viewing as/)).toHaveTextContent('Guest');
     });
 });

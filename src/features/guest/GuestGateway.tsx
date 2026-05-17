@@ -23,32 +23,20 @@ interface GuestGatewayProps {
  * 2. Continue as a Guest (requires email, logs visit)
  */
 export function GuestGateway({ onAccessGranted, onLoginRequest }: GuestGatewayProps) {
-    const [email, setEmail] = useState('');
-    const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const [showGuestModal, setShowGuestModal] = useState(false);
 
     /**
      * Handles the "Continue as Guest" flow.
-     * Validates email, logs the visit to DynamoDB, and grants access.
+     * Logs the visit to DynamoDB, and grants access.
      */
-    const handleGuestAccess = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        // Basic validation
-        if (!email || !email.includes('@')) {
-            GuestLogger.warn(`Invalid email provided: ${email}`);
-            setError('Please enter a valid email address.');
-            return;
-        }
-
-        GuestLogger.debug(`Processing guest access for: ${email}`);
+    const handleGuestAccess = async () => {
+        GuestLogger.debug(`Processing guest access`);
         setLoading(true);
         try {
             // Record the guest visit in DynamoDB
             // Note: Permissions allow public create but not read/update/delete on this model
             const { errors } = await client.models.GuestVisit.create({
-                email: email,
+                email: 'Guest',
                 visitedAt: new Date().toISOString()
             });
 
@@ -59,11 +47,11 @@ export function GuestGateway({ onAccessGranted, onLoginRequest }: GuestGatewayPr
                 GuestLogger.info('Visitation record created successfully.');
             }
 
-            onAccessGranted(email);
+            onAccessGranted('Guest');
         } catch (err) {
             GuestLogger.error('Exception saving guest:', err);
             // Fallback: grant access locally even if backend call fails
-            onAccessGranted(email);
+            onAccessGranted('Guest');
         } finally {
             setLoading(false);
         }
@@ -79,10 +67,11 @@ export function GuestGateway({ onAccessGranted, onLoginRequest }: GuestGatewayPr
 
                 <div className="gateway-actions">
                     <button
-                        onClick={() => setShowGuestModal(true)}
+                        onClick={handleGuestAccess}
                         className="btn btn-primary btn-block"
+                        disabled={loading}
                     >
-                        Continue as Guest
+                        {loading ? 'Processing...' : 'Continue as Guest'}
                     </button>
 
                     <div className="gateway-divider">
@@ -93,51 +82,6 @@ export function GuestGateway({ onAccessGranted, onLoginRequest }: GuestGatewayPr
                         Sign In / Sign Up
                     </button>
                 </div>
-            </div>
-
-            {/* Guest Modal */}
-            {showGuestModal && (
-                <div className="guest-modal-overlay">
-                    <div className="guest-modal-content animate-scale-in">
-                        <div className="modal-header">
-                            <h3>Guest Access</h3>
-                            <button
-                                className="modal-close-btn"
-                                onClick={() => setShowGuestModal(false)}
-                                aria-label="Close modal"
-                            >
-                                &times;
-                            </button>
-                        </div>
-
-                        <p className="modal-text">Enter your email to chat with the bot.</p>
-
-                        <form onSubmit={handleGuestAccess} className="guest-form">
-                            <div className="form-group">
-                                <label htmlFor="guest-email" className="sr-only">Email Address</label>
-                                <input
-                                    id="guest-email"
-                                    type="email"
-                                    className="gateway-input"
-                                    placeholder="enter@email.com"
-                                    value={email}
-                                    onChange={(e) => {
-                                        setEmail(e.target.value);
-                                        setError('');
-                                    }}
-                                    disabled={loading}
-                                    autoFocus
-                                />
-                            </div>
-                            {error && <p className="gateway-error">{error}</p>}
-
-                            <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
-                                {loading ? 'Verifying...' : 'Start Chatting'}
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            )}
         </div>
     );
 }

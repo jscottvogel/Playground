@@ -4,11 +4,10 @@ import './ChatInterface.css';
 
 interface ChatInterfaceProps {
     userEmail?: string;
-    onSignInRequest?: () => void;
     className?: string;
 }
 
-export function ChatInterface({ userEmail, onSignInRequest, className = '' }: ChatInterfaceProps) {
+export function ChatInterface({ userEmail, className = '' }: ChatInterfaceProps) {
     const botRef = useRef<ScottBotHandle>(null);
 
     const handleSuggestionClick = (text: string) => {
@@ -53,14 +52,6 @@ export function ChatInterface({ userEmail, onSignInRequest, className = '' }: Ch
                         <p>
                             Viewing as <strong>{userEmail || 'Guest'}</strong>
                         </p>
-                        {onSignInRequest && (
-                            <p>
-                                Want to see the full gallery? <br />
-                                <a href="#" onClick={(e) => { e.preventDefault(); onSignInRequest(); }} className="link-primary">
-                                    Sign In or Sign Up
-                                </a>
-                            </p>
-                        )}
                     </div>
                 </div>
 
