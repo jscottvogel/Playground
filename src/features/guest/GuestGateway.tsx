@@ -62,7 +62,6 @@ export function GuestGateway({ onAccessGranted, onLoginRequest }: GuestGatewayPr
             <div className="gateway-card animate-scale-in">
                 <div className="gateway-header">
                     <h1 className="gateway-title">Welcome to Vogel Solutions</h1>
-                    <p className="gateway-subtitle">Please identify yourself to continue</p>
                 </div>
 
                 <div className="gateway-actions">
