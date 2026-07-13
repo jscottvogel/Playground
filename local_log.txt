@@ -1,0 +1,186 @@
+2026-07-13T15:17:25.208Z [INFO]: # Build environment configured with Standard build compute type: 8GiB Memory, 4vCPUs, 128GB Disk Space
+2026-07-13T15:17:25.706Z [INFO]: # Cloning repository: git@github.com:jscottvogel/Playground.git
+2026-07-13T15:17:27.459Z [INFO]: 
+2026-07-13T15:17:27.459Z [INFO]: Cloning into 'Playground'...
+2026-07-13T15:17:27.459Z [INFO]: # Switching to commit: 2695dff0decc0872fa856ab51e571f22e7eea439
+2026-07-13T15:17:27.636Z [INFO]: Note: switching to '2695dff0decc0872fa856ab51e571f22e7eea439'.
+                                 You are in 'detached HEAD' state. You can look around, make experimental
+                                 changes and commit them, and you can discard any commits you make in this
+                                 state without impacting any branches by switching back to a branch.
+                                 If you want to create a new branch to retain commits you create, you may
+                                 do so (now or later) by using -c with the switch command. Example:
+                                 git switch -c <new-branch-name>
+                                 Or undo this operation with:
+                                 git switch -
+                                 Turn off this advice by setting config variable advice.detachedHead to false
+                                 HEAD is now at 2695dff fix: wrap cfnTable with safety check and warning log
+2026-07-13T15:17:27.814Z [INFO]: Successfully cleaned up Git credentials
+2026-07-13T15:17:27.814Z [INFO]: # Checking for Git submodules at: /codebuild/output/src84551059/src/Playground/.gitmodules
+2026-07-13T15:17:27.823Z [INFO]: # Retrieving environment cache...
+2026-07-13T15:17:27.892Z [INFO]: # Retrieved environment cache
+2026-07-13T15:17:27.893Z [INFO]: ---- Setting Up SSM Secrets ----
+2026-07-13T15:17:27.893Z [INFO]: SSM params {"Path":"/amplify/d3o0xpwvh5yghs/main/","WithDecryption":true}
+2026-07-13T15:17:29.126Z [INFO]: # No package override configuration found.
+2026-07-13T15:17:29.242Z [INFO]: # Retrieving cache...
+2026-07-13T15:17:37.738Z [INFO]: # Extracting cache...
+2026-07-13T15:17:40.529Z [INFO]: # Extraction completed
+2026-07-13T15:17:40.572Z [INFO]: # Retrieved cache
+2026-07-13T15:17:47.287Z [INFO]: ## Starting Backend Build
+                                 # Starting phase: build
+                                 # Executing command: npm ci --cache .npm --prefer-offline
+2026-07-13T15:18:13.791Z [WARNING]: npm warn ERESOLVE overriding peer dependency
+2026-07-13T15:18:13.798Z [WARNING]: npm warn While resolving: @xstate/react@3.2.2
+                                    npm warn Found: react@19.2.1
+                                    npm warn node_modules/react
+                                    npm warn   react@"^19.2.0" from the root project
+                                    npm warn   41 more (@aws-amplify/ui-react, @aws-amplify/ui-react-core, ...)
+                                    npm warn
+                                    npm warn Could not resolve dependency:
+                                    npm warn peer react@"^16.8.0 || ^17.0.0 || ^18.0.0" from @xstate/react@3.2.2
+                                    npm warn node_modules/@aws-amplify/ui-react-core/node_modules/@xstate/react
+                                    npm warn   @xstate/react@"^3.2.2" from @aws-amplify/ui-react-core@3.4.6
+                                    npm warn   node_modules/@aws-amplify/ui-react-core
+                                    npm warn
+                                    npm warn Conflicting peer dependency: react@18.3.1
+                                    npm warn node_modules/react
+                                    npm warn   peer react@"^16.8.0 || ^17.0.0 || ^18.0.0" from @xstate/react@3.2.2
+                                    npm warn   node_modules/@aws-amplify/ui-react-core/node_modules/@xstate/react
+                                    npm warn     @xstate/react@"^3.2.2" from @aws-amplify/ui-react-core@3.4.6
+                                    npm warn     node_modules/@aws-amplify/ui-react-core
+2026-07-13T15:18:13.805Z [WARNING]: npm warn ERESOLVE overriding peer dependency
+                                    npm warn While resolving: @xstate/react@3.2.2
+                                    npm warn Found: react@19.2.1
+                                    npm warn node_modules/react
+                                    npm warn   react@"^19.2.0" from the root project
+                                    npm warn   41 more (@aws-amplify/ui-react, @aws-amplify/ui-react-core, ...)
+                                    npm warn
+                                    npm warn Could not resolve dependency:
+                                    npm warn peer react@"^16.8.0 || ^17.0.0 || ^18.0.0" from @xstate/react@3.2.2
+                                    npm warn node_modules/@aws-amplify/ui-react/node_modules/@xstate/react
+                                    npm warn   @xstate/react@"^3.2.2" from @aws-amplify/ui-react@6.13.1
+                                    npm warn   node_modules/@aws-amplify/ui-react
+                                    npm warn
+                                    npm warn Conflicting peer dependency: react@18.3.1
+                                    npm warn node_modules/react
+                                    npm warn   peer react@"^16.8.0 || ^17.0.0 || ^18.0.0" from @xstate/react@3.2.2
+                                    npm warn   node_modules/@aws-amplify/ui-react/node_modules/@xstate/react
+                                    npm warn     @xstate/react@"^3.2.2" from @aws-amplify/ui-react@6.13.1
+                                    npm warn     node_modules/@aws-amplify/ui-react
+2026-07-13T15:18:13.822Z [WARNING]: npm warn ERESOLVE overriding peer dependency
+2026-07-13T15:18:13.822Z [WARNING]: npm warn While resolving: @aws-amplify/plugin-types@1.10.1
+                                    npm warn Found: @aws-sdk/types@3.821.0
+                                    npm warn node_modules/@aws-amplify/data-construct/node_modules/@aws-amplify/ai-constructs/node_modules/@aws-amplify/plugin-types/node_modules/@aws-sdk/types
+                                    npm warn
+                                    npm warn Could not resolve dependency:
+                                    npm warn peer @aws-sdk/types@"^3.734.0" from @aws-amplify/plugin-types@1.10.1
+                                    npm warn node_modules/@aws-amplify/data-construct/node_modules/@aws-amplify/ai-constructs/node_modules/@aws-amplify/plugin-types
+                                    npm warn   @aws-amplify/plugin-types@"^1.10.1" from @aws-amplify/ai-constructs@1.5.3
+                                    npm warn   node_modules/@aws-amplify/data-construct/node_modules/@aws-amplify/ai-constructs
+2026-07-13T15:18:13.961Z [WARNING]: npm warn ERESOLVE overriding peer dependency
+2026-07-13T15:18:13.961Z [WARNING]: npm warn While resolving: @aws-amplify/plugin-types@1.10.1
+                                    npm warn Found: @aws-sdk/types@3.821.0
+                                    npm warn node_modules/@aws-amplify/graphql-api-construct/node_modules/@aws-amplify/ai-constructs/node_modules/@aws-amplify/plugin-types/node_modules/@aws-sdk/types
+                                    npm warn
+                                    npm warn Could not resolve dependency:
+                                    npm warn peer @aws-sdk/types@"^3.734.0" from @aws-amplify/plugin-types@1.10.1
+                                    npm warn node_modules/@aws-amplify/graphql-api-construct/node_modules/@aws-amplify/ai-constructs/node_modules/@aws-amplify/plugin-types
+                                    npm warn   @aws-amplify/plugin-types@"^1.10.1" from @aws-amplify/ai-constructs@1.5.3
+                                    npm warn   node_modules/@aws-amplify/graphql-api-construct/node_modules/@aws-amplify/ai-constructs
+2026-07-13T15:19:33.063Z [WARNING]: npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+2026-07-13T15:19:33.215Z [WARNING]: npm warn deprecated @babel/plugin-proposal-class-properties@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-class-properties instead.
+2026-07-13T15:19:33.509Z [WARNING]: npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+2026-07-13T15:19:33.847Z [WARNING]: npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2026-07-13T15:19:33.848Z [WARNING]: npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2026-07-13T15:19:33.895Z [WARNING]: npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2026-07-13T15:19:33.921Z [WARNING]: npm warn deprecated @babel/plugin-proposal-object-rest-spread@7.20.7: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-object-rest-spread instead.
+2026-07-13T15:19:35.934Z [WARNING]: npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+2026-07-13T15:19:54.365Z [WARNING]: npm warn deprecated core-js@2.6.12: core-js@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js.
+2026-07-13T15:19:58.343Z [INFO]: added 2117 packages, and audited 2973 packages in 2m
+2026-07-13T15:19:58.348Z [INFO]: 252 packages are looking for funding
+                                 run `npm fund` for details
+2026-07-13T15:19:58.974Z [INFO]: 121 vulnerabilities (9 low, 67 moderate, 42 high, 3 critical)
+                                 To address issues that do not require attention, run:
+                                 npm audit fix
+                                 To address all issues possible (including breaking changes), run:
+                                 npm audit fix --force
+                                 Some issues need review, and may require choosing
+                                 a different dependency.
+                                 Run `npm audit` for details.
+2026-07-13T15:19:59.034Z [INFO]: # Executing command: npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
+2026-07-13T15:20:04.382Z [INFO]: 3:20:03 PM Synthesizing backend...
+2026-07-13T15:20:04.389Z [INFO]: 
+2026-07-13T15:20:05.799Z [WARNING]: Bundling asset amplify-d3o0xpwvh5yghs-main-branch-7fbc6e5348/AmplifyBranchLinker/CustomResourceLambda/Code/Stage...
+2026-07-13T15:20:06.203Z [WARNING]: ...fd3747e8ea1b7b03bd0237bc02be3ba7047cd70898cdde-building/index.js  1.1mb ⚠️
+                                    ⚡ Done in 105ms
+2026-07-13T15:20:06.371Z [WARNING]: [WARNING] aws-cdk-lib.aws_lambda.FunctionOptions#logRetention is deprecated.
+                                    use `logGroup` instead
+                                    This API will be removed in the next major release.
+2026-07-13T15:20:06.372Z [WARNING]: [WARNING] aws-cdk-lib.aws_lambda.FunctionOptions#logRetention is deprecated.
+                                    use `logGroup` instead
+                                    This API will be removed in the next major release.
+2026-07-13T15:20:06.373Z [WARNING]: Bundling asset amplify-d3o0xpwvh5yghs-main-branch-7fbc6e5348/function/chatHandler-lambda/Code/Stage...
+2026-07-13T15:20:07.059Z [WARNING]: Be careful when using @auth directives on a field in a root type. @auth directives on field definitions use the source object to perform authorization logic and the source will be an empty object for fields on root types. Static group authorization should perform as expected.
+2026-07-13T15:20:07.205Z [WARNING]: WARNING: owners may reassign ownership for the following model(s) and role(s): Project: [owner], GuestVisit: [owner]. If this is not intentional, you may want to apply field-level authorization rules to these fields. To read more: https://docs.amplify.aws/cli/graphql/authorization-rules/#per-user--owner-based-data-access.
+2026-07-13T15:20:07.243Z [WARNING]: [WARNING] aws-cdk-lib.aws_lambda.FunctionOptions#logRetention is deprecated.
+                                    use `logGroup` instead
+                                    This API will be removed in the next major release.
+2026-07-13T15:20:07.243Z [WARNING]: [WARNING] aws-cdk-lib.aws_lambda.FunctionOptions#logRetention is deprecated.
+                                    use `logGroup` instead
+                                    This API will be removed in the next major release.
+2026-07-13T15:20:07.244Z [WARNING]: Bundling asset amplify-d3o0xpwvh5yghs-main-branch-7fbc6e5348/function/contactNotifier-lambda/Code/Stage...
+2026-07-13T15:20:07.700Z [WARNING]: WARNING: cfnTable for GuestVisit not found! Available tables: []
+2026-07-13T15:20:07.717Z [WARNING]: [WARNING] aws-cdk-lib.aws_iam.GrantOnPrincipalOptions#scope is deprecated.
+                                    The scope argument is currently unused.
+                                    This API will be removed in the next major release.
+2026-07-13T15:20:08.369Z [INFO]: 3:20:08 PM ✔ Backend synthesized in 4.73 seconds
+2026-07-13T15:20:08.370Z [INFO]: 3:20:08 PM Running type checks...
+2026-07-13T15:20:09.060Z [INFO]: 3:20:09 PM ✔ Type checks completed in 0.69 seconds
+2026-07-13T15:20:09.069Z [INFO]: 3:20:09 PM Building and publishing assets...
+2026-07-13T15:20:12.037Z [INFO]: 3:20:12 PM ✔ Built and published assets
+2026-07-13T15:20:12.835Z [INFO]: 
+2026-07-13T15:20:12.836Z [INFO]: Notices:
+2026-07-13T15:20:12.836Z [INFO]: 
+2026-07-13T15:20:12.836Z [INFO]: 
+2026-07-13T15:20:12.837Z [INFO]: 3127	Amplify Function is dropping support of Node 16 Lambda Functions
+2026-07-13T15:20:12.837Z [INFO]: 
+2026-07-13T15:20:12.837Z [INFO]: 
+2026-07-13T15:20:12.838Z [INFO]: If you have Node 16 Lambda functions defined with Amplify Function, we highly
+2026-07-13T15:20:12.838Z [INFO]: 
+2026-07-13T15:20:12.839Z [INFO]: recommend updating your function's runtime to newer Node LTS versions (Node 20+).
+2026-07-13T15:20:12.839Z [INFO]: 
+2026-07-13T15:20:12.840Z [INFO]: More information at: https://github.com/aws-amplify/amplify-backend/issues/3127
+2026-07-13T15:20:12.841Z [INFO]: If you don't want to see a notice anymore, use npx ampx notices acknowledge <notice-id>
+2026-07-13T15:20:12.899Z [INFO]: 
+2026-07-13T15:20:12.899Z [INFO]: 
+2026-07-13T15:20:12.899Z [WARNING]: ampx pipeline-deploy
+                                    Command to deploy backends in a custom CI/CD pipeline. This command is not inten
+                                    ded to be used locally.
+                                    Options:
+                                    --debug            Print debug logs to the console
+                                    [boolean] [default: false]
+                                    --branch           Name of the git branch being deployed
+                                    [string] [required]
+                                    --app-id           The app id of the target Amplify app[string] [required]
+                                    --outputs-out-dir  A path to directory where amplify_outputs is written. I
+                                    f not provided defaults to current process working dire
+                                    ctory.                                         [string]
+                                    --outputs-version  Version of the configuration. Version 0 represents clas
+                                    sic amplify-cli config file amplify-configuration and 1
+                                    represents newer config file amplify_outputs
+                                    [string] [choices: "0", "1", "1.1", "1.2", "1.3", "1.4"] [default: "1.4"]
+                                    --outputs-format   amplify_outputs file format
+                                    [string] [choices: "mjs", "json", "json-mobile", "ts", "dart"]
+                                    -h, --help             Show help                                     [boolean]
+2026-07-13T15:20:12.900Z [INFO]: [CloudformationStackCircularDependencyError] The CloudFormation deployment failed due to circular dependency found between nested stacks [data7552DF31, function1351588B]
+                                 Resolution: If you are using functions then you can assign them to existing nested stacks that are dependent on functions or functions depend on them, for example:
+                                 1. If your function is defined as auth triggers, you should assign this function to auth stack.
+                                 2. If your function is used as data resolver or calls data API, you should assign this function to data stack.
+                                 To assign a function to a different stack, use the property 'resourceGroupName' in the defineFunction call and choose auth, data or any custom stack.
+                                 If your circular dependency issue is not resolved with this workaround, please create an issue here https://github.com/aws-amplify/amplify-backend/issues/new/choose
+2026-07-13T15:20:12.981Z [ERROR]: !!! Build failed
+2026-07-13T15:20:12.981Z [ERROR]: !!! Error: Command failed with exit code 1
+2026-07-13T15:20:12.981Z [INFO]: # Starting environment caching...
+2026-07-13T15:20:12.981Z [INFO]: # Uploading environment cache artifact...
+2026-07-13T15:20:13.072Z [INFO]: # Uploaded environment cache artifact
+2026-07-13T15:20:13.072Z [INFO]: # Environment caching completed
+

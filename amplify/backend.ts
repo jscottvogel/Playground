@@ -24,13 +24,13 @@ import { StartingPosition } from 'aws-cdk-lib/aws-lambda';
 
 // Enable DynamoDB stream on GuestVisit table
 const guestVisitTable = backend.data.resources.tables['GuestVisit'];
-const cfnTable = backend.data.resources.cfnResources.cfnTables['GuestVisit'];
+const cfnTable = backend.data.resources.cfnResources.amplifyDynamoDbTables['GuestVisit'];
 if (cfnTable) {
     cfnTable.streamSpecification = {
         streamViewType: StreamViewType.NEW_AND_OLD_IMAGES
     };
 } else {
-    console.warn("WARNING: cfnTable for GuestVisit not found! Available tables:", Object.keys(backend.data.resources.cfnResources.cfnTables));
+    console.warn("WARNING: cfnTable for GuestVisit not found! Available tables:", Object.keys(backend.data.resources.cfnResources.amplifyDynamoDbTables || {}));
 }
 
 // Add DynamoDB Event Source trigger to contactNotifier function
