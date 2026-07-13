@@ -6,7 +6,6 @@ const bedrock = new BedrockRuntimeClient({ region: process.env.AWS_REGION });
 const s3 = new S3Client({ region: process.env.AWS_REGION });
 
 // Global Cache for Knowledge Base
-let cachedKnowledgeBase: { text: string; embedding: number[]; source: string }[] | null = null;
 
 // --- MOCK DATA FOR TOOLS (Fallback) ---
 
@@ -87,8 +86,15 @@ function cosineSimilarity(vecA: number[], vecB: number[]): number {
     return dotProduct / (magA * magB);
 }
 
+let cachedKnowledgeBase: { text: string; embedding: number[]; source: string }[] | null = null;
+let lastCacheLoadTime = 0;
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes cache TTL
+
 async function loadKnowledgeBase() {
-    if (cachedKnowledgeBase) return cachedKnowledgeBase;
+    const now = Date.now();
+    if (cachedKnowledgeBase && (now - lastCacheLoadTime) < CACHE_TTL_MS) {
+        return cachedKnowledgeBase;
+    }
 
     const bucketName = process.env.STORAGE_BUCKET_NAME;
     if (!bucketName) {
@@ -105,6 +111,7 @@ async function loadKnowledgeBase() {
         const str = await response.Body?.transformToString();
         if (!str) return null;
         cachedKnowledgeBase = JSON.parse(str);
+        lastCacheLoadTime = now;
         if (cachedKnowledgeBase) {
             console.log(`[KnowledgeBase] Successfully loaded ${cachedKnowledgeBase.length} embeddings from S3.`);
         }
@@ -129,13 +136,21 @@ export const handler: any = async (event: any) => {
     const messages: any[] = [{ role: "user", content: [{ type: 'text', text: message }] }];
 
     try {
-        // 2. Call Bedrock with Tools
-        const response = await callBedrock(messages, config);
+        let response = await callBedrock(messages, config);
         console.log("[Bedrock] Initial response:", JSON.stringify(response, null, 2));
 
-        // 3. Check for Tool Use
-        if (response.stop_reason === "tool_use") {
+        let loopCount = 0;
+        const maxLoops = 5;
+
+        // Keep executing tools as long as the model requests it
+        while (response.stop_reason === "tool_use" && loopCount < maxLoops) {
+            loopCount++;
+            console.log(`[Agent] Tool use loop iteration ${loopCount}`);
+
             const toolRequests = response.content.filter((c: any) => c.type === "tool_use");
+            if (toolRequests.length === 0) {
+                break;
+            }
 
             // Execute Tools
             const toolResults = await Promise.all(toolRequests.map(async (tool: any) => {
@@ -151,13 +166,19 @@ export const handler: any = async (event: any) => {
             messages.push({ role: "assistant", content: response.content });
             messages.push({ role: "user", content: toolResults });
 
-            // 4. Call Bedrock Again with Tool Outputs
-            const finalResponse = await callBedrock(messages, config);
-            console.log("[Bedrock] Final response:", JSON.stringify(finalResponse, null, 2));
-            return finalResponse.content[0].text || "No response text found in final response.";
+            // Call Bedrock again with tool outputs
+            response = await callBedrock(messages, config);
+            console.log(`[Bedrock] Loop response:`, JSON.stringify(response, null, 2));
         }
 
-        return response.content[0].text || "No response text found in initial response.";
+        // Extract text response from the final response content blocks
+        const textBlock = response.content.find((c: any) => c.type === "text");
+        if (textBlock && textBlock.text) {
+            return textBlock.text;
+        }
+
+        // If no text block is found in the final response, return the fallback phrase
+        return config.fallbackPhrase || "Information for this question is not available.";
 
     } catch (error) {
         console.error("Agent Error:", error);

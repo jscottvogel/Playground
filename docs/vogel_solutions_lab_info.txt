@@ -1,0 +1,17 @@
+Vogel Solutions Lab LLC - Overview & Services
+
+Vogel Solutions Lab LLC is a custom software development company and SaaS incubator founded by J. Scott Vogel. The company focuses on designing, building, and deploying cutting-edge web applications, automated solutions, and experimental prototypes.
+
+Services Offered:
+- Custom SaaS Solutions: We design and develop full-stack SaaS applications tailored to business needs.
+- Prototype Incubation: We turn experimental ideas and prototypes (Lab Experiments) into production-ready software.
+- Cloud & AI Integration: Leveraging AWS (Bedrock, Lambda, DynamoDB, Amplify) to build intelligent, scalable solutions.
+- Technical Program Management & Consultation: Professional guidance on software architecture, containerization (distroless container architectures), and agile delivery.
+
+Incubated SaaS Products & Projects:
+- Wedding App: Our highly anticipated Wedding App is currently in the active roadmap and is targeting launch by August 31st (August 31, 2026). It offers comprehensive wedding planning, guest guestlists, and event coordination tools.
+- Resume Chatbot (LabAssistant): An AI-powered assistant built with AWS Bedrock and RAG to answer user queries about Scott's experience and company offerings.
+- PolicyPal: An enterprise generative AI policy assistant.
+
+Booking a Consultation:
+- To book a project consultation or contact us, users can register via the Guest Gateway on the portal or submit their email to get in touch. We will schedule a session to review their custom software needs.
