@@ -24,7 +24,7 @@ import { StartingPosition } from 'aws-cdk-lib/aws-lambda';
 
 // Enable DynamoDB stream on GuestVisit table
 const guestVisitTable = backend.data.resources.tables['GuestVisit'];
-const cfnTable = guestVisitTable.node.defaultChild as any;
+const cfnTable = backend.data.resources.cfnResources.cfnTables['GuestVisit'];
 cfnTable.streamSpecification = {
     streamViewType: StreamViewType.NEW_AND_OLD_IMAGES
 };
