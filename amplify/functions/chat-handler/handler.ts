@@ -178,7 +178,7 @@ CRITICAL RULES:
     `.trim();
 
     const command = new InvokeModelCommand({
-        modelId: "us.anthropic.claude-sonnet-4-20250514-v1:0",
+        modelId: "us.anthropic.claude-sonnet-4-5-20250929-v1:0",
         contentType: "application/json",
         accept: "application/json",
         body: JSON.stringify({
