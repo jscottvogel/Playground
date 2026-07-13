@@ -65,8 +65,7 @@ export function GuestGateway({ onAccessGranted, onLoginRequest }: GuestGatewayPr
                 </div>
                 
                 <div className="gateway-header">
-                    <h1 className="gateway-title">Welcome to Vogel Solutions</h1>
-                    <p className="gateway-tagline">Solutions Lab LLC</p>
+                    <h1 className="gateway-title">Welcome to Vogel Solutions Lab LLC</h1>
                     <p className="gateway-mission">"Dream it. Build it. Deploy it. Improve it."</p>
                 </div>
 
