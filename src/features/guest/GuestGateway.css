@@ -11,13 +11,27 @@
 }
 
 .gateway-title {
-    margin-bottom: 2.5rem;
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+    color: var(--color-text);
+    background: none;
+    -webkit-text-fill-color: var(--color-text);
+    margin-bottom: 1rem;
     text-align: center;
 }
 
 .gateway-card {
     max-width: 600px;
     width: 100%;
+    background: rgba(17, 24, 39, 0.35);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(14, 165, 233, 0.02);
+    border-radius: 16px;
+    padding: 3rem 2.5rem;
 }
 
 .gateway-subtitle {
@@ -114,60 +128,55 @@
 .gateway-brand {
     display: flex;
     justify-content: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .gateway-logo {
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
     object-fit: contain;
-    filter: drop-shadow(0 0 15px rgba(14, 165, 233, 0.4));
-}
-
-.gateway-tagline {
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin: 0;
-    text-align: center;
-    background: linear-gradient(45deg, var(--color-primary), var(--color-secondary));
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    mix-blend-mode: screen;
+    opacity: 0.95;
+    filter: drop-shadow(0 4px 20px rgba(14, 165, 233, 0.15));
 }
 
 .gateway-mission {
-    font-style: italic;
-    color: var(--color-text-dim);
-    font-size: 1.1rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--color-primary);
     text-align: center;
-    margin-top: 0.5rem;
-    margin-bottom: 2rem;
+    margin-top: 0.25rem;
+    margin-bottom: 2.5rem;
+    font-style: normal;
 }
 
 .gateway-info-box {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid var(--color-border);
-    padding: 1.25rem;
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    border-left: 3px solid var(--color-primary);
+    padding: 1.25rem 1.5rem;
     border-radius: 8px;
-    margin-bottom: 2rem;
-    text-align: center;
+    margin-bottom: 2.5rem;
+    text-align: left;
     font-size: 0.95rem;
-    line-height: 1.5;
-}
-
-.gateway-info-box strong {
-    color: var(--color-secondary);
+    line-height: 1.6;
+    color: var(--color-text-dim);
 }
 
 .gateway-link {
     color: var(--color-secondary);
-    text-decoration: underline;
-    font-weight: 600;
-    transition: color 0.2s ease;
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px dashed var(--color-secondary);
+    transition: all 0.2s ease;
 }
 
 .gateway-link:hover {
     color: var(--color-primary);
+    border-bottom-style: solid;
 }
 
 .btn-block {
