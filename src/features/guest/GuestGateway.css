@@ -135,7 +135,6 @@
     width: 90px;
     height: 90px;
     object-fit: contain;
-    mix-blend-mode: screen;
     opacity: 0.95;
     filter: drop-shadow(0 4px 20px rgba(14, 165, 233, 0.15));
 }
