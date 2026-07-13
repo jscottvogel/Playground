@@ -71,7 +71,7 @@ export function GuestGateway({ onAccessGranted, onLoginRequest }: GuestGatewayPr
                 </div>
 
                 <div className="gateway-info-box">
-                    <p>We build, test, and incubate modern SaaS products. Our active focus is preparing the new <strong>Wedding App</strong> for launch on August 31, 2026.</p>
+                    <p>We build, test, and incubate modern SaaS products. Our active focus is preparing the new <a href="https://weddingsteward.com" target="_blank" rel="noreferrer" className="gateway-link">Wedding Steward App</a> for launch on August 31, 2026.</p>
                 </div>
 
                 <div className="gateway-actions">

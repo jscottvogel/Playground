@@ -159,6 +159,17 @@
     color: var(--color-secondary);
 }
 
+.gateway-link {
+    color: var(--color-secondary);
+    text-decoration: underline;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.gateway-link:hover {
+    color: var(--color-primary);
+}
+
 .btn-block {
     width: 100%;
     display: block;
