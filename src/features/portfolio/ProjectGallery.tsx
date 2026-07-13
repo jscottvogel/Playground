@@ -3,6 +3,7 @@ import type { Schema } from '../../../amplify/data/resource';
 import { useEffect, useState } from 'react';
 import './ProjectGallery.css';
 import { GalleryLogger } from '../../services/Logger';
+import { ProjectDetailsModal } from './ProjectDetailsModal';
 
 /**
  * Interface for the Amplify Data Client
@@ -17,6 +18,7 @@ const client = generateClient<Schema>();
  */
 export function ProjectGallery() {
     const [projects, setProjects] = useState<Schema['Project']['type'][]>([]);
+    const [selectedProject, setSelectedProject] = useState<Schema['Project']['type'] | null>(null);
 
     /**
      * Fetches all projects from the database.
@@ -45,21 +47,34 @@ export function ProjectGallery() {
     return (
         <div className="animate-fade-in">
             <div className="gallery-header">
-                <h2>Project Showcase</h2>
+                <h2>Lab Experiments</h2>
+                <p className="gallery-tagline">"From ideas to products"</p>
+                <p className="gallery-desc">
+                    We build, test, and incubate experimental prototypes to transform them into production SaaS products.
+                </p>
             </div>
 
             {/* Empty State */}
             {projects.length === 0 ? (
                 <div className="card gallery-empty">
                     <p className="gallery-text-dim">
-                        No projects found.
+                        No experiments found.
                     </p>
                 </div>
             ) : (
                 /* Project Grid */
                 <div className="gallery-grid">
-                    {projects.map(proj => (
-                        <div key={proj.id} className="card">
+                    {projects.map(proj => {
+                        const isWeddingApp = proj.title?.toLowerCase().includes('wedding');
+                        return (
+                            <div key={proj.id} className="card project-card">
+                                <div className="badge-container">
+                                    {isWeddingApp ? (
+                                        <span className="badge-featured">Target Launch: Aug 31, 2026</span>
+                                    ) : (
+                                        <span className="badge-prototype">Experimental Prototype</span>
+                                    )}
+                                </div>
                             {proj.imageUrl && <img src={proj.imageUrl} alt={proj.title || ''} className="project-img" />}
                             {proj.demoUrl ? (
                                 <a href={proj.demoUrl} target="_blank" rel="noreferrer" className="project-title-link">
@@ -90,17 +105,26 @@ export function ProjectGallery() {
                             )}
 
                             {/* Action Links */}
-                            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
-                                {proj.demoUrl ? (
-                                    <a href={proj.demoUrl} className="btn btn-primary project-btn-demo" target='_blank' rel='noreferrer'>Live Demo</a>
-                                ) : (
-                                    <button className="btn btn-primary project-btn-demo" disabled>Live Demo</button>
+                            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
+                                <button onClick={() => setSelectedProject(proj)} className="btn btn-primary" style={{ flex: '1 1 auto' }}>
+                                    View Case Study ↗
+                                </button>
+                                {proj.demoUrl && (
+                                    <a href={proj.demoUrl} className="btn" target='_blank' rel='noreferrer' style={{ padding: '0.6em 0.8em' }}>Demo</a>
                                 )}
-                                {proj.gitUrl && <a href={proj.gitUrl} className="btn" target='_blank' rel='noreferrer'>GitHub</a>}
                             </div>
                         </div>
-                    ))}
+                    );
+                })}
                 </div>
+            )}
+
+            {/* Project Details Modal */}
+            {selectedProject && (
+                <ProjectDetailsModal
+                    project={selectedProject}
+                    onClose={() => setSelectedProject(null)}
+                />
             )}
         </div>
     );

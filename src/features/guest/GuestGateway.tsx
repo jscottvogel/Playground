@@ -59,9 +59,19 @@ export function GuestGateway({ onAccessGranted, onLoginRequest }: GuestGatewayPr
 
     return (
         <div className="gateway-container">
-            <div className="gateway-card animate-scale-in">
+            <div className="card gateway-card animate-fade-in">
+                <div className="gateway-brand">
+                    <img src="/vogel_lab_logo.png" alt="Vogel Solutions Lab Logo" className="gateway-logo" />
+                </div>
+                
                 <div className="gateway-header">
                     <h1 className="gateway-title">Welcome to Vogel Solutions</h1>
+                    <p className="gateway-tagline">Solutions Lab LLC</p>
+                    <p className="gateway-mission">"From ideas to products"</p>
+                </div>
+
+                <div className="gateway-info-box">
+                    <p>We build, test, and incubate modern SaaS products. Our active focus is preparing the new <strong>Wedding App</strong> for launch on August 31, 2026.</p>
                 </div>
 
                 <div className="gateway-actions">

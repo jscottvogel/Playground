@@ -17,22 +17,22 @@ export function ChatInterface({ userEmail, className = '' }: ChatInterfaceProps)
     };
 
     const suggestions = [
-        "What is Scott's professional background?",
-        "What are Scott's key technical skills?",
-        "Can you tell me about a challenging project Scott worked on?",
-        "What are Scott's hobbies outside of work?"
+        "What services does Vogel Solutions Lab offer?",
+        "Tell me about the Wedding App launching by August 31st.",
+        "What SaaS products are you incubating?",
+        "How can I book a project consultation?"
     ];
 
     return (
         <section className={`chat-interface-wrapper ${className}`}>
-            <h2 className="chat-main-title">Chat with Scott</h2>
+            <h2 className="chat-main-title">Chat with LabAssistant 🧪</h2>
 
             <div className="chat-interface-layout animate-fade-in">
                 {/* Left Panel: Instructions & Suggestions */}
                 <div className="chat-instructions-panel">
                     <p className="instruction-lead">
-                        I'm an AI assistant trained on Scott's professional background.
-                        I can answer questions about his projects, skills, and experience.
+                        I'm an AI assistant trained on Vogel Solutions Lab LLC.
+                        I can answer questions about our SaaS incubator, custom development solutions, and active roadmap.
                     </p>
 
                     <div className="suggestions-list">

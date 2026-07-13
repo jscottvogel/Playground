@@ -1,76 +1,41 @@
-import { type Dispatch, type SetStateAction } from 'react';
+import { NavLink, Link } from 'react-router-dom';
 import './Nav.css';
 
 interface NavProps {
-    /** Current active view state of the application */
-    viewState: 'gateway' | 'guest_chat' | 'auth' | 'admin';
-    /** Setter to change the view state */
-    setViewState: Dispatch<SetStateAction<'gateway' | 'guest_chat' | 'auth' | 'admin'>>;
-    /** Authenticated user object (if signed in) */
     user?: { signInDetails?: { loginId?: string } };
-    /** Function to sign out the user */
     signOut?: () => void;
 }
 
-/**
- * Nav Component
- * 
- * Top navigation bar that adapts based on the auth status.
- * Replaced buttons with a modern link/tab interface.
- */
-export const Nav = ({ viewState, setViewState, user, signOut }: NavProps) => {
+export const Nav = ({ user, signOut }: NavProps) => {
     return (
         <nav className="nav-container">
             {/* Branding */}
-            <div className="nav-brand">
+            <Link to="/" className="nav-brand" style={{ textDecoration: 'none' }}>
+                <img src="/vogel_lab_logo.png" alt="Vogel Solutions Lab Logo" className="nav-logo" />
                 <div className="nav-title">Vogel Solutions Lab</div>
-            </div>
+            </Link>
 
             {/* Main Navigation Links (Tabs) */}
             <div className="nav-links">
-                {/* Public / Guest Links */}
-                {(viewState === 'gateway' || viewState === 'guest_chat') && (
-                    <>
-                        <a
-                            href="#"
-                            className={`nav-link ${viewState === 'gateway' ? 'active' : ''}`}
-                            onClick={(e) => { e.preventDefault(); setViewState('gateway'); }}
-                        >
-                            Home
-                        </a>
-                        <a
-                            href="#"
-                            className="nav-link highlight"
-                            onClick={(e) => { e.preventDefault(); setViewState('auth'); }}
-                        >
-                            Sign In
-                        </a>
-                    </>
-                )}
-
-                {/* Authenticated Links */}
-                {(viewState === 'auth' || viewState === 'admin') && (
-                    <>
-                        <a
-                            href="#"
-                            className={`nav-link ${viewState === 'auth' ? 'active' : ''}`}
-                            onClick={(e) => { e.preventDefault(); setViewState('auth'); }}
-                        >
-                            Gallery
-                        </a>
-                        <a
-                            href="#"
-                            className={`nav-link ${viewState === 'admin' ? 'active' : ''}`}
-                            onClick={(e) => { e.preventDefault(); setViewState('admin'); }}
-                        >
-                            Admin Portal
-                        </a>
-                    </>
+                <NavLink to="/" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} end>
+                    Home
+                </NavLink>
+                <NavLink to="/experiments" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                    Experiments
+                </NavLink>
+                {user ? (
+                    <NavLink to="/admin" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                        Admin Portal
+                    </NavLink>
+                ) : (
+                    <NavLink to="/admin" className="nav-link highlight">
+                        Sign In
+                    </NavLink>
                 )}
             </div>
 
-            {/* One-off User Menu / Profile Section */}
-            {(viewState === 'auth' || viewState === 'admin') && (
+            {/* Profile Section */}
+            {user && (
                 <div className="nav-profile">
                     <span className="nav-user-email">
                         {user?.signInDetails?.loginId}

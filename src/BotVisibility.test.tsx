@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { render, screen, fireEvent } from '@testing-library/react';
 import App from './App';
+import { MemoryRouter } from 'react-router-dom';
 
 // Mocks
 jest.mock('@aws-amplify/ui-react', () => ({
@@ -49,7 +50,11 @@ jest.mock('aws-amplify/utils', () => ({
 
 describe('Chatbot Visibility', () => {
     test('Scenario 1: Visible to Guests after email', () => {
-        render(<App />);
+        render(
+            <MemoryRouter initialEntries={['/']}>
+                <App />
+            </MemoryRouter>
+        );
         // Start at gateway
         fireEvent.click(screen.getByText('Enter as Guest'));
         // Should be visible
@@ -57,7 +62,11 @@ describe('Chatbot Visibility', () => {
     });
 
     test('Scenario 2: Visible to Authenticated Users', () => {
-        render(<App />);
+        render(
+            <MemoryRouter initialEntries={['/']}>
+                <App />
+            </MemoryRouter>
+        );
         // Click Login to go to auth view
         fireEvent.click(screen.getByText('Login'));
         // Should be visible (alongside Gallery)
@@ -66,7 +75,11 @@ describe('Chatbot Visibility', () => {
     });
 
     test('Scenario 3: Visible to Admins', () => {
-        render(<App />);
+        render(
+            <MemoryRouter initialEntries={['/']}>
+                <App />
+            </MemoryRouter>
+        );
         // Login
         fireEvent.click(screen.getByText('Login'));
         // Click Admin Nav

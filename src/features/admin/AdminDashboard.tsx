@@ -109,11 +109,7 @@ export function AdminDashboard() {
         }
     };
 
-    /**
-     * Resets the form to its default "Add New" state.
-     * Clears all input fields and the 'id' state.
-     */
-    const handleCancelEdit = () => {
+    const resetForm = () => {
         setId(null);
         setTitle('');
         setDescription('');
@@ -121,6 +117,14 @@ export function AdminDashboard() {
         setDemoUrl('');
         setGitUrl('');
         setSkills('');
+    };
+
+    /**
+     * Resets the form to its default "Add New" state.
+     * Clears all input fields and the 'id' state.
+     */
+    const handleCancelEdit = () => {
+        resetForm();
         setStatus(null);
     };
 
@@ -169,7 +173,7 @@ export function AdminDashboard() {
                 setStatus({ type: 'success', message: 'Project created successfully!' });
             }
 
-            handleCancelEdit(); // Reset form
+            resetForm(); // Reset form
             fetchProjects(); // Refresh list to show changes
         } catch (err: any) {
             AdminLogger.error('Error saving project:', err);

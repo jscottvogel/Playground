@@ -3,6 +3,7 @@ import './ScottBot.css';
 import { ChatLogger } from '../../services/Logger';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../amplify/data/resource';
+import { getCurrentUser } from 'aws-amplify/auth';
 
 const client = generateClient<Schema>();
 
@@ -24,17 +25,24 @@ interface ScottBotProps {
     mode?: 'widget' | 'embedded';
 }
 
-export const ScottBot = forwardRef<ScottBotHandle, ScottBotProps>(({ guestEmail, mode = 'widget' }, ref) => {
+export const ScottBot = forwardRef<ScottBotHandle, ScottBotProps>(({ mode = 'widget' }, ref) => {
     // --- State ---
     const [messages, setMessages] = useState<Message[]>([
         {
             id: '1',
             sender: 'bot',
-            text: `Hi there! I'm the digital assistant for Scott Vogel.${guestEmail ? ` I see you're visiting as ${guestEmail}.` : ''} Ask me anything about his projects or experience!`
+            text: `Hi there! I'm LabAssistant, the digital agent for Vogel Solutions Lab LLC. Ask me anything about our incubator projects, custom SaaS solutions, or roadmap!`
         }
     ]);
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        getCurrentUser()
+            .then(() => setIsAuthenticated(true))
+            .catch(() => setIsAuthenticated(false));
+    }, []);
 
     // Ref for auto-scrolling the chat window
     const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -80,7 +88,10 @@ export const ScottBot = forwardRef<ScottBotHandle, ScottBotProps>(({ guestEmail,
         try {
             // Call the Bedrock Agent
             // Using 'any' cast temporarily until schema is regenerated types
-            const response = await (client.queries as any).askBedrockAgent({ message: userText });
+            const response = await (client.queries as any).askBedrockAgent(
+                { message: userText },
+                { authMode: isAuthenticated ? 'userPool' : 'apiKey' }
+            );
 
             if (response.errors && response.errors.length > 0) {
                 console.error("Backend errors:", response.errors);
@@ -109,7 +120,7 @@ export const ScottBot = forwardRef<ScottBotHandle, ScottBotProps>(({ guestEmail,
     if (!isOpen) {
         return (
             <button className="bot-fab animate-bounce-in" onClick={toggleChat} aria-label="Open Chat">
-                💬 Chat with Scott-bot
+                💬 Chat with LabAssistant
             </button>
         );
     }
@@ -117,7 +128,7 @@ export const ScottBot = forwardRef<ScottBotHandle, ScottBotProps>(({ guestEmail,
     return (
         <div className={`card bot-container ${mode === 'widget' ? 'bot-widget' : ''} animate-fade-in`}>
             <div className="bot-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h3 className="bot-title">Scott-bot 🤖</h3>
+                <h3 className="bot-title">LabAssistant 🧪</h3>
                 {mode === 'widget' && (
                     <button onClick={toggleChat} style={{ background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', fontSize: '1.2rem' }}>×</button>
                 )}
@@ -140,7 +151,7 @@ export const ScottBot = forwardRef<ScottBotHandle, ScottBotProps>(({ guestEmail,
                 <input
                     type="text"
                     className="bot-input"
-                    placeholder="Ask about projects..."
+                    placeholder="Ask about the Lab..."
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                 />

@@ -33,7 +33,7 @@ describe('ProjectGallery', () => {
     test('renders empty state when no projects', async () => {
         mockList.mockResolvedValue({ data: [] } as any);
         render(<ProjectGallery />);
-        expect(await screen.findByText(/No projects found/)).toBeInTheDocument();
+        expect(await screen.findByText(/No experiments found/)).toBeInTheDocument();
     });
 
     test('renders projects with skills and links', async () => {
@@ -54,10 +54,10 @@ describe('ProjectGallery', () => {
         expect(screen.getByText('React')).toBeInTheDocument();
         expect(screen.getByText('Vitest')).toBeInTheDocument();
 
-        const demoLink = screen.getByText('Live Demo');
-        expect(demoLink).toHaveAttribute('href', 'http://test.com');
+        const caseStudyBtn = screen.getByText('View Case Study ↗');
+        expect(caseStudyBtn).toBeInTheDocument();
 
-        const gitLink = screen.getByText('GitHub');
-        expect(gitLink).toHaveAttribute('href', 'http://github.com');
+        const demoLink = screen.getByText('Demo');
+        expect(demoLink).toHaveAttribute('href', 'http://test.com');
     });
 });

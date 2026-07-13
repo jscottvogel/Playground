@@ -110,3 +110,68 @@
     margin-bottom: 1.5rem;
     color: var(--color-text-secondary);
 }
+
+.gateway-brand {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.gateway-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 15px rgba(14, 165, 233, 0.4));
+}
+
+.gateway-tagline {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+    text-align: center;
+    background: linear-gradient(45deg, var(--color-primary), var(--color-secondary));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.gateway-mission {
+    font-style: italic;
+    color: var(--color-text-dim);
+    font-size: 1.1rem;
+    text-align: center;
+    margin-top: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.gateway-info-box {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--color-border);
+    padding: 1.25rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.gateway-info-box strong {
+    color: var(--color-secondary);
+}
+
+.btn-block {
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+}
+
+.btn-outline:hover {
+    background: rgba(14, 165, 233, 0.1);
+    color: white;
+}

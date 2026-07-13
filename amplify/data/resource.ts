@@ -20,6 +20,8 @@ const schema = a.schema({
         .authorization((allow) => [
             // Public can read projects
             allow.publicApiKey().to(['read']),
+            // Authenticated users can read projects (via Cognito User Pools)
+            allow.authenticated().to(['read']),
             // Admins group can do everything
             allow.groups(['Admins']).to(['create', 'update', 'delete']),
             // Owner (if signed in and not admin, though admin group covers most)

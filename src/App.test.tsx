@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import App from './App';
+import { MemoryRouter } from 'react-router-dom';
 
 // Mock Amplify Authenticator
 jest.mock('@aws-amplify/ui-react', () => ({
@@ -35,7 +36,7 @@ jest.mock('./features/admin/AdminDashboard', () => ({
 }));
 
 jest.mock('./features/chatbot/ScottBot', () => ({
-    ScottBot: () => <div>Scott-bot 🤖</div>
+    ScottBot: () => <div>LabAssistant 🧪</div>
 }));
 
 jest.mock('./services/Logger', () => ({
@@ -54,20 +55,32 @@ jest.mock('aws-amplify/utils', () => ({
 
 describe('App Navigation Flow', () => {
     test('renders GuestGateway by default', () => {
-        render(<App />);
+        render(
+            <MemoryRouter initialEntries={['/']}>
+                <App />
+            </MemoryRouter>
+        );
         expect(screen.getByTestId('guest-gateway')).toBeInTheDocument();
     });
 
     test('navigates to guest chat when access granted', () => {
-        render(<App />);
+        render(
+            <MemoryRouter initialEntries={['/']}>
+                <App />
+            </MemoryRouter>
+        );
         fireEvent.click(screen.getByText('Enter as Guest'));
-        expect(screen.getByText('Scott-bot 🤖')).toBeInTheDocument();
+        expect(screen.getByText('LabAssistant 🧪')).toBeInTheDocument();
         // Check if Nav is present
         expect(screen.getByText('Vogel Solutions Lab')).toBeInTheDocument();
     });
 
     test('navigates to auth view when login requested', () => {
-        render(<App />);
+        render(
+            <MemoryRouter initialEntries={['/']}>
+                <App />
+            </MemoryRouter>
+        );
         fireEvent.click(screen.getByText('Login'));
         // Since we mock Authenticator to render children, we should see authenticated content
         expect(screen.getByTestId('project-gallery')).toBeInTheDocument();
@@ -76,15 +89,23 @@ describe('App Navigation Flow', () => {
     });
 
     test('shows chatbot in admin view', () => {
-        render(<App />);
+        render(
+            <MemoryRouter initialEntries={['/']}>
+                <App />
+            </MemoryRouter>
+        );
         fireEvent.click(screen.getByText('Login')); // Go to auth
         fireEvent.click(screen.getByText('Admin Portal')); // Go to admin
-        expect(screen.getByText('Scott-bot 🤖')).toBeInTheDocument();
+        expect(screen.getByText('LabAssistant 🧪')).toBeInTheDocument();
         expect(screen.getByText('Admin Dashboard')).toBeInTheDocument();
     });
 
     test('sign out redirects to gateway', async () => {
-        render(<App />);
+        render(
+            <MemoryRouter initialEntries={['/']}>
+                <App />
+            </MemoryRouter>
+        );
         fireEvent.click(screen.getByText('Login')); // Login
         expect(screen.getByText('Sign Out')).toBeInTheDocument();
 

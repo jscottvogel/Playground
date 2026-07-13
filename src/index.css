@@ -1,26 +1,28 @@
 :root {
-  --font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
-  --line-height: 1.5;
+  --font-family: 'Outfit', 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --line-height: 1.6;
   --font-weight: 400;
 
-  --color-bg: #0f172a;
-  /* Slate 900 */
-  --color-surface: #1e293b;
-  /* Slate 800 */
-  --color-primary: #3b82f6;
-  /* Blue 500 */
-  --color-primary-hover: #2563eb;
-  /* Blue 600 */
-  --color-text: #f8fafc;
-  /* Slate 50 */
+  --color-bg: #0b0f19;
+  /* Slate Dark */
+  --color-surface: #111827;
+  /* Dark surface fallback */
+  --color-primary: #0ea5e9;
+  /* Electric Teal */
+  --color-primary-hover: #0284c7;
+  /* Electric Teal Hover */
+  --color-secondary: #06b6d4;
+  /* Neon Cyan */
+  --color-text: #f1f5f9;
+  /* Off-White */
   --color-text-dim: #94a3b8;
-  /* Slate 400 */
-  --color-border: #334155;
-  /* Slate 700 */
+  /* Slate Muted */
+  --color-border: rgba(255, 255, 255, 0.08);
+  /* Thin boundary border */
 
   --radius: 12px;
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.5);
+  --shadow-lg: 0 10px 30px -15px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 25px rgba(14, 165, 233, 0.15);
 
   color-scheme: dark;
   color: var(--color-text);
@@ -36,12 +38,10 @@ body {
   margin: 0;
   display: flex;
   place-items: center;
-  /* Centering might not be desired for full app, checking... */
-  /* Actually for a full app we usually want full width/height access */
   min-width: 320px;
   min-height: 100vh;
   font-family: var(--font-family);
-  background: radial-gradient(circle at top center, #1e293b 0%, #0f172a 60%);
+  background: radial-gradient(circle at top center, #131d33 0%, #0b0f19 80%);
 }
 
 #root {
@@ -55,20 +55,21 @@ body {
 /* Utilities */
 .btn {
   border-radius: var(--radius);
-  border: 1px solid transparent;
+  border: 1px solid var(--color-border);
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: var(--color-surface);
+  background-color: rgba(255, 255, 255, 0.05);
   color: var(--color-text);
   cursor: pointer;
-  transition: all 0.25s;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .btn:hover {
   border-color: var(--color-primary);
+  background-color: rgba(14, 165, 233, 0.1);
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg), var(--shadow-glow);
 }
@@ -80,24 +81,35 @@ body {
 
 .btn-primary {
   background-color: var(--color-primary);
+  border-color: var(--color-primary);
   color: white;
 }
 
 .btn-primary:hover {
   background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
 }
 
 .card {
-  background: var(--color-surface);
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   padding: 2rem;
   border-radius: var(--radius);
   border: 1px solid var(--color-border);
   box-shadow: var(--shadow-lg);
   text-align: left;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover {
+  border-color: rgba(14, 165, 233, 0.3);
+  box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.6), var(--shadow-glow);
+  transform: translateY(-2px);
 }
 
 input {
-  background: #020617;
+  background: rgba(2, 6, 23, 0.6);
   border: 1px solid var(--color-border);
   padding: 0.8rem;
   border-radius: 8px;
@@ -106,18 +118,19 @@ input {
   width: 100%;
   box-sizing: border-box;
   margin-bottom: 1rem;
+  transition: border-color 0.25s;
 }
 
 input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.3);
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
-  background: -webkit-linear-gradient(45deg, #60a5fa, #c084fc);
+  background: linear-gradient(45deg, var(--color-primary), var(--color-secondary));
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

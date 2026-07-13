@@ -1,5 +1,4 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { AdminDashboard } from './AdminDashboard';
 
 // 1. Define mock functions (vars)
 // 1. Mock 'aws-amplify/data' with a singleton to ensure reference equality
@@ -25,6 +24,25 @@ jest.mock('aws-amplify/data', () => {
     };
 });
 
+// Mock AWS Amplify Storage
+jest.mock('aws-amplify/storage', () => ({
+    downloadData: jest.fn(() => ({
+        result: Promise.resolve({
+            body: {
+                text: () => Promise.resolve(JSON.stringify({
+                    preferredName: 'ScottBot',
+                    fallbackPhrase: 'No info',
+                    restrictions: '',
+                    instructions: ''
+                }))
+            }
+        })
+    })),
+    uploadData: jest.fn(() => ({
+        result: Promise.resolve({})
+    }))
+}));
+
 // 2. Access the mocks for assertion via the imported module
 import { generateClient } from 'aws-amplify/data';
 const client = generateClient() as any;
@@ -38,6 +56,7 @@ jest.mock('../../services/Logger', () => ({
     AdminLogger: {
         debug: jest.fn(),
         info: jest.fn(),
+        warn: jest.fn(),
         error: jest.fn()
     }
 }));
@@ -49,6 +68,8 @@ jest.mock('@aws-amplify/ui-react', () => ({
     }),
     Authenticator: ({ children }: any) => <div>{children({ signOut: jest.fn(), user: { signInDetails: { loginId: 'test' } } })}</div>
 }));
+
+import { AdminDashboard } from './AdminDashboard';
 
 
 
@@ -70,6 +91,7 @@ describe('AdminDashboard', () => {
         // Mock window methods
         window.scrollTo = jest.fn();
         window.confirm = jest.fn(() => true);
+        (window as any).mockUpdate = mockUpdate;
     });
 
     test('renders form and loads projects', async () => {
@@ -106,7 +128,7 @@ describe('AdminDashboard', () => {
 
     test('edits a project', async () => {
         mockList.mockResolvedValue({
-            data: [{ id: '1', title: 'Old Title', isActive: true, skills: ['A'] }]
+            data: [{ id: '1', title: 'Old Title', description: 'Old Description', isActive: true, skills: ['A'] }]
         });
         mockUpdate.mockResolvedValue({ data: { id: '1' }, errors: null });
 
@@ -142,7 +164,7 @@ describe('AdminDashboard', () => {
                 id: '1',
                 isActive: false
             }));
-            expect(screen.getByText('Project deactivated.')).toBeInTheDocument();
+            expect(screen.getByText('Project Deactivated.')).toBeInTheDocument();
         });
     });
 });
