@@ -39,7 +39,7 @@ describe('GuestGateway', () => {
 
     test('renders correctly', () => {
         render(<GuestGateway onAccessGranted={jest.fn()} onLoginRequest={jest.fn()} />);
-        expect(screen.getByText('Welcome to Vogel Solutions')).toBeInTheDocument();
+        expect(screen.getByText('Welcome to Vogel Solutions Lab LLC')).toBeInTheDocument();
     });
 
     test('calls access granted and saves visit on click', async () => {
