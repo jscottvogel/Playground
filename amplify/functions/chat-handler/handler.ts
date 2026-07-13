@@ -131,6 +131,7 @@ export const handler: any = async (event: any) => {
     try {
         // 2. Call Bedrock with Tools
         const response = await callBedrock(messages, config);
+        console.log("[Bedrock] Initial response:", JSON.stringify(response, null, 2));
 
         // 3. Check for Tool Use
         if (response.stop_reason === "tool_use") {
@@ -152,10 +153,11 @@ export const handler: any = async (event: any) => {
 
             // 4. Call Bedrock Again with Tool Outputs
             const finalResponse = await callBedrock(messages, config);
-            return finalResponse.content[0].text;
+            console.log("[Bedrock] Final response:", JSON.stringify(finalResponse, null, 2));
+            return finalResponse.content[0].text || "No response text found in final response.";
         }
 
-        return response.content[0].text;
+        return response.content[0].text || "No response text found in initial response.";
 
     } catch (error) {
         console.error("Agent Error:", error);
