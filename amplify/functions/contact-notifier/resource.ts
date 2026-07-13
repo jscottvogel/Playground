@@ -1,6 +1,7 @@
 import { defineFunction } from '@aws-amplify/backend';
 
 export const contactNotifier = defineFunction({
+    name: 'contactNotifier',
     entry: './handler.ts',
     timeoutSeconds: 30,
     environment: {
