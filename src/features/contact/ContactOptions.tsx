@@ -40,7 +40,7 @@ export function ContactOptions() {
         <section className="contact-section">
             <div className="card contact-card animate-fade-in">
                 <h2 className="contact-title">Connect with the Lab</h2>
-                <p className="contact-subtitle">"From ideas to products"</p>
+                <p className="contact-subtitle">"Dream it. Build it. Deploy it. Improve it."</p>
                 <p className="contact-desc">
                     Ready to build custom SaaS systems, automate with AI, or consult on cloud infrastructure? Choose your preferred route to collaborate.
                 </p>

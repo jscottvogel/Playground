@@ -13,7 +13,7 @@ export function Footer() {
                         <img src="/vogel_lab_logo.png" alt="Vogel Solutions Lab Logo" className="footer-logo" />
                         <span className="footer-brand-name">Vogel Solutions Lab LLC</span>
                     </div>
-                    <p className="footer-tagline">"From ideas to products"</p>
+                    <p className="footer-tagline">"Dream it. Build it. Deploy it. Improve it."</p>
                 </div>
 
                 {/* Navigation Links */}

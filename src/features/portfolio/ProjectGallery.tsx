@@ -48,7 +48,7 @@ export function ProjectGallery() {
         <div className="animate-fade-in">
             <div className="gallery-header">
                 <h2>Lab Experiments</h2>
-                <p className="gallery-tagline">"From ideas to products"</p>
+                <p className="gallery-tagline">"Dream it. Build it. Deploy it. Improve it."</p>
                 <p className="gallery-desc">
                     We build, test, and incubate experimental prototypes to transform them into production SaaS products.
                 </p>
