@@ -59,14 +59,39 @@ export const caseStudies: Record<string, CaseStudy> = {
 };
 
 export function getCaseStudy(projectTitle: string): CaseStudy | null {
-    const titleLower = projectTitle.toLowerCase();
+    if (!projectTitle) return null;
     
-    // Find matching case study
+    const cleanTitle = projectTitle.toLowerCase().replace(/[^a-z0-9]/g, '');
+    
+    // Define explicit aliases for projects to guarantee matching
+    const aliases: Record<string, string[]> = {
+        "our wedding": ["wedding", "ourwedding", "weddingsteward"],
+        "value screener": ["value", "screener", "valuescreener", "latticework"],
+        "barometer": ["barometer"],
+        "vogel solutions": ["vogel", "solutions", "vogelsolutions", "solutionslab", "playground"],
+        "retro space war": ["retro", "spacewar", "retrospacewar"],
+        "flood image segmentation": ["flood", "imagesegmentation", "segmentation", "floodimagesegmentation"],
+        "tank battle": ["tank", "battle", "tankbattle"]
+    };
+
+    // 1. Check aliases first (exact clean match or substring match)
+    for (const [key, searchKeys] of Object.entries(aliases)) {
+        for (const searchKey of searchKeys) {
+            const cleanSearchKey = searchKey.replace(/[^a-z0-9]/g, '');
+            if (cleanTitle.includes(cleanSearchKey) || cleanSearchKey.includes(cleanTitle)) {
+                return caseStudies[key] || null;
+            }
+        }
+    }
+
+    // 2. Fallback to basic clean match on the main keys
     for (const [key, value] of Object.entries(caseStudies)) {
-        if (titleLower.includes(key) || key.includes(titleLower)) {
+        const cleanKey = key.replace(/[^a-z0-9]/g, '');
+        if (cleanTitle.includes(cleanKey) || cleanKey.includes(cleanTitle)) {
             return value;
         }
     }
     
     return null;
 }
+
