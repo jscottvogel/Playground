@@ -106,7 +106,7 @@ export function ProjectGallery() {
 
                             {/* Action Links */}
                             <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
-                                <button onClick={() => setSelectedProject(proj)} className="btn btn-primary" style={{ flex: '1 1 auto' }}>
+                                <button onClick={() => { console.log('[ProjectGallery] View Case Study clicked for project:', proj); setSelectedProject(proj); }} className="btn btn-primary" style={{ flex: '1 1 auto' }}>
                                     View Case Study ↗
                                 </button>
                                 {proj.demoUrl && (

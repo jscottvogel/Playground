@@ -4,18 +4,19 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(11, 15, 25, 0.8);
+    background: rgba(11, 15, 25, 0.85);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 99999;
     padding: 1.5rem;
     box-sizing: border-box;
 }
 
 .modal-content-card {
+    background: var(--color-surface);
     max-width: 750px;
     width: 100%;
     max-height: 90vh;

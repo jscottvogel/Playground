@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import type { Schema } from '../../../amplify/data/resource';
 import { getCaseStudy } from './caseStudies';
 import './ProjectDetailsModal.css';
@@ -15,6 +16,15 @@ export function ProjectDetailsModal({ project, onClose }: ProjectDetailsModalPro
     const isScottBot = project.title?.toLowerCase().includes('bot') || project.title?.toLowerCase().includes('chat');
     
     const caseStudy = getCaseStudy(project.title || '');
+
+    // Debug logs to help trace the exact data being passed to the modal
+    useEffect(() => {
+        console.log('[ProjectDetailsModal] Mounted modal for project:', {
+            title: project.title,
+            id: project.id,
+            caseStudyFound: !!caseStudy
+        });
+    }, [project, caseStudy]);
 
     // Dynamic architecture details based on project type
     const getTechDetails = () => {
@@ -41,7 +51,7 @@ export function ProjectDetailsModal({ project, onClose }: ProjectDetailsModalPro
 
     const techInfo = getTechDetails();
 
-    return (
+    return createPortal(
         <div className="modal-overlay" onClick={onClose}>
             <div className="card modal-content-card animate-fade-in" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
@@ -103,7 +113,9 @@ export function ProjectDetailsModal({ project, onClose }: ProjectDetailsModalPro
                         </div>
                     ) : activeTab === 'casestudy' ? (
                         <div className="case-study-empty animate-fade-in" style={{ padding: '2rem', textAlign: 'center' }}>
-                            <p style={{ color: 'var(--color-text-dim)' }}>No formal case study generated for this prototype.</p>
+                            <p style={{ color: 'var(--color-text-dim)' }}>
+                                No formal case study found for "{project.title || 'this prototype'}".
+                            </p>
                         </div>
                     ) : null}
 
@@ -160,6 +172,8 @@ export function ProjectDetailsModal({ project, onClose }: ProjectDetailsModalPro
                     )}
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
+
