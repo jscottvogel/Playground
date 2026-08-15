@@ -16,6 +16,10 @@ jest.mock('aws-amplify/data', () => ({
     })
 }));
 
+jest.mock('aws-amplify/auth', () => ({
+    getCurrentUser: jest.fn(() => Promise.reject(new Error('Not authenticated')))
+}));
+
 jest.mock('../../services/Logger', () => ({
     GalleryLogger: {
         debug: jest.fn(),

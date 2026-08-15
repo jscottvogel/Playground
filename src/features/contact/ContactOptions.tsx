@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../amplify/data/resource';
+import { getCurrentUser } from 'aws-amplify/auth';
 import './ContactOptions.css';
 
 const client = generateClient<Schema>();
@@ -9,6 +10,13 @@ export function ContactOptions() {
     const [email, setEmail] = useState('');
     const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
     const [loading, setLoading] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        getCurrentUser()
+            .then(() => setIsAuthenticated(true))
+            .catch(() => setIsAuthenticated(false));
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -18,10 +26,15 @@ export function ContactOptions() {
         setStatus(null);
 
         try {
-            const { errors } = await client.models.GuestVisit.create({
-                email: email,
-                visitedAt: new Date().toISOString()
-            });
+            const { errors } = await client.models.GuestVisit.create(
+                {
+                    email: email,
+                    visitedAt: new Date().toISOString()
+                },
+                {
+                    authMode: isAuthenticated ? 'userPool' : 'iam'
+                }
+            );
 
             if (errors) {
                 setStatus({ type: 'error', message: 'Failed to submit email. Please try again.' });

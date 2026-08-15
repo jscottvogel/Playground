@@ -52,9 +52,14 @@ describe('GuestGateway', () => {
         await user.click(openModalBtn);
 
         await waitFor(() => {
-            expect(mockCreate).toHaveBeenCalledWith(expect.objectContaining({
-                email: 'Guest'
-            }));
+            expect(mockCreate).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    email: 'Guest'
+                }),
+                expect.objectContaining({
+                    authMode: 'iam'
+                })
+            );
             expect(onAccessGranted).toHaveBeenCalledWith('Guest');
         });
     });

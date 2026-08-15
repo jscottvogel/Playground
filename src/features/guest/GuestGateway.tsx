@@ -35,10 +35,15 @@ export function GuestGateway({ onAccessGranted, onLoginRequest }: GuestGatewayPr
         try {
             // Record the guest visit in DynamoDB
             // Note: Permissions allow public create but not read/update/delete on this model
-            const { errors } = await client.models.GuestVisit.create({
-                email: 'Guest',
-                visitedAt: new Date().toISOString()
-            });
+            const { errors } = await client.models.GuestVisit.create(
+                {
+                    email: 'Guest',
+                    visitedAt: new Date().toISOString()
+                },
+                {
+                    authMode: 'iam'
+                }
+            );
 
             if (errors) {
                 GuestLogger.error('Error saving guest:', errors);

@@ -1,6 +1,7 @@
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../amplify/data/resource';
 import { useEffect, useState } from 'react';
+import { getCurrentUser } from 'aws-amplify/auth';
 import './ProjectGallery.css';
 import { GalleryLogger } from '../../services/Logger';
 import { ProjectDetailsModal } from './ProjectDetailsModal';
@@ -19,17 +20,34 @@ const client = generateClient<Schema>();
 export function ProjectGallery() {
     const [projects, setProjects] = useState<Schema['Project']['type'][]>([]);
     const [selectedProject, setSelectedProject] = useState<Schema['Project']['type'] | null>(null);
+    const [authLoading, setAuthLoading] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    // Check auth status on mount
+    useEffect(() => {
+        getCurrentUser()
+            .then(() => {
+                setIsAuthenticated(true);
+                setAuthLoading(false);
+            })
+            .catch(() => {
+                setIsAuthenticated(false);
+                setAuthLoading(false);
+            });
+    }, []);
 
     /**
      * Fetches all projects from the database.
      * Note: This view allows read access to all authenticated users.
      */
-    const fetchProjects = async () => {
-        GalleryLogger.debug('Fetching list of projects...');
+    const fetchProjects = async (authStatus: boolean) => {
+        GalleryLogger.debug(`Fetching list of projects (authStatus: ${authStatus})...`);
         try {
             // Fetch all projects, then filter for active ones.
-            // (Ideally done via filter in list() if supported, but client-side filter is safe for small datasets)
-            const { data: items } = await client.models.Project.list();
+            // Pass the correct authMode based on login status.
+            const { data: items } = await client.models.Project.list({
+                authMode: authStatus ? 'userPool' : 'iam'
+            });
             const activeItems = items.filter(p => p.isActive !== false); // Default is true, handle null/undefined as true or explicit false
 
             GalleryLogger.info(`Fetched ${items.length} projects (${activeItems.length} active).`);
@@ -39,10 +57,12 @@ export function ProjectGallery() {
         }
     };
 
-    // Load projects on mount
+    // Load projects when auth check completes
     useEffect(() => {
-        fetchProjects();
-    }, []);
+        if (!authLoading) {
+            fetchProjects(isAuthenticated);
+        }
+    }, [authLoading, isAuthenticated]);
 
     return (
         <div className="animate-fade-in">
