@@ -90,7 +90,7 @@ export const ScottBot = forwardRef<ScottBotHandle, ScottBotProps>(({ mode = 'wid
             // Using 'any' cast temporarily until schema is regenerated types
             const response = await (client.queries as any).askBedrockAgent(
                 { message: userText },
-                { authMode: isAuthenticated ? 'userPool' : 'apiKey' }
+                { authMode: isAuthenticated ? 'userPool' : 'iam' }
             );
 
             if (response.errors && response.errors.length > 0) {

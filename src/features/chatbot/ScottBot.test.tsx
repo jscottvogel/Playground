@@ -68,7 +68,7 @@ describe('ScottBot', () => {
         expect(screen.getByText('Hello Agent')).toBeInTheDocument();
 
         await waitFor(() => {
-            expect(mockAskAgent).toHaveBeenCalledWith({ message: 'Hello Agent' }, { authMode: 'apiKey' });
+            expect(mockAskAgent).toHaveBeenCalledWith({ message: 'Hello Agent' }, { authMode: 'iam' });
             expect(screen.getByText('I am the Agent.')).toBeInTheDocument();
         });
     });
