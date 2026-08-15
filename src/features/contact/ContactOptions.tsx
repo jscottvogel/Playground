@@ -32,7 +32,7 @@ export function ContactOptions() {
                     visitedAt: new Date().toISOString()
                 },
                 {
-                    authMode: isAuthenticated ? 'userPool' : 'iam'
+                    authMode: isAuthenticated ? 'userPool' : 'identityPool'
                 }
             );
 

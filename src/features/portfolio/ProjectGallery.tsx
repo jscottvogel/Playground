@@ -46,7 +46,7 @@ export function ProjectGallery() {
             // Fetch all projects, then filter for active ones.
             // Pass the correct authMode based on login status.
             const { data: items } = await client.models.Project.list({
-                authMode: authStatus ? 'userPool' : 'iam'
+                authMode: authStatus ? 'userPool' : 'identityPool'
             });
             const activeItems = items.filter(p => p.isActive !== false); // Default is true, handle null/undefined as true or explicit false
 

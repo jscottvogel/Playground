@@ -41,7 +41,7 @@ export function GuestGateway({ onAccessGranted, onLoginRequest }: GuestGatewayPr
                     visitedAt: new Date().toISOString()
                 },
                 {
-                    authMode: 'iam'
+                    authMode: 'identityPool'
                 }
             );
 
