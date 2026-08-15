@@ -20,6 +20,8 @@ const schema = a.schema({
         .authorization((allow) => [
             // Guest users (via IAM) can read projects
             allow.guest().to(['read']),
+            // Public users (via API Key) can read projects
+            allow.publicApiKey().to(['read']),
             // Authenticated users can read projects (via Cognito User Pools)
             allow.authenticated().to(['read']),
             // Admins group can do everything
@@ -36,6 +38,8 @@ const schema = a.schema({
         .authorization((allow) => [
             // Guests (public) can create a visit record (submit email) via IAM
             allow.guest().to(['create']),
+            // Guests can also submit via API Key
+            allow.publicApiKey().to(['create']),
             // Admin can read these
             allow.owner(),
         ]),
@@ -48,7 +52,8 @@ const schema = a.schema({
         .returns(a.string())
         .authorization(allow => [
             allow.authenticated(),
-            allow.guest() // Allow guests to chat too
+            allow.guest(), // Allow guests to chat too via IAM
+            allow.publicApiKey() // Allow guests to chat too via API Key
         ])
         .handler(a.handler.function(scottBotHandler)),
 });
@@ -59,5 +64,8 @@ export const data = defineData({
     schema,
     authorizationModes: {
         defaultAuthorizationMode: 'iam',
+        apiKeyAuthorizationMode: {
+            expiresInDays: 30,
+        },
     },
 });

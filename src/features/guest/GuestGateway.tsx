@@ -35,15 +35,37 @@ export function GuestGateway({ onAccessGranted, onLoginRequest }: GuestGatewayPr
         try {
             // Record the guest visit in DynamoDB
             // Note: Permissions allow public create but not read/update/delete on this model
-            const { errors } = await client.models.GuestVisit.create(
-                {
-                    email: 'Guest',
-                    visitedAt: new Date().toISOString()
-                },
-                {
-                    authMode: 'identityPool'
+            let errors = null;
+            try {
+                GuestLogger.debug("Trying to log guest visit via identityPool...");
+                const res = await client.models.GuestVisit.create(
+                    {
+                        email: 'Guest',
+                        visitedAt: new Date().toISOString()
+                    },
+                    {
+                        authMode: 'identityPool'
+                    }
+                );
+                errors = res.errors;
+            } catch (identityPoolErr) {
+                GuestLogger.warn("Failed to log guest visit via identityPool, trying apiKey...", identityPoolErr);
+                try {
+                    const res = await client.models.GuestVisit.create(
+                        {
+                            email: 'Guest',
+                            visitedAt: new Date().toISOString()
+                        },
+                        {
+                            authMode: 'apiKey'
+                        }
+                    );
+                    errors = res.errors;
+                } catch (apiKeyErr) {
+                    GuestLogger.error("All authorization methods failed for logging guest visit:", apiKeyErr);
+                    errors = [apiKeyErr];
                 }
-            );
+            }
 
             if (errors) {
                 GuestLogger.error('Error saving guest:', errors);
