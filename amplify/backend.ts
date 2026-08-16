@@ -67,8 +67,7 @@ backend.storage.resources.bucket.grantRead(backend.scottBotHandler.resources.lam
 // Pass bucket name to env vars so Lambda knows where to look for config
 backend.scottBotHandler.resources.lambda.addEnvironment('STORAGE_BUCKET_NAME', backend.storage.resources.bucket.bucketName);
 
-// Force API Key rotation
-backend.data.resources.cfnResources.cfnApiKey?.overrideLogicalId(
-    `RecoverApiKey${new Date().getTime()}`
-);
+// Explicitly enable unauthenticated identities in Cognito Identity Pool
+const { cfnIdentityPool } = backend.auth.resources.cfnResources;
+cfnIdentityPool.allowUnauthenticatedIdentities = true;
 

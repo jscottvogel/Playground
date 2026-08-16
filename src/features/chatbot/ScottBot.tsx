@@ -86,40 +86,10 @@ export const ScottBot = forwardRef<ScottBotHandle, ScottBotProps>(({ mode = 'wid
         ChatLogger.info(`User sent message: ${userText}`);
 
         try {
-            // Call the Bedrock Agent
-            // Using 'any' cast temporarily until schema is regenerated types
-            let response = null;
-            if (isAuthenticated) {
-                try {
-                    response = await (client.queries as any).askBedrockAgent(
-                        { message: userText },
-                        { authMode: 'userPool' }
-                    );
-                } catch (userPoolErr) {
-                    ChatLogger.warn("askBedrockAgent failed via userPool, falling back to guest auth...", userPoolErr);
-                }
-            }
-
-            if (!response) {
-                // Try identityPool, then fall back to apiKey
-                try {
-                    response = await (client.queries as any).askBedrockAgent(
-                        { message: userText },
-                        { authMode: 'identityPool' }
-                    );
-                } catch (identityPoolErr) {
-                    ChatLogger.warn("askBedrockAgent failed via identityPool, trying apiKey...", identityPoolErr);
-                    try {
-                        response = await (client.queries as any).askBedrockAgent(
-                            { message: userText },
-                            { authMode: 'apiKey' }
-                        );
-                    } catch (apiKeyErr) {
-                        ChatLogger.error("All authorization methods failed for askBedrockAgent:", apiKeyErr);
-                        throw apiKeyErr;
-                    }
-                }
-            }
+            const response = await (client.queries as any).askBedrockAgent(
+                { message: userText },
+                { authMode: isAuthenticated ? 'userPool' : 'identityPool' }
+            );
 
             if (response.errors && response.errors.length > 0) {
                 console.error("Backend errors:", response.errors);

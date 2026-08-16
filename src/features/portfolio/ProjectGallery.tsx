@@ -41,52 +41,17 @@ export function ProjectGallery() {
      * Note: This view allows read access to all authenticated users.
      */
     const fetchProjects = async (authStatus: boolean) => {
-        GalleryLogger.debug(`Fetching list of projects (authStatus: ${authStatus})...`);
+        const mode = authStatus ? 'userPool' : 'identityPool';
+        GalleryLogger.debug(`Fetching list of projects using ${mode} authMode...`);
         try {
-            if (authStatus) {
-                // If authenticated, try userPool first
-                try {
-                    GalleryLogger.debug("Trying userPool authorization...");
-                    const { data: items } = await client.models.Project.list({
-                        authMode: 'userPool'
-                    });
-                    const activeItems = items.filter(p => p.isActive !== false);
-                    GalleryLogger.info(`Fetched ${items.length} projects via userPool.`);
-                    setProjects(activeItems);
-                    return;
-                } catch (userPoolErr) {
-                    GalleryLogger.warn("userPool query failed, falling back to identityPool:", userPoolErr);
-                }
-            }
-
-            // Unauthenticated (or authenticated fallback): Try identityPool
-            try {
-                GalleryLogger.debug("Trying identityPool authorization...");
-                const { data: items } = await client.models.Project.list({
-                    authMode: 'identityPool'
-                });
-                const activeItems = items.filter(p => p.isActive !== false);
-                GalleryLogger.info(`Fetched ${items.length} projects via identityPool.`);
-                setProjects(activeItems);
-                return;
-            } catch (identityPoolErr) {
-                GalleryLogger.warn("identityPool query failed, trying apiKey...", identityPoolErr);
-            }
-
-            // Fallback: Try apiKey
-            try {
-                GalleryLogger.debug("Trying apiKey authorization...");
-                const { data: items } = await client.models.Project.list({
-                    authMode: 'apiKey'
-                });
-                const activeItems = items.filter(p => p.isActive !== false);
-                GalleryLogger.info(`Fetched ${items.length} projects via apiKey.`);
-                setProjects(activeItems);
-            } catch (apiKeyErr) {
-                GalleryLogger.error("All authorization methods failed for fetching projects:", apiKeyErr);
-            }
+            const { data: items } = await client.models.Project.list({
+                authMode: mode
+            });
+            const activeItems = items.filter(p => p.isActive !== false); // Default is true, handle null/undefined as true or explicit false
+            GalleryLogger.info(`Fetched ${items.length} projects (${activeItems.length} active).`);
+            setProjects(activeItems);
         } catch (e) {
-            GalleryLogger.error("Unexpected error in fetchProjects:", e);
+            GalleryLogger.error("Failed to fetch projects:", e);
         }
     };
 

@@ -26,54 +26,15 @@ export function ContactOptions() {
         setStatus(null);
 
         try {
-            let errors = null;
-            if (isAuthenticated) {
-                try {
-                    const res = await client.models.GuestVisit.create(
-                        {
-                            email: email,
-                            visitedAt: new Date().toISOString()
-                        },
-                        {
-                            authMode: 'userPool'
-                        }
-                    );
-                    errors = res.errors;
-                } catch (userPoolErr) {
-                    setStatus({ type: 'error', message: 'Failed to submit email. Please try again.' });
-                    setLoading(false);
-                    return;
+            const { errors } = await client.models.GuestVisit.create(
+                {
+                    email: email,
+                    visitedAt: new Date().toISOString()
+                },
+                {
+                    authMode: isAuthenticated ? 'userPool' : 'identityPool'
                 }
-            } else {
-                // Try identityPool first, then fall back to apiKey
-                try {
-                    const res = await client.models.GuestVisit.create(
-                        {
-                            email: email,
-                            visitedAt: new Date().toISOString()
-                        },
-                        {
-                            authMode: 'identityPool'
-                        }
-                    );
-                    errors = res.errors;
-                } catch (identityPoolErr) {
-                    try {
-                        const res = await client.models.GuestVisit.create(
-                            {
-                                email: email,
-                                visitedAt: new Date().toISOString()
-                            },
-                            {
-                                authMode: 'apiKey'
-                            }
-                        );
-                        errors = res.errors;
-                    } catch (apiKeyErr) {
-                        errors = [apiKeyErr];
-                    }
-                }
-            }
+            );
 
             if (errors) {
                 setStatus({ type: 'error', message: 'Failed to submit email. Please try again.' });
