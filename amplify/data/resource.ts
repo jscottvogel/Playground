@@ -21,9 +21,9 @@ const schema = a.schema({
             // Guest users (via IAM) can read projects
             allow.guest().to(['read']),
             // Authenticated users can read projects (via Cognito User Pools)
-            allow.authenticated('userPools').to(['read']),
-            // Authenticated users (via IAM / Identity Pool) can read projects
             allow.authenticated().to(['read']),
+            // Authenticated users (via IAM / Identity Pool) can read projects
+            allow.authenticated('identityPool').to(['read']),
             // Admins group can do everything
             allow.groups(['Admins']).to(['create', 'update', 'delete']),
             // Owner (if signed in and not admin, though admin group covers most)
@@ -49,8 +49,8 @@ const schema = a.schema({
         })
         .returns(a.string())
         .authorization(allow => [
-            allow.authenticated('userPools'),
             allow.authenticated(),
+            allow.authenticated('identityPool'),
             allow.guest() // Allow guests to chat too via IAM
         ])
         .handler(a.handler.function(scottBotHandler)),
