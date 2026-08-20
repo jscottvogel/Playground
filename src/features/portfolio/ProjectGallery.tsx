@@ -88,7 +88,7 @@ export function ProjectGallery() {
                             <div key={proj.id} className="card project-card">
                                 <div className="badge-container">
                                     {isWeddingApp ? (
-                                        <span className="badge-featured">Target Launch: Aug 31, 2026</span>
+                                        <span className="badge-featured">Target Launch: September 30, 2026</span>
                                     ) : (
                                         <span className="badge-prototype">Experimental Prototype</span>
                                     )}

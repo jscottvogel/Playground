@@ -63,7 +63,7 @@ export function ProjectDetailsModal({ project, onClose }: ProjectDetailsModalPro
                     {/* Status Badge */}
                     <div style={{ marginBottom: '1.5rem' }}>
                         {isWeddingApp ? (
-                            <span className="badge-featured">Incubator Target Launch: Aug 31, 2026</span>
+                            <span className="badge-featured">Incubator Target Launch: September 30, 2026</span>
                         ) : (
                             <span className="badge-prototype">Experimental Prototype</span>
                         )}
