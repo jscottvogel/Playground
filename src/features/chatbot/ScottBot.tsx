@@ -88,7 +88,7 @@ export const ScottBot = forwardRef<ScottBotHandle, ScottBotProps>(({ mode = 'wid
         try {
             const response = await (client.queries as any).askBedrockAgent(
                 { message: userText },
-                { authMode: isAuthenticated ? 'userPool' : 'identityPool' }
+                { authMode: isAuthenticated ? 'userPool' : 'iam' }
             );
 
             if (response.errors && response.errors.length > 0) {

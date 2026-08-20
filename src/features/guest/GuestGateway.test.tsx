@@ -57,7 +57,7 @@ describe('GuestGateway', () => {
                     email: 'Guest'
                 }),
                 expect.objectContaining({
-                    authMode: 'identityPool'
+                    authMode: 'iam'
                 })
             );
             expect(onAccessGranted).toHaveBeenCalledWith('Guest');

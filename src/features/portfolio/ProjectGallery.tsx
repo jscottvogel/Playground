@@ -41,7 +41,7 @@ export function ProjectGallery() {
      * Note: This view allows read access to all authenticated users.
      */
     const fetchProjects = async (authStatus: boolean) => {
-        const mode = authStatus ? 'userPool' : 'identityPool';
+        const mode = authStatus ? 'userPool' : 'iam';
         GalleryLogger.debug(`Fetching list of projects using ${mode} authMode...`);
         try {
             const { data: items } = await client.models.Project.list({

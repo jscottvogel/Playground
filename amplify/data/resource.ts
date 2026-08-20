@@ -21,6 +21,8 @@ const schema = a.schema({
             // Guest users (via IAM) can read projects
             allow.guest().to(['read']),
             // Authenticated users can read projects (via Cognito User Pools)
+            allow.authenticated('userPools').to(['read']),
+            // Authenticated users (via IAM / Identity Pool) can read projects
             allow.authenticated().to(['read']),
             // Admins group can do everything
             allow.groups(['Admins']).to(['create', 'update', 'delete']),
@@ -47,6 +49,7 @@ const schema = a.schema({
         })
         .returns(a.string())
         .authorization(allow => [
+            allow.authenticated('userPools'),
             allow.authenticated(),
             allow.guest() // Allow guests to chat too via IAM
         ])
