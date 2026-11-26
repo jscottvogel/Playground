@@ -9,7 +9,7 @@ Services Offered:
 - Technical Program Management & Consultation: Professional guidance on software architecture, containerization (distroless container architectures), and agile delivery.
 
 Incubated SaaS Products & Projects:
-- Wedding App: Our highly anticipated Wedding App is currently in the active roadmap and is targeting launch by August 31st (August 31, 2026). It offers comprehensive wedding planning, guest guestlists, and event coordination tools.
+- WeddingSteward (formerly the Wedding App): Launched and live in production at https://weddingsteward.com as of November 2026. It offers comprehensive wedding planning, guest lists and RSVPs, and event coordination tools.
 - Resume Chatbot (LabAssistant): An AI-powered assistant built with AWS Bedrock and RAG to answer user queries about Scott's experience and company offerings.
 - PolicyPal: An enterprise generative AI policy assistant.
 

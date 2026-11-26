@@ -21,7 +21,7 @@ export function TermsOfService() {
                 <ul>
                     <li>Prototypes are provided on an "as-is" and "as-available" basis.</li>
                     <li>We make no guarantees regarding data persistence, uptime, or correctness of these experiments.</li>
-                    <li>Active target features (such as the Wedding App launching August 31, 2026) are subject to modification during the development lifecycle.</li>
+                    <li>Active target features of incubator products are subject to modification during the development lifecycle.</li>
                 </ul>
             </section>
 

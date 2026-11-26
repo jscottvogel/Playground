@@ -18,7 +18,7 @@ export function ChatInterface({ userEmail, className = '' }: ChatInterfaceProps)
 
     const suggestions = [
         "What services does Vogel Solutions Lab offer?",
-        "Tell me about the Wedding App launching by August 31st.",
+        "Tell me about WeddingSteward.com, now live in production.",
         "What SaaS products are you incubating?",
         "How can I book a project consultation?"
     ];

@@ -19,7 +19,7 @@ export function Footer() {
                 {/* Navigation Links */}
                 <div className="footer-nav-section">
                     <h4>Incubator Target</h4>
-                    <p className="footer-inc-note">Wedding App launch set for <strong>August 31, 2026</strong>.</p>
+                    <p className="footer-inc-note"><a href="https://weddingsteward.com" target="_blank" rel="noopener noreferrer">WeddingSteward.com</a> is <strong>now live</strong>.</p>
                 </div>
 
                 {/* Legal Links */}

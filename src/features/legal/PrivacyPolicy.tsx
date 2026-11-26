@@ -24,7 +24,7 @@ export function PrivacyPolicy() {
                 </p>
                 <ul>
                     <li>Respond to inquiries, questions, and scheduling requests.</li>
-                    <li>Provide updates on our active incubator projects (such as the Wedding App launch).</li>
+                    <li>Provide updates on our active incubator projects (such as WeddingSteward.com).</li>
                     <li>Improve our website performance and user experience.</li>
                 </ul>
             </section>
