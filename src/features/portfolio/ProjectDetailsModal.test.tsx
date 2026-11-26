@@ -1,6 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ProjectDetailsModal } from './ProjectDetailsModal';
 
+jest.mock('../../services/Logger'); // uses src/services/__mocks__/Logger.ts
+
 const mockProject = {
     id: '1',
     title: 'Our Wedding',

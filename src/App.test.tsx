@@ -39,6 +39,10 @@ jest.mock('./features/chatbot/ScottBot', () => ({
     ScottBot: () => <div>LabAssistant 🧪</div>
 }));
 
+jest.mock('./features/contact/ContactOptions', () => ({
+    ContactOptions: () => <div data-testid="contact-options">Contact Options</div>
+}));
+
 jest.mock('./services/Logger'); // uses src/services/__mocks__/Logger.ts
 
 jest.mock('aws-amplify/utils', () => ({

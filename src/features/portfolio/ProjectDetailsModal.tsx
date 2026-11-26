@@ -1,3 +1,4 @@
+import { GalleryLogger } from '../../services/Logger';
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { Schema } from '../../../amplify/data/resource';
@@ -22,7 +23,7 @@ export function ProjectDetailsModal({ project, onClose }: ProjectDetailsModalPro
 
     // Debug logs to help trace the exact data being passed to the modal
     useEffect(() => {
-        console.log('[ProjectDetailsModal] Mounted modal for project:', {
+        GalleryLogger.debug('ProjectDetailsModal mounted for project:', {
             title: project.title,
             id: project.id,
             caseStudyFound: !!caseStudy
