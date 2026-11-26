@@ -51,8 +51,9 @@ export function ProjectGallery() {
             const activeItems = items.filter(p => p.isActive !== false); // Default is true, handle null/undefined as true or explicit false
             GalleryLogger.info(`Fetched ${items.length} projects (${activeItems.length} active).`);
             // Production (live) projects first; stable sort keeps the rest in order
-            activeItems.sort((a, b) =>
-                (b.status === 'production' ? 1 : 0) - (a.status === 'production' ? 1 : 0));
+            const live = (p: Schema['Project']['type']) =>
+                p.status === 'production' || !!p.title?.toLowerCase().includes('wedding') ? 1 : 0;
+            activeItems.sort((a, b) => live(b) - live(a));
             setProjects(activeItems);
         } catch (e) {
             GalleryLogger.error("Failed to fetch projects:", e);
@@ -88,7 +89,7 @@ export function ProjectGallery() {
                 <div className="gallery-grid">
                     {projects.map(proj => {
                         const isWeddingApp = proj.title?.toLowerCase().includes('wedding');
-                        const isLive = proj.status === 'production';
+                        const isLive = proj.status === 'production' || isWeddingApp; // WeddingSteward has launched
                         return (
                             <div key={proj.id} className={`card project-card${isLive ? ' project-card--production' : ''}`}>
                                 <div className="badge-container">
@@ -97,8 +98,6 @@ export function ProjectGallery() {
                                             <span className="launch-pill__dot" aria-hidden="true" />
                                             Live
                                         </span>
-                                    ) : isWeddingApp ? (
-                                        <span className="badge-featured">Target Launch: September 30, 2026</span>
                                     ) : (
                                         <span className="badge-prototype">Experimental Prototype</span>
                                     )}

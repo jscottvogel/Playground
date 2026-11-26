@@ -13,8 +13,9 @@ interface ProjectDetailsModalProps {
 export function ProjectDetailsModal({ project, onClose }: ProjectDetailsModalProps) {
     const [activeTab, setActiveTab] = useState<'casestudy' | 'overview'>('casestudy');
     
-    const isLive = project.status === 'production';
     const isWeddingApp = project.title?.toLowerCase().includes('wedding');
+    // WeddingSteward has launched, so it is always shown as live.
+    const isLive = project.status === 'production' || isWeddingApp;
     const isScottBot = project.title?.toLowerCase().includes('bot') || project.title?.toLowerCase().includes('chat');
     
     const caseStudy = getCaseStudy(project.title || '');
@@ -69,8 +70,6 @@ export function ProjectDetailsModal({ project, onClose }: ProjectDetailsModalPro
                                 <span className="launch-pill__dot" aria-hidden="true" />
                                 Live in Production
                             </span>
-                        ) : isWeddingApp ? (
-                            <span className="badge-featured">Incubator Target Launch: September 30, 2026</span>
                         ) : (
                             <span className="badge-prototype">Experimental Prototype</span>
                         )}

@@ -83,4 +83,21 @@ describe('ProjectGallery', () => {
         expect(screen.getByText('Visit Site')).toHaveAttribute('href', 'https://weddingsteward.com');
         expect(screen.getByText('Demo')).toHaveAttribute('href', 'http://proto.com');
     });
+
+    test('WeddingSteward shows as Live even when status is unset, with no stale launch date', async () => {
+        mockList.mockResolvedValue({
+            data: [
+                { id: '1', title: 'Proto App', description: 'p' },
+                { id: '2', title: 'Our Wedding (Wedding Steward)', description: 'w' },
+            ]
+        });
+
+        const { container } = render(<ProjectGallery />);
+        expect(await screen.findByText('Our Wedding (Wedding Steward)')).toBeInTheDocument();
+
+        const titles = Array.from(container.querySelectorAll('.project-card h3')).map(h => h.textContent);
+        expect(titles[0]).toBe('Our Wedding (Wedding Steward)');
+        expect(screen.getAllByTestId('production-badge')).toHaveLength(1);
+        expect(screen.queryByText(/Target Launch|September|August/i)).not.toBeInTheDocument();
+    });
 });
