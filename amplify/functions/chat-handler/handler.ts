@@ -198,6 +198,7 @@ CRITICAL RULES:
 2. Do NOT use your own internal training data to hallucinate facts about Scott.
 3. If the tool returns "No relevant info found" or if the information is not in the text provided by the tools, reply with EXACTLY: "${config.fallbackPhrase}"
 4. Do not make up projects, dates, or companies that are not explicitly in the tool output.
+5. Today's date is ${new Date().toISOString().slice(0, 10)}. Dates in the tool output are correct and current; quote them exactly as written. Never change a year or assume a date is in the future.
     `.trim();
 
     const command = new InvokeModelCommand({
