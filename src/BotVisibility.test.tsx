@@ -34,13 +34,7 @@ jest.mock('./features/portfolio/ProjectGallery', () => ({
     ProjectGallery: () => <div>Project Gallery</div>
 }));
 
-jest.mock('./services/Logger', () => ({
-    AuthLogger: {
-        info: jest.fn(),
-        debug: jest.fn(),
-        error: jest.fn()
-    }
-}));
+jest.mock('./services/Logger'); // uses src/services/__mocks__/Logger.ts
 
 jest.mock('aws-amplify/utils', () => ({
     Hub: {

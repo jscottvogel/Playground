@@ -3,6 +3,7 @@ import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../amplify/data/resource';
 import { GuestLogger } from '../../services/Logger';
 import './GuestGateway.css';
+import { LaunchSpotlight } from '../../components/LaunchSpotlight';
 
 /**
  * Interface for the Amplify Data Client
@@ -62,6 +63,7 @@ export function GuestGateway({ onAccessGranted, onLoginRequest }: GuestGatewayPr
 
     return (
         <div className="gateway-container">
+            <LaunchSpotlight />
             <div className="card gateway-card animate-fade-in">
                 <div className="gateway-brand">
                     <img src="/vogel_lab_logo.png" alt="Vogel Solutions Lab Logo" className="gateway-logo" />
@@ -73,7 +75,7 @@ export function GuestGateway({ onAccessGranted, onLoginRequest }: GuestGatewayPr
                 </div>
 
                 <div className="gateway-info-box">
-                    <p>We build, test, and incubate modern SaaS products. Our active focus is preparing the new <a href="https://weddingsteward.com" target="_blank" rel="noreferrer" className="gateway-link">Wedding Steward App</a> for launch on August 31, 2026.</p>
+                    <p>We build, test, and incubate modern SaaS products — and take the best ones all the way to production. Explore our lab experiments and chat with our AI assistant inside.</p>
                 </div>
 
                 <div className="gateway-actions">

@@ -22,14 +22,7 @@ const client = generateClient() as any;
 const mockCreate = client.models.GuestVisit.create as jest.Mock;
 
 // Mock Logger to prevent console noise
-jest.mock('../../services/Logger', () => ({
-    GuestLogger: {
-        debug: jest.fn(),
-        info: jest.fn(),
-        warn: jest.fn(),
-        error: jest.fn()
-    }
-}));
+jest.mock('../../services/Logger'); // uses src/services/__mocks__/Logger.ts
 
 describe('GuestGateway', () => {
     beforeEach(() => {

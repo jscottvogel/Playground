@@ -1,0 +1,4 @@
+#!/bin/sh
+# Pre-push guard: block pushes when tests or the build fail.
+# Enabled via `git config core.hooksPath .githooks` (run by `npm install` through the "prepare" script).
+npx jest --ci && npm run build

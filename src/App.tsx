@@ -7,6 +7,7 @@ import '@aws-amplify/ui-react/styles.css';
 import { GuestGateway } from './features/guest/GuestGateway';
 import { ChatInterface } from './features/chatbot/ChatInterface';
 import { ProjectGallery } from './features/portfolio/ProjectGallery';
+import { LaunchSpotlight } from './components/LaunchSpotlight';
 import { AdminDashboard } from './features/admin/AdminDashboard';
 import { Nav } from './components/Nav';
 import { Footer } from './components/Footer';
@@ -114,6 +115,7 @@ function MainAppContent() {
             <main className="main-container">
               <Nav user={user} signOut={handleSignOut} />
               <div className="auth-layout animate-fade-in">
+                <LaunchSpotlight compact />
                 <ChatInterface userEmail={guestEmail || user?.signInDetails?.loginId} className="embedded-section" />
                 <ProjectGallery />
                 <ContactOptions />

@@ -16,6 +16,9 @@ const schema = a.schema({
             gitUrl: a.string(),
             skills: a.string().array(),
             isActive: a.boolean().default(true),
+            // Lifecycle stage: 'production' | 'beta' | 'prototype' (optional).
+            // Inherits the model-level authorization rules below.
+            status: a.string(),
         })
         .authorization((allow) => [
             // Guest users (via IAM) can read projects

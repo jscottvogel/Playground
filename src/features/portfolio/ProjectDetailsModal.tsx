@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import type { Schema } from '../../../amplify/data/resource';
 import { getCaseStudy } from './caseStudies';
 import './ProjectDetailsModal.css';
+import '../../components/LaunchSpotlight.css';
 
 interface ProjectDetailsModalProps {
     project: Schema['Project']['type'];
@@ -12,6 +13,7 @@ interface ProjectDetailsModalProps {
 export function ProjectDetailsModal({ project, onClose }: ProjectDetailsModalProps) {
     const [activeTab, setActiveTab] = useState<'casestudy' | 'overview'>('casestudy');
     
+    const isLive = project.status === 'production';
     const isWeddingApp = project.title?.toLowerCase().includes('wedding');
     const isScottBot = project.title?.toLowerCase().includes('bot') || project.title?.toLowerCase().includes('chat');
     
@@ -62,7 +64,12 @@ export function ProjectDetailsModal({ project, onClose }: ProjectDetailsModalPro
                 <div className="modal-body">
                     {/* Status Badge */}
                     <div style={{ marginBottom: '1.5rem' }}>
-                        {isWeddingApp ? (
+                        {isLive ? (
+                            <span className="launch-pill" data-testid="modal-production-badge">
+                                <span className="launch-pill__dot" aria-hidden="true" />
+                                Live in Production
+                            </span>
+                        ) : isWeddingApp ? (
                             <span className="badge-featured">Incubator Target Launch: September 30, 2026</span>
                         ) : (
                             <span className="badge-prototype">Experimental Prototype</span>
@@ -160,7 +167,7 @@ export function ProjectDetailsModal({ project, onClose }: ProjectDetailsModalPro
                 <div className="modal-footer">
                     {project.demoUrl ? (
                         <a href={project.demoUrl} target="_blank" rel="noreferrer" className="btn btn-primary">
-                            Explore Live Demo ↗
+                            {isLive ? 'Visit Site ↗' : 'Explore Live Demo ↗'}
                         </a>
                     ) : (
                         <button className="btn" disabled>No Live Demo Available</button>

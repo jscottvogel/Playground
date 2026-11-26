@@ -52,14 +52,7 @@ const mockUpdate = client.models.Project.update as jest.Mock;
 //const mockDelete = client.models.Project.delete as jest.Mock;
 
 // 3. Mock Logger
-jest.mock('../../services/Logger', () => ({
-    AdminLogger: {
-        debug: jest.fn(),
-        info: jest.fn(),
-        warn: jest.fn(),
-        error: jest.fn()
-    }
-}));
+jest.mock('../../services/Logger'); // uses src/services/__mocks__/Logger.ts
 
 // 4. Mock Authenticator
 jest.mock('@aws-amplify/ui-react', () => ({
@@ -165,6 +158,53 @@ describe('AdminDashboard', () => {
                 isActive: false
             }));
             expect(screen.getByText('Project Deactivated.')).toBeInTheDocument();
+        });
+    });
+
+    test('creates a project with a lifecycle status', async () => {
+        mockList.mockResolvedValue({ data: [] });
+        mockCreate.mockResolvedValue({ data: { id: 'new' }, errors: null });
+
+        render(<AdminDashboard />);
+
+        const statusSelect = screen.getByLabelText(/^Status$/i);
+        expect(statusSelect).toHaveValue('');
+        expect(Array.from((statusSelect as HTMLSelectElement).options).map(o => o.value))
+            .toEqual(['', 'production', 'beta', 'prototype']);
+
+        fireEvent.change(screen.getByLabelText(/Project Title/i), { target: { value: 'Live App' } });
+        fireEvent.change(screen.getByLabelText(/Description/i), { target: { value: 'Desc' } });
+        fireEvent.change(statusSelect, { target: { value: 'production' } });
+        fireEvent.click(screen.getByText('Create Project'));
+
+        await waitFor(() => {
+            expect(mockCreate).toHaveBeenCalledWith(expect.objectContaining({
+                title: 'Live App',
+                status: 'production'
+            }));
+            // Success message survives the form reset
+            expect(screen.getByText('Project created successfully!')).toBeInTheDocument();
+        });
+        expect(screen.getByLabelText(/^Status$/i)).toHaveValue('');
+    });
+
+    test('edit populates status and saves null when cleared', async () => {
+        mockList.mockResolvedValue({
+            data: [{ id: '1', title: 'Beta App', description: 'Desc', isActive: true, status: 'beta' }]
+        });
+        mockUpdate.mockResolvedValue({ data: { id: '1' }, errors: null });
+
+        render(<AdminDashboard />);
+        fireEvent.click(await screen.findByText('Edit'));
+
+        const statusSelect = screen.getByLabelText(/^Status$/i);
+        await waitFor(() => expect(statusSelect).toHaveValue('beta'));
+
+        fireEvent.change(statusSelect, { target: { value: '' } });
+        fireEvent.click(screen.getByText('Update Project'));
+
+        await waitFor(() => {
+            expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({ id: '1', status: null }));
         });
     });
 });

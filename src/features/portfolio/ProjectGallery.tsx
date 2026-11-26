@@ -3,6 +3,7 @@ import type { Schema } from '../../../amplify/data/resource';
 import { useEffect, useState } from 'react';
 import { getCurrentUser } from 'aws-amplify/auth';
 import './ProjectGallery.css';
+import '../../components/LaunchSpotlight.css';
 import { GalleryLogger } from '../../services/Logger';
 import { ProjectDetailsModal } from './ProjectDetailsModal';
 
@@ -49,6 +50,9 @@ export function ProjectGallery() {
             });
             const activeItems = items.filter(p => p.isActive !== false); // Default is true, handle null/undefined as true or explicit false
             GalleryLogger.info(`Fetched ${items.length} projects (${activeItems.length} active).`);
+            // Production (live) projects first; stable sort keeps the rest in order
+            activeItems.sort((a, b) =>
+                (b.status === 'production' ? 1 : 0) - (a.status === 'production' ? 1 : 0));
             setProjects(activeItems);
         } catch (e) {
             GalleryLogger.error("Failed to fetch projects:", e);
@@ -84,10 +88,16 @@ export function ProjectGallery() {
                 <div className="gallery-grid">
                     {projects.map(proj => {
                         const isWeddingApp = proj.title?.toLowerCase().includes('wedding');
+                        const isLive = proj.status === 'production';
                         return (
-                            <div key={proj.id} className="card project-card">
+                            <div key={proj.id} className={`card project-card${isLive ? ' project-card--production' : ''}`}>
                                 <div className="badge-container">
-                                    {isWeddingApp ? (
+                                    {isLive ? (
+                                        <span className="launch-pill" data-testid="production-badge">
+                                            <span className="launch-pill__dot" aria-hidden="true" />
+                                            Live
+                                        </span>
+                                    ) : isWeddingApp ? (
                                         <span className="badge-featured">Target Launch: September 30, 2026</span>
                                     ) : (
                                         <span className="badge-prototype">Experimental Prototype</span>
@@ -128,7 +138,7 @@ export function ProjectGallery() {
                                     View Case Study ↗
                                 </button>
                                 {proj.demoUrl && (
-                                    <a href={proj.demoUrl} className="btn" target='_blank' rel='noreferrer' style={{ padding: '0.6em 0.8em' }}>Demo</a>
+                                    <a href={proj.demoUrl} className="btn" target='_blank' rel='noreferrer' style={{ padding: '0.6em 0.8em' }}>{isLive ? 'Visit Site' : 'Demo'}</a>
                                 )}
                             </div>
                         </div>

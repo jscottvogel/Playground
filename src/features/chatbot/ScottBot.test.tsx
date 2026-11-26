@@ -6,13 +6,7 @@ window.HTMLElement.prototype.scrollIntoView = jest.fn();
 window.HTMLElement.prototype.scrollTo = jest.fn();
 
 // Mock Logger
-jest.mock('../../services/Logger', () => ({
-    ChatLogger: {
-        debug: jest.fn(),
-        info: jest.fn(),
-        error: jest.fn()
-    }
-}));
+jest.mock('../../services/Logger'); // uses src/services/__mocks__/Logger.ts
 
 // Mock AWS Amplify Data Client
 jest.mock('aws-amplify/data', () => {

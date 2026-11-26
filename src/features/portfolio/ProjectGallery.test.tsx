@@ -20,13 +20,7 @@ jest.mock('aws-amplify/auth', () => ({
     getCurrentUser: jest.fn(() => Promise.reject(new Error('Not authenticated')))
 }));
 
-jest.mock('../../services/Logger', () => ({
-    GalleryLogger: {
-        debug: jest.fn(),
-        info: jest.fn(),
-        error: jest.fn()
-    }
-}));
+jest.mock('../../services/Logger'); // uses src/services/__mocks__/Logger.ts
 
 describe('ProjectGallery', () => {
     beforeEach(() => {
@@ -63,5 +57,30 @@ describe('ProjectGallery', () => {
 
         const demoLink = screen.getByText('Demo');
         expect(demoLink).toHaveAttribute('href', 'http://test.com');
+        expect(screen.queryByTestId('production-badge')).not.toBeInTheDocument();
+    });
+
+    test('production projects get a Live badge, sort first, and use a Visit Site CTA', async () => {
+        mockList.mockResolvedValue({
+            data: [
+                { id: '1', title: 'Proto App', description: 'p', demoUrl: 'http://proto.com', status: 'prototype' },
+                { id: '2', title: 'Wedding Steward', description: 'w', demoUrl: 'https://weddingsteward.com', status: 'production' },
+                { id: '3', title: 'Beta App', description: 'b' },
+            ]
+        });
+
+        const { container } = render(<ProjectGallery />);
+        expect(await screen.findByText('Wedding Steward')).toBeInTheDocument();
+
+        const titles = Array.from(container.querySelectorAll('.project-card h3')).map(h => h.textContent);
+        expect(titles).toEqual(['Wedding Steward', 'Proto App', 'Beta App']);
+
+        const badges = screen.getAllByTestId('production-badge');
+        expect(badges).toHaveLength(1);
+        expect(badges[0]).toHaveTextContent('Live');
+        expect(badges[0].closest('.project-card')).toHaveClass('project-card--production');
+
+        expect(screen.getByText('Visit Site')).toHaveAttribute('href', 'https://weddingsteward.com');
+        expect(screen.getByText('Demo')).toHaveAttribute('href', 'http://proto.com');
     });
 });

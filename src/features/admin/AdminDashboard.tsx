@@ -36,6 +36,8 @@ export function AdminDashboard() {
     const [demoUrl, setDemoUrl] = useState('');
     const [gitUrl, setGitUrl] = useState('');
     const [skills, setSkills] = useState('');
+    // Lifecycle stage: 'production' | 'beta' | 'prototype' | '' (none)
+    const [projStatus, setProjStatus] = useState('');
 
     // --- UI State Management ---
     const [projects, setProjects] = useState<Schema['Project']['type'][]>([]);
@@ -80,6 +82,7 @@ export function AdminDashboard() {
         setDemoUrl(proj.demoUrl || '');
         setGitUrl(proj.gitUrl || '');
         setSkills(proj.skills ? proj.skills.join(', ') : '');
+        setProjStatus(proj.status || '');
         setStatus(null); // Clear previous messages
         window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to form
     };
@@ -117,6 +120,7 @@ export function AdminDashboard() {
         setDemoUrl('');
         setGitUrl('');
         setSkills('');
+        setProjStatus('');
     };
 
     /**
@@ -151,6 +155,7 @@ export function AdminDashboard() {
                 demoUrl,
                 gitUrl,
                 skills: skillsArray,
+                status: projStatus || null,
                 isActive: true // Default to active
             };
 
@@ -315,6 +320,20 @@ export function AdminDashboard() {
                                 value={skills}
                                 onChange={e => setSkills(e.target.value)}
                             />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="project-status">Status</label>
+                            <select
+                                id="project-status"
+                                value={projStatus}
+                                onChange={e => setProjStatus(e.target.value)}
+                            >
+                                <option value="">(none)</option>
+                                <option value="production">Production</option>
+                                <option value="beta">Beta</option>
+                                <option value="prototype">Prototype</option>
+                            </select>
                         </div>
 
                         <div style={{ display: 'flex', gap: '1rem' }}>
