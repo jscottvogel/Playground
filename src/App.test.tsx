@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import App from './App';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -47,63 +47,63 @@ jest.mock('aws-amplify/utils', () => ({
     }
 }));
 
+jest.mock('aws-amplify/auth', () => ({
+    getCurrentUser: jest.fn(() => Promise.reject(new Error('No active session')))
+}));
+
+/** Renders App and flushes the async auth check on mount inside act(). */
+async function renderApp() {
+    const utils = render(
+        <MemoryRouter initialEntries={['/']}>
+            <App />
+        </MemoryRouter>
+    );
+    await act(async () => { await new Promise((r) => setTimeout(r, 0)); });
+    return utils;
+}
+
+/** Clicks an element and lets async router/state updates settle inside act(). */
+async function click(el: HTMLElement) {
+    await act(async () => { fireEvent.click(el); });
+}
+
 describe('App Navigation Flow', () => {
-    test('renders GuestGateway by default', () => {
-        render(
-            <MemoryRouter initialEntries={['/']}>
-                <App />
-            </MemoryRouter>
-        );
+    test('renders GuestGateway by default', async () => {
+        await renderApp();
         expect(screen.getByTestId('guest-gateway')).toBeInTheDocument();
     });
 
-    test('navigates to guest chat when access granted', () => {
-        render(
-            <MemoryRouter initialEntries={['/']}>
-                <App />
-            </MemoryRouter>
-        );
-        fireEvent.click(screen.getByText('Enter as Guest'));
+    test('navigates to guest chat when access granted', async () => {
+        await renderApp();
+        await click(screen.getByText('Enter as Guest'));
         expect(screen.getByText('LabAssistant 🧪')).toBeInTheDocument();
         // Check if Nav is present
         expect(screen.getByText('Vogel Solutions Lab')).toBeInTheDocument();
     });
 
-    test('navigates to auth view when login requested', () => {
-        render(
-            <MemoryRouter initialEntries={['/']}>
-                <App />
-            </MemoryRouter>
-        );
-        fireEvent.click(screen.getByText('Login'));
+    test('navigates to auth view when login requested', async () => {
+        await renderApp();
+        await click(screen.getByText('Login'));
         // Since we mock Authenticator to render children, we should see authenticated content
         expect(screen.getByTestId('project-gallery')).toBeInTheDocument();
         // Also check if Admin button is present now that we are logged in
         expect(screen.getByText('Admin Portal')).toBeInTheDocument();
     });
 
-    test('shows chatbot in admin view', () => {
-        render(
-            <MemoryRouter initialEntries={['/']}>
-                <App />
-            </MemoryRouter>
-        );
-        fireEvent.click(screen.getByText('Login')); // Go to auth
-        fireEvent.click(screen.getByText('Admin Portal')); // Go to admin
+    test('shows chatbot in admin view', async () => {
+        await renderApp();
+        await click(screen.getByText('Login')); // Go to auth
+        await click(screen.getByText('Admin Portal')); // Go to admin
         expect(screen.getByText('LabAssistant 🧪')).toBeInTheDocument();
         expect(screen.getByText('Admin Dashboard')).toBeInTheDocument();
     });
 
     test('sign out redirects to gateway', async () => {
-        render(
-            <MemoryRouter initialEntries={['/']}>
-                <App />
-            </MemoryRouter>
-        );
-        fireEvent.click(screen.getByText('Login')); // Login
+        await renderApp();
+        await click(screen.getByText('Login')); // Login
         expect(screen.getByText('Sign Out')).toBeInTheDocument();
 
-        fireEvent.click(screen.getByText('Sign Out'));
+        await click(screen.getByText('Sign Out'));
 
         // Should land back on Gateway
         expect(await screen.findByTestId('guest-gateway')).toBeInTheDocument();

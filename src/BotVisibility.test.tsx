@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import App from './App';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -42,42 +42,50 @@ jest.mock('aws-amplify/utils', () => ({
     }
 }));
 
+jest.mock('aws-amplify/auth', () => ({
+    getCurrentUser: jest.fn(() => Promise.reject(new Error('No active session')))
+}));
+
+/** Renders App and flushes the async auth check on mount inside act(). */
+async function renderApp() {
+    const utils = render(
+        <MemoryRouter initialEntries={['/']}>
+            <App />
+        </MemoryRouter>
+    );
+    await act(async () => { await new Promise((r) => setTimeout(r, 0)); });
+    return utils;
+}
+
+/** Clicks an element and lets async router/state updates settle inside act(). */
+async function click(el: HTMLElement) {
+    await act(async () => { fireEvent.click(el); });
+}
+
 describe('Chatbot Visibility', () => {
-    test('Scenario 1: Visible to Guests after email', () => {
-        render(
-            <MemoryRouter initialEntries={['/']}>
-                <App />
-            </MemoryRouter>
-        );
+    test('Scenario 1: Visible to Guests after email', async () => {
+        await renderApp();
         // Start at gateway
-        fireEvent.click(screen.getByText('Enter as Guest'));
+        await click(screen.getByText('Enter as Guest'));
         // Should be visible
         expect(screen.getByTestId('meet-me-bot')).toBeInTheDocument();
     });
 
-    test('Scenario 2: Visible to Authenticated Users', () => {
-        render(
-            <MemoryRouter initialEntries={['/']}>
-                <App />
-            </MemoryRouter>
-        );
+    test('Scenario 2: Visible to Authenticated Users', async () => {
+        await renderApp();
         // Click Login to go to auth view
-        fireEvent.click(screen.getByText('Login'));
+        await click(screen.getByText('Login'));
         // Should be visible (alongside Gallery)
         expect(screen.getByTestId('meet-me-bot')).toBeInTheDocument();
         expect(screen.getByText('Project Gallery')).toBeInTheDocument();
     });
 
-    test('Scenario 3: Visible to Admins', () => {
-        render(
-            <MemoryRouter initialEntries={['/']}>
-                <App />
-            </MemoryRouter>
-        );
+    test('Scenario 3: Visible to Admins', async () => {
+        await renderApp();
         // Login
-        fireEvent.click(screen.getByText('Login'));
+        await click(screen.getByText('Login'));
         // Click Admin Nav
-        fireEvent.click(screen.getByText('Admin Portal'));
+        await click(screen.getByText('Admin Portal'));
         // Should be visible (alongside Admin Dashboard)
         expect(screen.getByTestId('meet-me-bot')).toBeInTheDocument();
         expect(screen.getByText('Admin Dashboard')).toBeInTheDocument();
